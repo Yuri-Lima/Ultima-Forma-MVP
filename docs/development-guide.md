@@ -18,6 +18,37 @@ pnpm nx run <projeto>:test
 pnpm nx run <projeto>:lint
 ```
 
+## Testar endpoints do api-gateway
+
+Após `pnpm db:seed` e com o api-gateway rodando (`pnpm dev:gateway`):
+
+```bash
+./scripts/test-endpoints.sh
+```
+
+Ou manualmente:
+
+```bash
+# IDs fixos do seed (Tenant e Partner de demonstração)
+TENANT_ID="21a30170-166d-44e3-ac09-b640768dc1c7"
+PARTNER_ID="c2989a86-ca61-40f2-9d8a-e6250bde4f9d"
+
+# Criar emissor
+curl -X POST http://localhost:3333/v1/issuers \
+  -H "Content-Type: application/json" \
+  -d "{\"tenantId\":\"$TENANT_ID\",\"partnerId\":\"$PARTNER_ID\",\"name\":\"Test Issuer\"}"
+
+# Criar consumidor
+curl -X POST http://localhost:3333/v1/consumers \
+  -H "Content-Type: application/json" \
+  -d "{\"tenantId\":\"$TENANT_ID\",\"partnerId\":\"$PARTNER_ID\",\"name\":\"Test Consumer\"}"
+
+# Rotacionar credencial de integração
+curl -X POST http://localhost:3333/v1/integration-credentials/rotate \
+  -H "Content-Type: application/json" \
+  -d "{\"partnerId\":\"$PARTNER_ID\"}"
+```
+
 ## Rodar cada app
 
 | App | Comando | Saída |

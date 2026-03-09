@@ -23,6 +23,10 @@
       ],
       "@ultima-forma/infrastructure-drizzle": [
         "libs/infrastructure/drizzle/src/index.ts"
+      ],
+      "@ultima-forma/domain-partner": ["libs/domain/partner/src/index.ts"],
+      "@ultima-forma/application-partner": [
+        "libs/application/partner/src/index.ts"
       ]
     }
   },

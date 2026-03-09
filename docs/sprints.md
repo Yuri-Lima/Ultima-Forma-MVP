@@ -5,7 +5,7 @@
 | Sprint | Objetivo principal | Status |
 |--------|--------------------|--------|
 | 0 | Foundation e base executável | Concluído |
-| 1 | Parceiros e fundação de domínio | Pendente |
+| 1 | Parceiros e fundação de domínio | Concluído |
 | 2 | Solicitação de dados e consentimento universal | Pendente |
 | 3 | Verificação, confiança e resposta ao consumidor | Pendente |
 | 4 | Auditoria e eventos faturáveis | Pendente |
@@ -24,12 +24,16 @@
 - GET /health nos backends
 - Documentação em `docs/`
 
-## Sprint 1 – Parceiros
+## Sprint 1 – Parceiros (concluído)
 
-- Modelos: Partner, Issuer, Consumer, Tenant, IntegrationCredential
+- Libs: domain-partner, application-partner
+- Modelos: Partner, Issuer, Consumer, Tenant, IntegrationCredential (schema `core.*`)
 - Endpoints: POST /v1/issuers, POST /v1/consumers, POST /v1/integration-credentials/rotate
-- Persistência real com Drizzle
-- Testes de use case
+- Persistência real com Drizzle (PartnerRepository)
+- Secret sempre em hash (SHA-256), nunca em texto puro
+- Use cases: CreateIssuer, CreateConsumer, RotateIntegrationCredential
+- Seed mínimo (1 tenant, 1 partner) via `pnpm db:seed`
+- Testes: use cases (unit com mocks) e PartnerRepository (integration)
 
 ## Sprint 2 – Consentimento
 

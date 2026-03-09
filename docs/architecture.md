@@ -17,12 +17,17 @@ flowchart TB
         errors[shared-errors]
         db[infrastructure-db]
         drizzle[infrastructure-drizzle]
+        domainPartner[domain-partner]
+        appPartner[application-partner]
     end
 
     apiGW --> config
     apiGW --> logger
     apiGW --> errors
     apiGW --> drizzle
+    apiGW --> appPartner
+    appPartner --> domainPartner
+    appPartner --> drizzle
     orch --> config
     orch --> logger
     orch --> errors

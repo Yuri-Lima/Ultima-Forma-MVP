@@ -28,10 +28,11 @@ A Ultima Forma é uma infraestrutura de identidade portátil privacy-first, com 
 3. **Menos módulos, mais conectados** – Evitar scaffolding vazio
 4. **Sempre executável** – Todo sprint gera algo testável
 
-## Quick start (5 passos)
+## Quick start (6 passos)
 
 1. `pnpm install`
 2. `cp .env.example .env`
 3. `pnpm db:up`
 4. `pnpm db:migrate`
-5. `pnpm dev:gateway` e em outro terminal `curl http://localhost:3333/health`
+5. `pnpm db:seed` – cria tenant e partner de demonstração
+6. `pnpm dev:gateway` e em outro terminal `pnpm test:api` (ou `curl http://localhost:3333/health`)

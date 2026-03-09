@@ -39,7 +39,10 @@ Edite `.env` se necessário. Valores padrão:
 ```bash
 pnpm db:up      # Sobe PostgreSQL
 pnpm db:migrate # Aplica migrations
+pnpm db:seed    # Cria tenant e partner de demonstração (IDs fixos)
 ```
+
+Após o seed, use os IDs para testar os endpoints; veja `docs/development-guide.md` (seção "Testar endpoints").
 
 ### 4. Verificação
 
@@ -58,6 +61,7 @@ pnpm nx run user-app:export
 - [ ] `pnpm db:migrate` aplica migrations
 - [ ] `pnpm dev:gateway` sobe na porta 3333
 - [ ] `curl http://localhost:3333/health` retorna `{"status":"ok",...}`
+- [ ] `pnpm db:seed` cria tenant e partner (IDs: `21a30170-166d-44e3-ac09-b640768dc1c7`, `c2989a86-ca61-40f2-9d8a-e6250bde4f9d`)
 
 ## Configuração opcional
 
