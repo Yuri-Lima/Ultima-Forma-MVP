@@ -24,6 +24,9 @@ node_modules
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Docker / database
+docker/ultima_forma_data/
+
 # misc
 /.sass-cache
 /connect.lock
@@ -40,3 +43,21 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+
+# Expo
+node_modules/
+.expo/
+.yarn/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+cache/
+
+
+vite.config.*.timestamp*

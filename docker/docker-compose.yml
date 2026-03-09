@@ -1,0 +1,41 @@
+# Production: set POSTGRES_PASSWORD in .env to a strong value;
+# bind 127.0.0.1 keeps Postgres off public interfaces.
+services:
+  postgres:
+    image: postgres:18.3
+    container_name: ultima-forma-postgres
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-ultima_forma}
+      # Production tuning
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    ports:
+      - '127.0.0.1:55432:5432'
+    volumes:
+      - ./ultima_forma_data:/var/lib/postgresql/data
+    # Shared memory required for PostgreSQL (default 64MB can cause issues)
+    shm_size: 256mb
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ultima_forma}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+        reservations:
+          memory: 512M
+          cpus: '0.5'

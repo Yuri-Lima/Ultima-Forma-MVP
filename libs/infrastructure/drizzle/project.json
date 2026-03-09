@@ -1,0 +1,19 @@
+{
+  "name": "drizzle",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/infrastructure/drizzle/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/infrastructure/drizzle",
+        "main": "libs/infrastructure/drizzle/src/index.ts",
+        "tsConfig": "libs/infrastructure/drizzle/tsconfig.lib.json",
+        "assets": ["libs/infrastructure/drizzle/*.md"]
+      }
+    }
+  }
+}

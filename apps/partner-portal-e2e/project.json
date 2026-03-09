@@ -1,0 +1,10 @@
+{
+  "name": "partner-portal-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/partner-portal-e2e/src",
+  "implicitDependencies": ["partner-portal"],
+  "tags": [],
+  "// targets": "to see all targets run: nx show project partner-portal-e2e --web",
+  "targets": {}
+}

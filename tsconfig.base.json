@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ultima-forma/shared-config": ["libs/shared/config/src/index.ts"],
+      "@ultima-forma/shared-logger": ["libs/shared/logger/src/index.ts"],
+      "@ultima-forma/shared-errors": ["libs/shared/errors/src/index.ts"],
+      "@ultima-forma/infrastructure-db": [
+        "libs/infrastructure/db/src/index.ts"
+      ],
+      "@ultima-forma/infrastructure-drizzle": [
+        "libs/infrastructure/drizzle/src/index.ts"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
