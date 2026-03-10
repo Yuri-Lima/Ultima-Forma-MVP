@@ -1,4 +1,5 @@
 import {
+  boolean,
   jsonb,
   pgSchema,
   pgTable,
@@ -73,4 +74,49 @@ export const integrationCredentials = core.table('integration_credentials', {
   status: varchar('status', { length: 50 }).notNull().default('active'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   expiresAt: timestamp('expires_at'),
+});
+
+export const dataRequests = core.table('data_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  consumerId: uuid('consumer_id')
+    .notNull()
+    .references(() => consumers.id),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  purpose: varchar('purpose', { length: 500 }).notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  idempotencyKey: varchar('idempotency_key', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const requestItems = core.table('request_items', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  dataRequestId: uuid('data_request_id')
+    .notNull()
+    .references(() => dataRequests.id),
+  claim: varchar('claim', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const consents = core.table('consents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  dataRequestId: uuid('data_request_id')
+    .notNull()
+    .references(() => dataRequests.id),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const consentReceipts = core.table('consent_receipts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  consentId: uuid('consent_id')
+    .notNull()
+    .references(() => consents.id),
+  approved: boolean('approved').notNull(),
+  receiptData: jsonb('receipt_data').$type<Record<string, unknown>>().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });

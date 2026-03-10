@@ -6,3 +6,4 @@ export {
 } from './lib/drizzle.module';
 export * as schema from './lib/schema';
 export { PartnerRepository } from './lib/partner.repository';
+export { ConsentRepository } from './lib/consent.repository';

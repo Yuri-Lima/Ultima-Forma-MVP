@@ -1,0 +1,38 @@
+export type RequestStatus = 'pending' | 'expired' | 'completed' | 'rejected';
+
+export type ConsentStatus = 'pending' | 'approved' | 'rejected';
+
+export interface DataRequest {
+  id: string;
+  consumerId: string;
+  tenantId: string;
+  status: RequestStatus;
+  purpose: string;
+  expiresAt: Date;
+  idempotencyKey: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface RequestItem {
+  id: string;
+  dataRequestId: string;
+  claim: string;
+  createdAt: Date;
+}
+
+export interface Consent {
+  id: string;
+  dataRequestId: string;
+  status: ConsentStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ConsentReceipt {
+  id: string;
+  consentId: string;
+  approved: boolean;
+  receiptData: Record<string, unknown>;
+  createdAt: Date;
+}

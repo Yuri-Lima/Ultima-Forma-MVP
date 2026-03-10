@@ -22,6 +22,7 @@ export interface RotateCredentialResult {
 
 export interface PartnerRepositoryPort {
   findPartnerById(id: string): Promise<Partner | null>;
+  findConsumerById(id: string): Promise<Consumer | null>;
   createIssuer(input: CreateIssuerInput): Promise<Issuer>;
   createConsumer(input: CreateConsumerInput): Promise<Consumer>;
   rotateIntegrationCredential(partnerId: string): Promise<RotateCredentialResult>;

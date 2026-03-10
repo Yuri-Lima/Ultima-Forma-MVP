@@ -27,4 +27,18 @@ echo "3. POST /v1/integration-credentials/rotate"
 curl -s -X POST "$BASE_URL/v1/integration-credentials/rotate" \
   -H "Content-Type: application/json" \
   -d "{\"partnerId\":\"$PARTNER_ID\"}"
+echo -e "\n"
+
+CONSUMER_ID="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+EXPIRES_AT=$(date -u -v+1d +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d "+1 day" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "2026-12-31T23:59:59Z")
+
+echo "4. POST /v1/data-requests (creates request + consent)"
+RESP=$(curl -s -X POST "$BASE_URL/v1/data-requests" \
+  -H "Content-Type: application/json" \
+  -d "{\"consumerId\":\"$CONSUMER_ID\",\"tenantId\":\"$TENANT_ID\",\"purpose\":\"Test\",\"claims\":[\"email\",\"name\"],\"expiresAt\":\"$EXPIRES_AT\"}")
+echo "$RESP"
+REQUEST_ID=$(echo "$RESP" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+if [ -n "$REQUEST_ID" ]; then
+  echo "  -> Use consentUrl from response or open: http://localhost:8081/consent/$REQUEST_ID"
+fi
 echo ""

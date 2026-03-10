@@ -19,6 +19,8 @@ flowchart TB
         drizzle[infrastructure-drizzle]
         domainPartner[domain-partner]
         appPartner[application-partner]
+        domainConsent[domain-consent]
+        appConsent[application-consent]
     end
 
     apiGW --> config
@@ -26,8 +28,11 @@ flowchart TB
     apiGW --> errors
     apiGW --> drizzle
     apiGW --> appPartner
+    apiGW --> appConsent
     appPartner --> domainPartner
     appPartner --> drizzle
+    appConsent --> domainConsent
+    appConsent --> drizzle
     orch --> config
     orch --> logger
     orch --> errors

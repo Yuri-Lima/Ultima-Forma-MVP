@@ -5,6 +5,7 @@ import { AppError } from '@ultima-forma/shared-errors';
 describe('CreateConsumerUseCase', () => {
   const mockRepo: jest.Mocked<PartnerRepositoryPort> = {
     findPartnerById: jest.fn(),
+    findConsumerById: jest.fn(),
     createIssuer: jest.fn(),
     createConsumer: jest.fn(),
     rotateIntegrationCredential: jest.fn(),

@@ -9,5 +9,7 @@ module.exports = {
   moduleNameMapper: {
     '^@ultima-forma/domain-partner$':
       '<rootDir>/../../domain/partner/src/index.ts',
+    '^@ultima-forma/domain-consent$':
+      '<rootDir>/../../domain/consent/src/index.ts',
   },
 };

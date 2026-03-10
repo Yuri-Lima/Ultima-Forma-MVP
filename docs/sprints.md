@@ -6,7 +6,7 @@
 |--------|--------------------|--------|
 | 0 | Foundation e base executável | Concluído |
 | 1 | Parceiros e fundação de domínio | Concluído |
-| 2 | Solicitação de dados e consentimento universal | Pendente |
+| 2 | Solicitação de dados e consentimento universal | Concluído |
 | 3 | Verificação, confiança e resposta ao consumidor | Pendente |
 | 4 | Auditoria e eventos faturáveis | Pendente |
 | 5 | Atualização cadastral e webhooks básicos | Pendente |
@@ -35,12 +35,16 @@
 - Seed mínimo (1 tenant, 1 partner) via `pnpm db:seed`
 - Testes: use cases (unit com mocks) e PartnerRepository (integration)
 
-## Sprint 2 – Consentimento
+## Sprint 2 – Consentimento (concluído)
 
-- DataRequest, RequestItem, Consent, ConsentReceipt
-- Fluxo de aprovação/rejeição no user-app (web e mobile)
-- POST /v1/data-requests, GET /v1/data-requests/:id
-- Trilha auditável mínima
+- Libs: domain-consent, application-consent
+- Modelos: DataRequest, RequestItem, Consent, ConsentReceipt (schema `core.*`)
+- Endpoints: POST /v1/data-requests, GET /v1/data-requests/:id, POST /v1/data-requests/:id/expire
+- Endpoints: POST /v1/consents/:id/approve, POST /v1/consents/:id/reject
+- orchestration-api: POST /internal/consents/:id/approve, /reject
+- Fluxo de consentimento no user-app (web e mobile): /consent/[requestId]
+- Consent receipt auditável, idempotency key em criação
+- Testes: use cases (unit) e ConsentRepository (integration)
 
 ## Sprint 3 – Verificação
 

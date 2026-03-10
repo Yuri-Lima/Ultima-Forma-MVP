@@ -48,6 +48,26 @@ export class PartnerRepository implements PartnerRepositoryPort {
     };
   }
 
+  async findConsumerById(id: string): Promise<Consumer | null> {
+    const rows = await this.db
+      .select()
+      .from(consumers)
+      .where(eq(consumers.id, id))
+      .limit(1);
+    const row = rows[0];
+    if (!row) return null;
+    return {
+      id: row.id,
+      partnerId: row.partnerId,
+      tenantId: row.tenantId,
+      name: row.name,
+      status: row.status as PartnerStatus,
+      scopes: (row.scopes as string[]) ?? [],
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
   async createIssuer(input: CreateIssuerInput): Promise<Issuer> {
     const [row] = await this.db
       .insert(issuers)

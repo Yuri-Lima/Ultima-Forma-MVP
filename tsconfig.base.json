@@ -27,6 +27,10 @@
       "@ultima-forma/domain-partner": ["libs/domain/partner/src/index.ts"],
       "@ultima-forma/application-partner": [
         "libs/application/partner/src/index.ts"
+      ],
+      "@ultima-forma/domain-consent": ["libs/domain/consent/src/index.ts"],
+      "@ultima-forma/application-consent": [
+        "libs/application/consent/src/index.ts"
       ]
     }
   },

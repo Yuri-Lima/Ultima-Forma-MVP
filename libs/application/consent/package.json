@@ -1,0 +1,14 @@
+{
+  "name": "@ultima-forma/application-consent",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@ultima-forma/domain-consent": "*",
+    "@ultima-forma/domain-partner": "*",
+    "@ultima-forma/shared-errors": "*"
+  }
+}

@@ -47,6 +47,13 @@ curl -X POST http://localhost:3333/v1/consumers \
 curl -X POST http://localhost:3333/v1/integration-credentials/rotate \
   -H "Content-Type: application/json" \
   -d "{\"partnerId\":\"$PARTNER_ID\"}"
+
+# Criar solicitação de dados (Sprint 2)
+CONSUMER_ID="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+curl -X POST http://localhost:3333/v1/data-requests \
+  -H "Content-Type: application/json" \
+  -d "{\"consumerId\":\"$CONSUMER_ID\",\"tenantId\":\"$TENANT_ID\",\"purpose\":\"Verificação de identidade\",\"claims\":[\"email\",\"name\"],\"expiresAt\":\"2026-12-31T23:59:59Z\"}"
+# Resposta inclui consentUrl para o user-app
 ```
 
 ## Rodar cada app
@@ -56,6 +63,8 @@ curl -X POST http://localhost:3333/v1/integration-credentials/rotate \
 | api-gateway | `pnpm dev:gateway` | http://localhost:3333 |
 | orchestration-api | `pnpm dev:orchestration` | http://localhost:3334 |
 | user-app (web) | `pnpm dev:user-app` | http://localhost:8081 |
+| user-app (native / Expo Go) | `pnpm dev:user-app:native` | QR code no terminal |
+| user-app (tunnel, redes distintas) | `pnpm dev:user-app:tunnel` | QR code no terminal |
 | partner-portal | `pnpm dev:partner-portal` | http://localhost:4200 |
 
 ## Workflow típico
