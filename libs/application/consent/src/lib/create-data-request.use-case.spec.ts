@@ -27,6 +27,7 @@ describe('CreateDataRequestUseCase', () => {
       rejectConsent: jest.fn(),
       expireRequest: jest.fn(),
       findByIdempotencyKey: jest.fn(),
+      findDataRequestResultForConsumer: jest.fn(),
     };
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),
@@ -35,6 +36,7 @@ describe('CreateDataRequestUseCase', () => {
         tenantId: 'tenant-id',
         name: 'Test Consumer',
         status: 'active',
+        scopes: [],
       }),
       createIssuer: jest.fn(),
       createConsumer: jest.fn(),
@@ -110,5 +112,88 @@ describe('CreateDataRequestUseCase', () => {
 
     expect(result).toBe(existing);
     expect(consentRepo.findByIdempotencyKey).toHaveBeenCalledWith('key-123');
+  });
+
+  it('should throw CLAIMS_OUT_OF_SCOPE when consumer has scopes and claims are not subset', async () => {
+    const consentRepo = {
+      createDataRequest: jest.fn(),
+      findByIdempotencyKey: jest.fn().mockResolvedValue(null),
+    } as unknown as ConsentRepositoryPort;
+    const partnerRepo: PartnerRepositoryPort = {
+      findPartnerById: jest.fn(),
+      findConsumerById: jest.fn().mockResolvedValue({
+        id: 'consumer-id',
+        tenantId: 'tenant-id',
+        name: 'Test Consumer',
+        status: 'active',
+        scopes: ['email', 'name'],
+      }),
+      createIssuer: jest.fn(),
+      createConsumer: jest.fn(),
+      rotateIntegrationCredential: jest.fn(),
+    };
+
+    const useCase = new CreateDataRequestUseCase(consentRepo, partnerRepo);
+    await expect(
+      useCase.execute({
+        consumerId: 'consumer-id',
+        tenantId: 'tenant-id',
+        purpose: 'Test',
+        claims: ['email', 'phone'],
+        expiresAt,
+      })
+    ).rejects.toThrow(AppError);
+
+    expect(consentRepo.createDataRequest).not.toHaveBeenCalled();
+  });
+
+  it('should create when consumer scopes include all requested claims', async () => {
+    const consentRepo: ConsentRepositoryPort = {
+      createDataRequest: jest.fn().mockResolvedValue({
+        id: 'request-id',
+        consumerId: 'consumer-id',
+        tenantId: 'tenant-id',
+        status: 'pending',
+        purpose: 'Test',
+        expiresAt,
+        idempotencyKey: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+      findDataRequestById: jest.fn(),
+      findDataRequestForUser: jest.fn(),
+      findConsentById: jest.fn(),
+      findConsentByRequestId: jest.fn(),
+      approveConsent: jest.fn(),
+      rejectConsent: jest.fn(),
+      expireRequest: jest.fn(),
+      findByIdempotencyKey: jest.fn(),
+      findDataRequestResultForConsumer: jest.fn(),
+    };
+    const partnerRepo: PartnerRepositoryPort = {
+      findPartnerById: jest.fn(),
+      findConsumerById: jest.fn().mockResolvedValue({
+        id: 'consumer-id',
+        tenantId: 'tenant-id',
+        name: 'Test Consumer',
+        status: 'active',
+        scopes: ['email', 'name', 'phone'],
+      }),
+      createIssuer: jest.fn(),
+      createConsumer: jest.fn(),
+      rotateIntegrationCredential: jest.fn(),
+    };
+
+    const useCase = new CreateDataRequestUseCase(consentRepo, partnerRepo);
+    const result = await useCase.execute({
+      consumerId: 'consumer-id',
+      tenantId: 'tenant-id',
+      purpose: 'Test',
+      claims: ['email', 'name'],
+      expiresAt,
+    });
+
+    expect(result.id).toBe('request-id');
+    expect(consentRepo.createDataRequest).toHaveBeenCalled();
   });
 });

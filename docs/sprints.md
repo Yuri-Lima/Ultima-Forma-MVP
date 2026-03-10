@@ -7,7 +7,7 @@
 | 0 | Foundation e base executável | Concluído |
 | 1 | Parceiros e fundação de domínio | Concluído |
 | 2 | Solicitação de dados e consentimento universal | Concluído |
-| 3 | Verificação, confiança e resposta ao consumidor | Pendente |
+| 3 | Verificação, confiança e resposta ao consumidor | Concluído |
 | 4 | Auditoria e eventos faturáveis | Pendente |
 | 5 | Atualização cadastral e webhooks básicos | Pendente |
 | 6 | Hardening do MVP | Pendente |
@@ -46,11 +46,14 @@
 - Consent receipt auditável, idempotency key em criação
 - Testes: use cases (unit) e ConsentRepository (integration)
 
-## Sprint 3 – Verificação
+## Sprint 3 – Verificação (concluído)
 
-- TrustLevel, VerificationResult
-- Verificação básica de solicitação
-- Retorno estruturado ao consumidor
+- Domain: TrustLevel, VerificationResult, ReceiptData, DataRequestResultForConsumer
+- Verificação básica de solicitação: validação de claims dentro dos scopes do consumer
+- Consent receipt com trustLevel e verificationResult (high ao aprovar, low ao rejeitar)
+- Endpoint GET /v1/data-requests/:id/result para consumidor obter resultado estruturado
+- Use case GetDataRequestResultForConsumerUseCase
+- Testes: unit (CreateDataRequest CLAIMS_OUT_OF_SCOPE, GetDataRequestResultForConsumer), integration (ConsentRepository receipt structure)
 
 ## Sprint 4 – Auditoria e billing
 

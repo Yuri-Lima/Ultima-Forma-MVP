@@ -2,6 +2,7 @@ import type {
   Consent,
   ConsentReceipt,
   DataRequest,
+  DataRequestResultForConsumer,
   RequestItem,
 } from './consent.types';
 
@@ -31,4 +32,7 @@ export interface ConsentRepositoryPort {
   rejectConsent(consentId: string): Promise<ConsentReceipt>;
   expireRequest(requestId: string): Promise<DataRequest>;
   findByIdempotencyKey(key: string): Promise<DataRequest | null>;
+  findDataRequestResultForConsumer(
+    requestId: string
+  ): Promise<DataRequestResultForConsumer | null>;
 }

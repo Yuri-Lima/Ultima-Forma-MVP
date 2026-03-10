@@ -12,6 +12,7 @@ import {
   RejectConsentUseCase,
   ExpireRequestUseCase,
   GetDataRequestForUserUseCase,
+  GetDataRequestResultForConsumerUseCase,
 } from '@ultima-forma/application-consent';
 import {
   DRIZZLE,
@@ -96,6 +97,12 @@ export const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
       provide: GetDataRequestForUserUseCase,
       useFactory: (repo: ConsentRepositoryPort) =>
         new GetDataRequestForUserUseCase(repo),
+      inject: [CONSENT_REPOSITORY],
+    },
+    {
+      provide: GetDataRequestResultForConsumerUseCase,
+      useFactory: (repo: ConsentRepositoryPort) =>
+        new GetDataRequestResultForConsumerUseCase(repo),
       inject: [CONSENT_REPOSITORY],
     },
   ],

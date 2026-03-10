@@ -39,6 +39,18 @@ export class CreateDataRequestUseCase {
       throw new AppError('INVALID_INPUT', 'At least one claim is required', 400);
     }
 
+    if (consumer.scopes?.length) {
+      const scopeSet = new Set(consumer.scopes);
+      const outOfScope = input.claims.filter((c) => !scopeSet.has(c));
+      if (outOfScope.length) {
+        throw new AppError(
+          'CLAIMS_OUT_OF_SCOPE',
+          'Requested claims exceed consumer scopes',
+          400
+        );
+      }
+    }
+
     if (input.expiresAt <= new Date()) {
       throw new AppError(
         'INVALID_INPUT',

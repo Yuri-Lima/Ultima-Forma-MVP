@@ -2,6 +2,23 @@ export type RequestStatus = 'pending' | 'expired' | 'completed' | 'rejected';
 
 export type ConsentStatus = 'pending' | 'approved' | 'rejected';
 
+export type TrustLevel = 'low' | 'medium' | 'high' | 'verified';
+
+export interface VerificationResult {
+  trustLevel: TrustLevel;
+  verifiedAt: Date;
+  verifiedClaims?: string[];
+}
+
+export interface ReceiptData {
+  approved: boolean;
+  timestamp: string;
+  requestId: string;
+  consentId: string;
+  trustLevel: TrustLevel;
+  verificationResult?: VerificationResult;
+}
+
 export interface DataRequest {
   id: string;
   consumerId: string;
@@ -35,4 +52,21 @@ export interface ConsentReceipt {
   approved: boolean;
   receiptData: Record<string, unknown>;
   createdAt: Date;
+}
+
+export interface DataRequestResultForConsumer {
+  requestId: string;
+  status: RequestStatus;
+  consumerId: string;
+  consumerName: string;
+  purpose: string;
+  claims: string[];
+  expiresAt: Date;
+  createdAt: Date;
+  receipt?: {
+    id: string;
+    approved: boolean;
+    trustLevel: TrustLevel;
+    verificationResult?: VerificationResult;
+  };
 }

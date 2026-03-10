@@ -48,6 +48,7 @@ async function seed() {
       partnerId,
       tenantId,
       name: 'Demo Consumer',
+      scopes: ['email', 'name'],
     })
     .onConflictDoNothing({ target: [consumers.id] });
 

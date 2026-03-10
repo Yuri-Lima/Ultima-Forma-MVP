@@ -5,8 +5,11 @@ import type {
   ConsentRepositoryPort,
   CreateDataRequestInput,
   DataRequest,
+  DataRequestResultForConsumer,
   DataRequestWithDetails,
   RequestItem,
+  TrustLevel,
+  VerificationResult,
 } from '@ultima-forma/domain-consent';
 import {
   consentReceipts,
@@ -135,11 +138,24 @@ export class ConsentRepository implements ConsentRepositoryPort {
     const consentRow = consentRows[0];
     if (!consentRow) throw new Error('Consent not found');
 
+    const itemRows = await this.db
+      .select({ claim: requestItems.claim })
+      .from(requestItems)
+      .where(eq(requestItems.dataRequestId, consentRow.dataRequestId));
+    const verifiedClaims = itemRows.map((r) => r.claim);
+    const verifiedAt = new Date();
+
     const receiptData = {
       approved: true,
-      timestamp: new Date().toISOString(),
+      timestamp: verifiedAt.toISOString(),
       requestId: consentRow.dataRequestId,
       consentId,
+      trustLevel: 'high',
+      verificationResult: {
+        trustLevel: 'high',
+        verifiedAt: verifiedAt.toISOString(),
+        verifiedClaims,
+      },
     };
 
     const [receiptRow] = await this.db
@@ -181,11 +197,18 @@ export class ConsentRepository implements ConsentRepositoryPort {
     const consentRow = consentRows[0];
     if (!consentRow) throw new Error('Consent not found');
 
+    const verifiedAt = new Date();
     const receiptData = {
       approved: false,
-      timestamp: new Date().toISOString(),
+      timestamp: verifiedAt.toISOString(),
       requestId: consentRow.dataRequestId,
       consentId,
+      trustLevel: 'low',
+      verificationResult: {
+        trustLevel: 'low',
+        verifiedAt: verifiedAt.toISOString(),
+        verifiedClaims: [],
+      },
     };
 
     const [receiptRow] = await this.db
@@ -238,6 +261,93 @@ export class ConsentRepository implements ConsentRepositoryPort {
     const row = rows[0];
     if (!row) return null;
     return this.toDataRequest(row);
+  }
+
+  async findDataRequestResultForConsumer(
+    requestId: string
+  ): Promise<DataRequestResultForConsumer | null> {
+    const requestRows = await this.db
+      .select()
+      .from(dataRequests)
+      .where(eq(dataRequests.id, requestId))
+      .limit(1);
+    const requestRow = requestRows[0];
+    if (!requestRow) return null;
+
+    const itemRows = await this.db
+      .select({ claim: requestItems.claim })
+      .from(requestItems)
+      .where(eq(requestItems.dataRequestId, requestId));
+    const claims = itemRows.map((r) => r.claim);
+
+    const consumerRows = await this.db
+      .select({ name: consumers.name })
+      .from(consumers)
+      .where(eq(consumers.id, requestRow.consumerId))
+      .limit(1);
+    const consumerRow = consumerRows[0];
+    if (!consumerRow) return null;
+
+    let receipt: DataRequestResultForConsumer['receipt'];
+
+    if (
+      requestRow.status === 'completed' ||
+      requestRow.status === 'rejected'
+    ) {
+      const consentRows = await this.db
+        .select()
+        .from(consents)
+        .where(eq(consents.dataRequestId, requestId))
+        .limit(1);
+      const consentRow = consentRows[0];
+      if (!consentRow) return null;
+
+      const receiptRows = await this.db
+        .select()
+        .from(consentReceipts)
+        .where(eq(consentReceipts.consentId, consentRow.id))
+        .limit(1);
+      const receiptRow = receiptRows[0];
+      if (!receiptRow) return null;
+
+      const data = receiptRow.receiptData as Record<string, unknown>;
+      const trustLevel =
+        (data['trustLevel'] as TrustLevel) ??
+        (receiptRow.approved ? 'high' : 'low');
+      const verificationResultRaw = data[
+        'verificationResult'
+      ] as Record<string, unknown> | undefined;
+      let verificationResult: VerificationResult | undefined;
+      if (verificationResultRaw) {
+        const va = verificationResultRaw['verifiedAt'];
+        verificationResult = {
+          trustLevel: (verificationResultRaw['trustLevel'] as TrustLevel) ?? trustLevel,
+          verifiedAt: typeof va === 'string' ? new Date(va) : (va as Date),
+          verifiedClaims: verificationResultRaw[
+            'verifiedClaims'
+          ] as string[] | undefined,
+        };
+      }
+
+      receipt = {
+        id: receiptRow.id,
+        approved: receiptRow.approved,
+        trustLevel,
+        verificationResult,
+      };
+    }
+
+    return {
+      requestId: requestRow.id,
+      status: requestRow.status as DataRequestResultForConsumer['status'],
+      consumerId: requestRow.consumerId,
+      consumerName: consumerRow.name,
+      purpose: requestRow.purpose,
+      claims,
+      expiresAt: requestRow.expiresAt,
+      createdAt: requestRow.createdAt,
+      receipt,
+    };
   }
 
   private toDataRequest(row: (typeof dataRequests.$inferSelect)): DataRequest {

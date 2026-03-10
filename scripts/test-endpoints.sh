@@ -40,5 +40,9 @@ echo "$RESP"
 REQUEST_ID=$(echo "$RESP" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
 if [ -n "$REQUEST_ID" ]; then
   echo "  -> Use consentUrl from response or open: http://localhost:8081/consent/$REQUEST_ID"
+  echo ""
+  echo "5. GET /v1/data-requests/$REQUEST_ID/result (consumer polling)"
+  curl -s "$BASE_URL/v1/data-requests/$REQUEST_ID/result" | head -20
+  echo -e "\n  -> After user approves in user-app, call again to see receipt with trustLevel"
 fi
 echo ""

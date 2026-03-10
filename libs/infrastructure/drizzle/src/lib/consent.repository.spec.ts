@@ -55,5 +55,59 @@ describe('ConsentRepository (integration)', () => {
     expect(forUser?.items).toHaveLength(2);
     expect(forUser?.consent.status).toBe('pending');
     expect(forUser?.consumerName).toBeDefined();
+
+    const receipt = await repo.approveConsent(forUser!.consent.id);
+    expect(receipt.approved).toBe(true);
+    expect(receipt.receiptData).toMatchObject({
+      approved: true,
+      trustLevel: 'high',
+      verificationResult: {
+        trustLevel: 'high',
+        verifiedClaims: ['email', 'name'],
+      },
+    });
+    expect(receipt.receiptData['timestamp']).toBeDefined();
+  });
+
+  it('should create reject receipt with trustLevel low', async () => {
+    const consumerRows = await pool.query(
+      'SELECT id, tenant_id FROM core.consumers LIMIT 1'
+    );
+    const consumerId = consumerRows.rows[0]?.id;
+    const tenantId = consumerRows.rows[0]?.tenant_id;
+    if (!consumerId || !tenantId) {
+      console.warn('Skipping: no consumers in DB.');
+      return;
+    }
+
+    const expiresAt = new Date(Date.now() + 86400000);
+    const request = await repo.createDataRequest({
+      consumerId,
+      tenantId,
+      purpose: 'Reject test',
+      claims: ['phone'],
+      expiresAt,
+    });
+    const forUser = await repo.findDataRequestForUser(request.id);
+    if (!forUser) return;
+
+    const receipt = await repo.rejectConsent(forUser.consent.id);
+    expect(receipt.approved).toBe(false);
+    expect(receipt.receiptData).toMatchObject({
+      approved: false,
+      trustLevel: 'low',
+      verificationResult: {
+        trustLevel: 'low',
+        verifiedClaims: [],
+      },
+    });
+
+    const result = await repo.findDataRequestResultForConsumer(request.id);
+    expect(result).not.toBeNull();
+    expect(result?.status).toBe('rejected');
+    expect(result?.receipt).toBeDefined();
+    expect(result?.receipt?.trustLevel).toBe('low');
+    expect(result?.consumerName).toBeDefined();
+    expect(result?.claims).toContain('phone');
   });
 });

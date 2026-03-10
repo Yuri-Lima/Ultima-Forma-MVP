@@ -3,3 +3,4 @@ export { ApproveConsentUseCase } from './lib/approve-consent.use-case';
 export { RejectConsentUseCase } from './lib/reject-consent.use-case';
 export { ExpireRequestUseCase } from './lib/expire-request.use-case';
 export { GetDataRequestForUserUseCase } from './lib/get-data-request-for-user.use-case';
+export { GetDataRequestResultForConsumerUseCase } from './lib/get-data-request-result-for-consumer.use-case';
