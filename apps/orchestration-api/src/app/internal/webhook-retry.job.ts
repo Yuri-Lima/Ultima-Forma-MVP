@@ -5,6 +5,7 @@ import {
   WebhookDeliveryRepository,
   WebhookDispatcher,
 } from '@ultima-forma/infrastructure-drizzle';
+import { logger } from '@ultima-forma/shared-logger';
 
 const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
 
@@ -22,8 +23,11 @@ export class WebhookRetryJob {
     for (const delivery of pending) {
       try {
         await this.dispatcher.retryDelivery(delivery.id);
-      } catch {
-        // Log and continue - delivery status will be updated by dispatcher
+      } catch (err) {
+        logger.error('WebhookRetryJob: failed to retry delivery', {
+          deliveryId: delivery.id,
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     }
   }

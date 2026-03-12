@@ -11,7 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({ origin: true }); // Allow user-app (localhost:8081) and partner-portal
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    })
   );
   const config = getConfig();
   const port = config.apiGatewayPort;

@@ -8,6 +8,7 @@ import type {
 } from '@ultima-forma/domain-webhook';
 
 const RETRY_BACKOFF_MS = [60_000, 120_000, 240_000, 480_000, 960_000];
+const FETCH_TIMEOUT_MS = 30_000;
 
 function computeSignature(payload: string, secret: string): string {
   return createHmac('sha256', secret).update(payload).digest('hex');
@@ -75,11 +76,15 @@ export class WebhookDispatcher implements WebhookDispatcherPort {
     }
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const res = await fetch(url, {
         method: 'POST',
         headers,
         body: payload,
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (res.ok) {
         await this.deliveryRepo.updateStatus(delivery.id, 'succeeded', {

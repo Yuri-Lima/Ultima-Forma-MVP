@@ -11,6 +11,7 @@
 | 4 | Auditoria e eventos faturáveis | Concluído |
 | 4.1 | Sprint 4 – Production-Grade MVP Review | Concluído |
 | 5 | Atualização cadastral e webhooks básicos | Concluído |
+| 5.1 | Sprint 5 – Production-Grade MVP Review | Concluído |
 | 6 | Hardening do MVP | Pendente |
 
 ## Sprint 0 – Foundation (concluído)
@@ -93,6 +94,22 @@
 - **api-gateway**: PATCH /v1/issuers/:id, PATCH /v1/consumers/:id
 - **orchestration-api**: GET /internal/webhook-deliveries, WebhookRetryJob (cron a cada minuto)
 - **ops-console**: rotas /profile-updates e /webhooks (ProfileUpdateList, WebhookDeliveryList)
+
+## Sprint 5.1 – Production-Grade MVP Review (concluído)
+
+- **api-gateway**
+  - ParseUUIDPipe para PATCH /v1/issuers/:id e PATCH /v1/consumers/:id — IDs inválidos retornam 400 Bad Request
+  - UpdateIssuerDto/UpdateConsumerDto: validador customizado exige ao menos um campo (name, status ou scopes); corpo vazio `{}` retorna erro de validação
+  - ValidationPipe global: adicionado `transform: true` para coerção de tipos (ex.: limit/offset como números)
+- **Repositories**
+  - PartnerRepository, WebhookSubscriptionRepository, WebhookDeliveryRepository: uso de AppError com códigos específicos em vez de Error genérico (ISSUER_UPDATE_FAILED, CONSUMER_UPDATE_FAILED, WEBHOOK_SUBSCRIPTION_CREATE_FAILED, WEBHOOK_DELIVERY_CREATE_FAILED)
+- **WebhookDispatcher**
+  - Timeout de 30s (AbortController) no fetch — endpoints lentos ou travados não bloqueiam o retry job
+- **WebhookRetryJob**
+  - Log de erros no catch com shared-logger (deliveryId, mensagem) — observabilidade quando retryDelivery lança exceção
+- **Banco de dados**
+  - Migration 0005: índices em webhook_deliveries (status, subscription_id, next_retry_at, created_at)
+- **ops-console E2E**: smoke tests para /profile-updates e /webhooks
 
 ## Sprint 6 – Hardening
 

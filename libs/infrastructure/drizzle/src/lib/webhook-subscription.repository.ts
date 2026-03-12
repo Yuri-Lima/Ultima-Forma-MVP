@@ -1,4 +1,5 @@
 import { and, eq } from 'drizzle-orm';
+import { AppError } from '@ultima-forma/shared-errors';
 import type {
   CreateWebhookSubscriptionInput,
   WebhookSubscription,
@@ -32,7 +33,7 @@ export class WebhookSubscriptionRepository implements WebhookSubscriptionReposit
       })
       .returning();
 
-    if (!row) throw new Error('Failed to create webhook subscription');
+    if (!row) throw new AppError('WEBHOOK_SUBSCRIPTION_CREATE_FAILED', 'Failed to create webhook subscription', 500);
 
     return this.mapRow(row);
   }

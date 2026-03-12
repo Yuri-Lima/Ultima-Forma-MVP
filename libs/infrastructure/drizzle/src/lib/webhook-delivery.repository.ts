@@ -1,4 +1,5 @@
 import { and, eq, or, lte, lt, sql } from 'drizzle-orm';
+import { AppError } from '@ultima-forma/shared-errors';
 import type {
   CreateWebhookDeliveryInput,
   WebhookDelivery,
@@ -22,7 +23,7 @@ export class WebhookDeliveryRepository implements WebhookDeliveryRepositoryPort 
       })
       .returning();
 
-    if (!row) throw new Error('Failed to create webhook delivery');
+    if (!row) throw new AppError('WEBHOOK_DELIVERY_CREATE_FAILED', 'Failed to create webhook delivery', 500);
 
     return this.mapRow(row);
   }

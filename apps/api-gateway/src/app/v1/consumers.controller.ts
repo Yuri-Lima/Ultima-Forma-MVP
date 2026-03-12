@@ -1,4 +1,11 @@
-import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import {
   CreateConsumerUseCase,
   UpdateConsumerUseCase,
@@ -34,7 +41,10 @@ export class ConsumersController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateConsumerDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateConsumerDto
+  ) {
     const input: { name?: string; status?: string; scopes?: string[] } = {};
     if (dto.name !== undefined) input.name = dto.name;
     if (dto.status !== undefined) input.status = dto.status;

@@ -1,4 +1,5 @@
 import { IsArray, IsIn, IsOptional, IsString, MinLength } from 'class-validator';
+import { HasAtLeastOneField } from './has-at-least-one-field.validator';
 
 export class UpdateConsumerDto {
   @IsOptional()
@@ -15,4 +16,9 @@ export class UpdateConsumerDto {
   @IsArray()
   @IsString({ each: true })
   scopes?: string[];
+
+  @HasAtLeastOneField()
+  get _requireAtLeastOne(): this {
+    return this;
+  }
 }

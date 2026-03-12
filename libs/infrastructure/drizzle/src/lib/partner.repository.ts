@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { eq } from 'drizzle-orm';
+import { AppError } from '@ultima-forma/shared-errors';
 import type {
   Consumer,
   CreateConsumerInput,
@@ -146,7 +147,7 @@ export class PartnerRepository implements PartnerRepositoryPort {
       .set(updates as Record<string, unknown>)
       .where(eq(issuers.id, id))
       .returning();
-    if (!row) throw new Error('Failed to update issuer');
+    if (!row) throw new AppError('ISSUER_UPDATE_FAILED', 'Failed to update issuer', 500);
     return {
       id: row.id,
       partnerId: row.partnerId,
@@ -169,7 +170,7 @@ export class PartnerRepository implements PartnerRepositoryPort {
       .set(updates as Record<string, unknown>)
       .where(eq(consumers.id, id))
       .returning();
-    if (!row) throw new Error('Failed to update consumer');
+    if (!row) throw new AppError('CONSUMER_UPDATE_FAILED', 'Failed to update consumer', 500);
     return {
       id: row.id,
       partnerId: row.partnerId,
