@@ -9,6 +9,8 @@ import {
   CreateConsumerUseCase,
   CreateIssuerUseCase,
   RotateIntegrationCredentialUseCase,
+  UpdateConsumerUseCase,
+  UpdateIssuerUseCase,
 } from '@ultima-forma/application-partner';
 import {
   CreateDataRequestUseCase,
@@ -18,6 +20,7 @@ import {
   GetDataRequestForUserUseCase,
   GetDataRequestResultForConsumerUseCase,
 } from '@ultima-forma/application-consent';
+import type { WebhookDispatcherPort } from '@ultima-forma/domain-webhook';
 import {
   DRIZZLE,
   type DrizzleDB,
@@ -25,6 +28,9 @@ import {
   ConsentRepository,
   AuditRepository,
   BillableEventRepository,
+  WebhookSubscriptionRepository,
+  WebhookDeliveryRepository,
+  WebhookDispatcher,
 } from '@ultima-forma/infrastructure-drizzle';
 import { IssuersController } from './issuers.controller';
 import { ConsumersController } from './consumers.controller';
@@ -36,6 +42,8 @@ export const PARTNER_REPOSITORY = 'PARTNER_REPOSITORY';
 export const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
 export const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
 export const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
+export const WEBHOOK_SUBSCRIPTION_REPOSITORY = 'WEBHOOK_SUBSCRIPTION_REPOSITORY';
+export const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
 
 @Module({
   imports: [],
@@ -53,6 +61,25 @@ export const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
       inject: [DRIZZLE],
     },
     {
+      provide: WEBHOOK_SUBSCRIPTION_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new WebhookSubscriptionRepository(db),
+      inject: [DRIZZLE],
+    },
+    {
+      provide: WEBHOOK_DELIVERY_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new WebhookDeliveryRepository(db),
+      inject: [DRIZZLE],
+    },
+    {
+      provide: WebhookDispatcher,
+      useFactory: (subRepo: unknown, delRepo: unknown) =>
+        new WebhookDispatcher(
+          subRepo as WebhookSubscriptionRepository,
+          delRepo as WebhookDeliveryRepository
+        ),
+      inject: [WEBHOOK_SUBSCRIPTION_REPOSITORY, WEBHOOK_DELIVERY_REPOSITORY],
+    },
+    {
       provide: CreateIssuerUseCase,
       useFactory: (repo: PartnerRepositoryPort) => new CreateIssuerUseCase(repo),
       inject: [PARTNER_REPOSITORY],
@@ -62,6 +89,24 @@ export const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
       useFactory: (repo: PartnerRepositoryPort) =>
         new CreateConsumerUseCase(repo),
       inject: [PARTNER_REPOSITORY],
+    },
+    {
+      provide: UpdateIssuerUseCase,
+      useFactory: (
+        repo: PartnerRepositoryPort,
+        auditRepo: AuditRepositoryPort,
+        dispatcher: WebhookDispatcherPort
+      ) => new UpdateIssuerUseCase(repo, auditRepo, dispatcher),
+      inject: [PARTNER_REPOSITORY, AUDIT_REPOSITORY, WebhookDispatcher],
+    },
+    {
+      provide: UpdateConsumerUseCase,
+      useFactory: (
+        repo: PartnerRepositoryPort,
+        auditRepo: AuditRepositoryPort,
+        dispatcher: WebhookDispatcherPort
+      ) => new UpdateConsumerUseCase(repo, auditRepo, dispatcher),
+      inject: [PARTNER_REPOSITORY, AUDIT_REPOSITORY, WebhookDispatcher],
     },
     {
       provide: RotateIntegrationCredentialUseCase,

@@ -1,5 +1,10 @@
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { RequestList, AuditEventList } from './components';
+import {
+  RequestList,
+  AuditEventList,
+  ProfileUpdateList,
+  WebhookDeliveryList,
+} from './components';
 import styles from './app.module.css';
 
 const API_BASE =
@@ -17,6 +22,12 @@ export function App() {
           <Link to="/audit" className={styles.navLink}>
             Audit
           </Link>
+          <Link to="/profile-updates" className={styles.navLink}>
+            Profile Updates
+          </Link>
+          <Link to="/webhooks" className={styles.navLink}>
+            Webhooks
+          </Link>
         </nav>
         <main className={styles.main}>
           <Routes>
@@ -31,6 +42,24 @@ export function App() {
               path="/audit"
               element={
                 <AuditEventList apiBase={API_BASE} apiKey={INTERNAL_API_KEY} />
+              }
+            />
+            <Route
+              path="/profile-updates"
+              element={
+                <ProfileUpdateList
+                  apiBase={API_BASE}
+                  apiKey={INTERNAL_API_KEY}
+                />
+              }
+            />
+            <Route
+              path="/webhooks"
+              element={
+                <WebhookDeliveryList
+                  apiBase={API_BASE}
+                  apiKey={INTERNAL_API_KEY}
+                />
               }
             />
           </Routes>

@@ -14,6 +14,7 @@
       "@ultima-forma/application-partner": ["libs/application/partner/src/index.ts"],
       "@ultima-forma/domain-consent": ["libs/domain/consent/src/index.ts"],
       "@ultima-forma/domain-audit": ["dist/libs/domain/audit/src/index.d.ts"],
+      "@ultima-forma/domain-webhook": ["dist/libs/domain/webhook/src/index.d.ts"],
       "@ultima-forma/application-consent": ["libs/application/consent/src/index.ts"]
     }
   },

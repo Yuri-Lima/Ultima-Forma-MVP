@@ -33,6 +33,7 @@ describe('CreateDataRequestUseCase', () => {
     };
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),
+      findIssuerById: jest.fn(),
       findConsumerById: jest.fn().mockResolvedValue({
         id: 'consumer-id',
         tenantId: 'tenant-id',
@@ -42,6 +43,8 @@ describe('CreateDataRequestUseCase', () => {
       }),
       createIssuer: jest.fn(),
       createConsumer: jest.fn(),
+      updateIssuer: jest.fn(),
+      updateConsumer: jest.fn(),
       rotateIntegrationCredential: jest.fn(),
     };
 
@@ -160,6 +163,7 @@ describe('CreateDataRequestUseCase', () => {
     } as unknown as ConsentRepositoryPort;
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),
+      findIssuerById: jest.fn(),
       findConsumerById: jest.fn().mockResolvedValue({
         id: 'consumer-id',
         tenantId: 'tenant-id',
@@ -169,6 +173,8 @@ describe('CreateDataRequestUseCase', () => {
       }),
       createIssuer: jest.fn(),
       createConsumer: jest.fn(),
+      updateIssuer: jest.fn(),
+      updateConsumer: jest.fn(),
       rotateIntegrationCredential: jest.fn(),
     };
 
@@ -275,6 +281,7 @@ describe('CreateDataRequestUseCase', () => {
     };
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),
+      findIssuerById: jest.fn(),
       findConsumerById: jest.fn().mockResolvedValue({
         id: 'consumer-id',
         tenantId: 'tenant-id',
@@ -284,6 +291,8 @@ describe('CreateDataRequestUseCase', () => {
       }),
       createIssuer: jest.fn(),
       createConsumer: jest.fn(),
+      updateIssuer: jest.fn(),
+      updateConsumer: jest.fn(),
       rotateIntegrationCredential: jest.fn(),
     };
 

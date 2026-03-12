@@ -30,6 +30,7 @@
       ],
       "@ultima-forma/domain-consent": ["libs/domain/consent/src/index.ts"],
       "@ultima-forma/domain-audit": ["libs/domain/audit/src/index.ts"],
+      "@ultima-forma/domain-webhook": ["libs/domain/webhook/src/index.ts"],
       "@ultima-forma/application-consent": [
         "libs/application/consent/src/index.ts"
       ]

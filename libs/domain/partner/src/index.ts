@@ -11,5 +11,7 @@ export type {
   PartnerRepositoryPort,
   CreateIssuerInput,
   CreateConsumerInput,
+  UpdateIssuerInput,
+  UpdateConsumerInput,
   RotateCredentialResult,
 } from './lib/partner.repository.port';

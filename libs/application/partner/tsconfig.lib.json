@@ -3,7 +3,11 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@ultima-forma/domain-audit": ["dist/libs/domain/audit/src/index.d.ts"],
+      "@ultima-forma/domain-webhook": ["dist/libs/domain/webhook/src/index.d.ts"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]

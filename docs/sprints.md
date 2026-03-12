@@ -10,7 +10,7 @@
 | 3 | Verificação, confiança e resposta ao consumidor | Concluído |
 | 4 | Auditoria e eventos faturáveis | Concluído |
 | 4.1 | Sprint 4 – Production-Grade MVP Review | Concluído |
-| 5 | Atualização cadastral e webhooks básicos | Pendente |
+| 5 | Atualização cadastral e webhooks básicos | Concluído |
 | 6 | Hardening do MVP | Pendente |
 
 ## Sprint 0 – Foundation (concluído)
@@ -83,11 +83,16 @@
 - **ops-console E2E**: expectativa atualizada de "Welcome" para "Data Requests"
 - **.env.example**: documentação de INTERNAL_API_KEY
 
-## Sprint 5 – Atualização cadastral
+## Sprint 5 – Atualização cadastral (concluído)
 
-- ProfileChangeEvent, UpdateNotification
-- Webhook básico com retry
-- Tela de acompanhamento no ops-console
+- **Lib domain-webhook**: ProfileChangeEvent, UpdateNotification, WebhookSubscription, WebhookDelivery, ports
+- **Schema**: webhook_subscriptions, webhook_deliveries (migration 0005)
+- **Infrastructure**: WebhookSubscriptionRepository, WebhookDeliveryRepository, WebhookDispatcher (HMAC signing, retry backoff 1–16min)
+- **PartnerRepository**: findIssuerById, updateIssuer, updateConsumer
+- **Application**: UpdateIssuerUseCase, UpdateConsumerUseCase (audit issuer_updated/consumer_updated + webhook dispatch)
+- **api-gateway**: PATCH /v1/issuers/:id, PATCH /v1/consumers/:id
+- **orchestration-api**: GET /internal/webhook-deliveries, WebhookRetryJob (cron a cada minuto)
+- **ops-console**: rotas /profile-updates e /webhooks (ProfileUpdateList, WebhookDeliveryList)
 
 ## Sprint 6 – Hardening
 

@@ -1,8 +1,10 @@
 import {
   boolean,
+  integer,
   jsonb,
   pgSchema,
   pgTable,
+  text,
   timestamp,
   uuid,
   varchar,
@@ -140,5 +142,33 @@ export const billableEvents = core.table('billable_events', {
     .notNull()
     .references(() => tenants.id),
   payload: jsonb('payload').$type<Record<string, unknown>>().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const webhookSubscriptions = core.table('webhook_subscriptions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  partnerId: uuid('partner_id')
+    .notNull()
+    .references(() => partners.id),
+  url: varchar('url', { length: 2048 }).notNull(),
+  secret: varchar('secret', { length: 255 }),
+  eventTypes: jsonb('event_types').$type<string[]>().default([]),
+  status: varchar('status', { length: 50 }).notNull().default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const webhookDeliveries = core.table('webhook_deliveries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  subscriptionId: uuid('subscription_id')
+    .notNull()
+    .references(() => webhookSubscriptions.id),
+  eventType: varchar('event_type', { length: 100 }).notNull(),
+  payload: jsonb('payload').$type<Record<string, unknown>>().notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  attempts: integer('attempts').notNull().default(0),
+  lastError: text('last_error'),
+  nextRetryAt: timestamp('next_retry_at'),
+  succeededAt: timestamp('succeeded_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

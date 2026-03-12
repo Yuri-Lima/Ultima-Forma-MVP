@@ -22,6 +22,7 @@ flowchart TB
         appPartner[application-partner]
         domainConsent[domain-consent]
         appConsent[application-consent]
+        domainWebhook[domain-webhook]
     end
 
     apiGW --> config
@@ -34,6 +35,7 @@ flowchart TB
     appPartner --> drizzle
     appConsent --> domainConsent
     appConsent --> drizzle
+    orch --> domainWebhook
     orch --> config
     orch --> logger
     orch --> errors

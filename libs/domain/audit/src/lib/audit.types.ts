@@ -2,7 +2,9 @@ export type AuditEventType =
   | 'request_created'
   | 'consent_granted'
   | 'consent_rejected'
-  | 'request_expired';
+  | 'request_expired'
+  | 'issuer_updated'
+  | 'consumer_updated';
 
 export type BillableEventType = 'consent_granted';
 

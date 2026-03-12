@@ -9,6 +9,8 @@ import type {
   PartnerRepositoryPort,
   PartnerStatus,
   RotateCredentialResult,
+  UpdateConsumerInput,
+  UpdateIssuerInput,
 } from '@ultima-forma/domain-partner';
 import {
   consumers,
@@ -43,6 +45,26 @@ export class PartnerRepository implements PartnerRepositoryPort {
       tenantId: row.tenantId,
       name: row.name,
       status: row.status as PartnerStatus,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  async findIssuerById(id: string): Promise<Issuer | null> {
+    const rows = await this.db
+      .select()
+      .from(issuers)
+      .where(eq(issuers.id, id))
+      .limit(1);
+    const row = rows[0];
+    if (!row) return null;
+    return {
+      id: row.id,
+      partnerId: row.partnerId,
+      tenantId: row.tenantId,
+      name: row.name,
+      status: row.status as PartnerStatus,
+      scopes: (row.scopes as string[]) ?? [],
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     };
@@ -102,6 +124,52 @@ export class PartnerRepository implements PartnerRepositoryPort {
       })
       .returning();
     if (!row) throw new Error('Failed to create consumer');
+    return {
+      id: row.id,
+      partnerId: row.partnerId,
+      tenantId: row.tenantId,
+      name: row.name,
+      status: row.status as PartnerStatus,
+      scopes: (row.scopes as string[]) ?? [],
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  async updateIssuer(id: string, input: UpdateIssuerInput): Promise<Issuer> {
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+    if (input['name'] !== undefined) updates['name'] = input['name'];
+    if (input['status'] !== undefined) updates['status'] = input['status'];
+    if (input['scopes'] !== undefined) updates['scopes'] = input['scopes'];
+    const [row] = await this.db
+      .update(issuers)
+      .set(updates as Record<string, unknown>)
+      .where(eq(issuers.id, id))
+      .returning();
+    if (!row) throw new Error('Failed to update issuer');
+    return {
+      id: row.id,
+      partnerId: row.partnerId,
+      tenantId: row.tenantId,
+      name: row.name,
+      status: row.status as PartnerStatus,
+      scopes: (row.scopes as string[]) ?? [],
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  async updateConsumer(id: string, input: UpdateConsumerInput): Promise<Consumer> {
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+    if (input['name'] !== undefined) updates['name'] = input['name'];
+    if (input['status'] !== undefined) updates['status'] = input['status'];
+    if (input['scopes'] !== undefined) updates['scopes'] = input['scopes'];
+    const [row] = await this.db
+      .update(consumers)
+      .set(updates as Record<string, unknown>)
+      .where(eq(consumers.id, id))
+      .returning();
+    if (!row) throw new Error('Failed to update consumer');
     return {
       id: row.id,
       partnerId: row.partnerId,
