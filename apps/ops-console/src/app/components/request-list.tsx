@@ -13,12 +13,14 @@ interface RequestItem {
 
 interface RequestListProps {
   apiBase: string;
+  apiKey?: string;
 }
 
-export function RequestList({ apiBase }: RequestListProps) {
+export function RequestList({ apiBase, apiKey }: RequestListProps) {
   const [items, setItems] = useState<RequestItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState('');
   const [tenantId, setTenantId] = useState('');
   const [page, setPage] = useState(0);
@@ -26,24 +28,33 @@ export function RequestList({ apiBase }: RequestListProps) {
 
   useEffect(() => {
     setLoading(true);
+    setError(null);
     const params = new URLSearchParams();
     if (status) params.set('status', status);
     if (tenantId) params.set('tenantId', tenantId);
     params.set('limit', String(limit));
     params.set('offset', String(page * limit));
 
-    fetch(`${apiBase}/internal/requests?${params}`)
-      .then((res) => res.json())
+    const headers: Record<string, string> = {};
+    if (apiKey) headers['X-API-Key'] = apiKey;
+    fetch(`${apiBase}/internal/requests?${params}`, { headers })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Request failed: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setItems(data.items ?? []);
         setTotal(data.total ?? 0);
       })
-      .catch(() => {
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to load requests');
         setItems([]);
         setTotal(0);
       })
       .finally(() => setLoading(false));
-  }, [apiBase, status, tenantId, page]);
+  }, [apiBase, apiKey, status, tenantId, page]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
@@ -82,6 +93,9 @@ export function RequestList({ apiBase }: RequestListProps) {
           />
         </label>
       </div>
+      {error && (
+        <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
+      )}
       {loading ? (
         <p>Loading...</p>
       ) : (

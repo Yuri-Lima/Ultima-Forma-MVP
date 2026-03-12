@@ -1,31 +1,29 @@
-import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
 import type { AuditRepositoryPort } from '@ultima-forma/domain-audit';
+import { ListAuditEventsQueryDto } from './list-audit-events-query.dto';
+import { InternalApiKeyGuard } from './internal-api-key.guard';
 
 @Controller('internal/audit-events')
+@UseGuards(InternalApiKeyGuard)
 export class AuditController {
   constructor(
     @Inject('AUDIT_REPOSITORY') private readonly auditRepo: AuditRepositoryPort
   ) {}
 
   @Get()
-  async list(
-    @Query('eventType') eventType?: string,
-    @Query('aggregateId') aggregateId?: string,
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string
-  ) {
+  async list(@Query() query: ListAuditEventsQueryDto) {
     const filters =
-      eventType || aggregateId
+      query.eventType || query.aggregateId
         ? {
-            ...(eventType && { eventType }),
-            ...(aggregateId && { aggregateId }),
+            ...(query.eventType && { eventType: query.eventType }),
+            ...(query.aggregateId && { aggregateId: query.aggregateId }),
           }
         : undefined;
     const pagination =
-      limit || offset
+      query.limit != null || query.offset != null
         ? {
-            ...(limit && { limit: parseInt(limit, 10) }),
-            ...(offset && { offset: parseInt(offset, 10) }),
+            limit: query.limit ?? 50,
+            offset: query.offset ?? 0,
           }
         : undefined;
 

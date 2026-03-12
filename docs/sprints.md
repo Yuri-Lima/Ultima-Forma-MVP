@@ -9,6 +9,7 @@
 | 2 | Solicitação de dados e consentimento universal | Concluído |
 | 3 | Verificação, confiança e resposta ao consumidor | Concluído |
 | 4 | Auditoria e eventos faturáveis | Concluído |
+| 4.1 | Sprint 4 – Production-Grade MVP Review | Concluído |
 | 5 | Atualização cadastral e webhooks básicos | Pendente |
 | 6 | Hardening do MVP | Pendente |
 
@@ -64,6 +65,23 @@
 - Integração nos use cases: CreateDataRequest (request_created), ApproveConsent (consent_granted audit + billable), RejectConsent (consent_rejected), ExpireRequest (request_expired)
 - orchestration-api: GET /internal/requests, GET /internal/audit-events
 - ops-console (React + Vite, porta 4201): rotas /requests e /audit
+
+## Sprint 4.1 – Production-Grade MVP Review (concluído)
+
+- **orchestration-api**
+  - CORS habilitado (`enableCors({ origin: true })`) para requisições do ops-console
+  - ValidationPipe global com whitelist e transform
+  - DTOs de query com class-validator: ListRequestsQueryDto, ListAuditEventsQueryDto (limit 1–100, validação de UUIDs e enums)
+  - InternalApiKeyGuard: proteção por `X-API-Key` quando `INTERNAL_API_KEY` está definido (opcional em dev)
+- **ApproveConsentUseCase**: checagem defensiva — lança AppError se `dataRequest` for null (evita FK violation)
+- **Audit/Billable repositories**: uso de AppError com códigos `AUDIT_APPEND_FAILED` e `BILLABLE_APPEND_FAILED` em vez de Error genérico
+- **ops-console**
+  - Tratamento de erros: checagem `res.ok`, estado de erro e feedback ao usuário (sem listas vazias silenciosas)
+  - Suporte a `VITE_INTERNAL_API_KEY` para enviar X-API-Key em chamadas internas
+  - Barrel `components/index.ts` para resolução de módulos
+- **Banco de dados**: migration 0004 com índices em audit_events (event_type, aggregate_id, created_at) e billable_events (event_type, tenant_id, data_request_id, created_at)
+- **ops-console E2E**: expectativa atualizada de "Welcome" para "Data Requests"
+- **.env.example**: documentação de INTERNAL_API_KEY
 
 ## Sprint 5 – Atualização cadastral
 

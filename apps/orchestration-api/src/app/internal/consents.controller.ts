@@ -1,10 +1,12 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApproveConsentUseCase,
   RejectConsentUseCase,
 } from '@ultima-forma/application-consent';
+import { InternalApiKeyGuard } from './internal-api-key.guard';
 
 @Controller('internal/consents')
+@UseGuards(InternalApiKeyGuard)
 export class ConsentsController {
   constructor(
     private readonly approveConsent: ApproveConsentUseCase,

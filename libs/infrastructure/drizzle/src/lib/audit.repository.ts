@@ -1,4 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm';
+import { AppError } from '@ultima-forma/shared-errors';
 import type {
   AuditEvent,
   AuditEventFilters,
@@ -23,7 +24,7 @@ export class AuditRepository implements AuditRepositoryPort {
       })
       .returning();
 
-    if (!row) throw new Error('Failed to append audit event');
+    if (!row) throw new AppError('AUDIT_APPEND_FAILED', 'Failed to append audit event', 500);
 
     return {
       id: row.id,

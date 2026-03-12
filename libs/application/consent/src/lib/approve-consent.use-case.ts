@@ -40,7 +40,14 @@ export class ApproveConsentUseCase {
       (verificationResult?.['verifiedClaims'] as string[]) ?? [];
 
     const dataRequest = await this.repo.findDataRequestById(requestId);
-    const tenantId = dataRequest?.tenantId ?? '';
+    if (!dataRequest) {
+      throw new AppError(
+        'DATA_REQUEST_NOT_FOUND',
+        'Data request not found for consent',
+        500
+      );
+    }
+    const tenantId = dataRequest.tenantId;
 
     await this.auditRepo.append({
       eventType: 'consent_granted',

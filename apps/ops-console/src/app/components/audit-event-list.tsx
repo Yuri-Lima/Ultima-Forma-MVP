@@ -11,12 +11,14 @@ interface AuditItem {
 
 interface AuditEventListProps {
   apiBase: string;
+  apiKey?: string;
 }
 
-export function AuditEventList({ apiBase }: AuditEventListProps) {
+export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
   const [items, setItems] = useState<AuditItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [eventType, setEventType] = useState('');
   const [aggregateId, setAggregateId] = useState('');
   const [page, setPage] = useState(0);
@@ -24,24 +26,33 @@ export function AuditEventList({ apiBase }: AuditEventListProps) {
 
   useEffect(() => {
     setLoading(true);
+    setError(null);
     const params = new URLSearchParams();
     if (eventType) params.set('eventType', eventType);
     if (aggregateId) params.set('aggregateId', aggregateId);
     params.set('limit', String(limit));
     params.set('offset', String(page * limit));
 
-    fetch(`${apiBase}/internal/audit-events?${params}`)
-      .then((res) => res.json())
+    const headers: Record<string, string> = {};
+    if (apiKey) headers['X-API-Key'] = apiKey;
+    fetch(`${apiBase}/internal/audit-events?${params}`, { headers })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Request failed: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setItems(data.items ?? []);
         setTotal(data.total ?? 0);
       })
-      .catch(() => {
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : 'Failed to load audit events');
         setItems([]);
         setTotal(0);
       })
       .finally(() => setLoading(false));
-  }, [apiBase, eventType, aggregateId, page]);
+  }, [apiBase, apiKey, eventType, aggregateId, page]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
@@ -80,6 +91,9 @@ export function AuditEventList({ apiBase }: AuditEventListProps) {
           />
         </label>
       </div>
+      {error && (
+        <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
+      )}
       {loading ? (
         <p>Loading...</p>
       ) : (

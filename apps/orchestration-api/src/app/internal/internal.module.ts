@@ -18,6 +18,7 @@ import {
 import { ConsentsController } from './consents.controller';
 import { RequestsController } from './requests.controller';
 import { AuditController } from './audit.controller';
+import { InternalApiKeyGuard } from './internal-api-key.guard';
 
 const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
 const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
@@ -50,6 +51,7 @@ const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
       ) => new ApproveConsentUseCase(repo, auditRepo, billableRepo),
       inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY, BILLABLE_EVENT_REPOSITORY],
     },
+    InternalApiKeyGuard,
     {
       provide: RejectConsentUseCase,
       useFactory: (

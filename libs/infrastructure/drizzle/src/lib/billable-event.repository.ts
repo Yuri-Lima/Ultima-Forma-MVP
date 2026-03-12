@@ -1,4 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm';
+import { AppError } from '@ultima-forma/shared-errors';
 import type {
   BillableEvent,
   BillableEventFilters,
@@ -23,7 +24,7 @@ export class BillableEventRepository implements BillableEventRepositoryPort {
       })
       .returning();
 
-    if (!row) throw new Error('Failed to append billable event');
+    if (!row) throw new AppError('BILLABLE_APPEND_FAILED', 'Failed to append billable event', 500);
 
     return {
       id: row.id,
