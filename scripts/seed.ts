@@ -3,16 +3,18 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import {
   consumers,
+  issuers,
   partners,
   tenants,
 } from '../libs/infrastructure/drizzle/src/lib/schema';
+import {
+  SEED_CONSUMER_ID,
+  SEED_ISSUER_ID,
+  SEED_PARTNER_ID,
+  SEED_TENANT_ID,
+} from './fixtures';
 
 config();
-
-/** IDs fixos para uso em exemplos de API e testes locais */
-export const SEED_TENANT_ID = '21a30170-166d-44e3-ac09-b640768dc1c7';
-export const SEED_PARTNER_ID = 'c2989a86-ca61-40f2-9d8a-e6250bde4f9d';
-export const SEED_CONSUMER_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
 async function seed() {
   const connectionString =
@@ -52,10 +54,22 @@ async function seed() {
     })
     .onConflictDoNothing({ target: [consumers.id] });
 
+  await db
+    .insert(issuers)
+    .values({
+      id: SEED_ISSUER_ID,
+      partnerId,
+      tenantId,
+      name: 'Demo Issuer',
+      scopes: ['email', 'name'],
+    })
+    .onConflictDoNothing({ target: [issuers.id] });
+
   console.log('Seed completed:');
   console.log('  Tenant ID:', tenantId);
   console.log('  Partner ID:', partnerId);
   console.log('  Consumer ID:', SEED_CONSUMER_ID);
+  console.log('  Issuer ID:', SEED_ISSUER_ID);
   await pool.end();
 }
 

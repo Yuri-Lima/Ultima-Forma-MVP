@@ -1,11 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { correlationIdMiddleware } from './app/correlation-id.middleware';
 import { getConfig } from '@ultima-forma/shared-config';
 import { logger } from '@ultima-forma/shared-logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(correlationIdMiddleware);
   app.enableCors({ origin: true });
   app.useGlobalPipes(
     new ValidationPipe({

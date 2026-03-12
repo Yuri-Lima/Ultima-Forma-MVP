@@ -12,7 +12,7 @@
 | 4.1 | Sprint 4 – Production-Grade MVP Review | Concluído |
 | 5 | Atualização cadastral e webhooks básicos | Concluído |
 | 5.1 | Sprint 5 – Production-Grade MVP Review | Concluído |
-| 6 | Hardening do MVP | Pendente |
+| 6 | Hardening do MVP | Concluído |
 
 ## Sprint 0 – Foundation (concluído)
 
@@ -111,13 +111,25 @@
   - Migration 0005: índices em webhook_deliveries (status, subscription_id, next_retry_at, created_at)
 - **ops-console E2E**: smoke tests para /profile-updates e /webhooks
 
-## Sprint 6 – Hardening
+## Sprint 6 – Hardening (concluído)
 
-- Limpeza de scaffolding
-- Seed, fixtures
-- E2E do fluxo crítico
-- Rate limit, idempotency, correlation id
-- Documentação de endpoints
+- **Scaffolding**
+  - Remoção de nx-welcome.tsx (partner-portal, ops-console)
+  - api-gateway-e2e e orchestration-api-e2e: testes de /health em vez de /api; portas 3333/3334
+  - partner-portal-e2e: expectativa corrigida para "Partner Portal"
+- **Seed e fixtures**
+  - scripts/fixtures.ts com SEED_TENANT_ID, SEED_PARTNER_ID, SEED_CONSUMER_ID, SEED_ISSUER_ID
+  - Seed estendido com issuer (Demo Issuer)
+  - test-endpoints.sh: exemplo PATCH /v1/issuers/:id
+- **Correlation ID**
+  - Middleware em api-gateway e orchestration-api: lê/propaga X-Correlation-ID ou X-Request-ID, gera UUID se ausente
+- **Rate limit**
+  - @nestjs/throttler em api-gateway: 100 req/min por IP (RATE_LIMIT_TTL, RATE_LIMIT_LIMIT)
+  - /health isento via @SkipThrottle()
+- **Documentação**
+  - docs/api-endpoints.md: todos os endpoints (api-gateway, orchestration-api) com método, path, body, resposta, idempotency
+- **E2E**
+  - api-gateway-e2e: smoke PATCH /v1/issuers/:id
 
 ## O que fica fora do MVP
 

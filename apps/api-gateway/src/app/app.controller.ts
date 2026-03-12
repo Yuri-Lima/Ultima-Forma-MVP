@@ -1,6 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { sql } from 'drizzle-orm';
-import { getConfig } from '@ultima-forma/shared-config';
 import { logger } from '@ultima-forma/shared-logger';
 import { DRIZZLE, type DrizzleDB } from '@ultima-forma/infrastructure-drizzle';
 
@@ -10,9 +10,9 @@ export class AppController {
     @Inject(DRIZZLE) private readonly db: DrizzleDB,
   ) {}
 
+  @SkipThrottle()
   @Get('health')
   async getHealth(): Promise<{ status: string; timestamp: string; db?: string }> {
-    const config = getConfig();
     const response: { status: string; timestamp: string; db?: string } = {
       status: 'ok',
       timestamp: new Date().toISOString(),
