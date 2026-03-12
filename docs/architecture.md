@@ -9,6 +9,7 @@ flowchart TB
         orch[orchestration-api]
         userApp[user-app]
         partner[partner-portal]
+        opsConsole[ops-console]
     end
 
     subgraph libs [Libs]
@@ -46,7 +47,7 @@ flowchart TB
 |------------|-----------|-------------|
 | **user-app** | Produto do usuário final | iOS, Android, Web |
 | **partner-portal** | Portal para emissores e consumidores | Web |
-| **ops-console** | Operação interna e auditoria | Web (Sprint 4+) |
+| **ops-console** | Operação interna e auditoria | Web |
 
 ## Boundaries entre camadas
 
@@ -67,6 +68,7 @@ flowchart TB
 | api-gateway | 3333 | http://localhost:3333 |
 | orchestration-api | 3334 | http://localhost:3334 |
 | partner-portal | 4200 | http://localhost:4200 |
+| ops-console | 4201 | http://localhost:4201 |
 | user-app (web) | 8081 | http://localhost:8081 |
 | PostgreSQL | 5432 | localhost:5432 |
 

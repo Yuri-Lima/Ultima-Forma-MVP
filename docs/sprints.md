@@ -8,7 +8,7 @@
 | 1 | Parceiros e fundação de domínio | Concluído |
 | 2 | Solicitação de dados e consentimento universal | Concluído |
 | 3 | Verificação, confiança e resposta ao consumidor | Concluído |
-| 4 | Auditoria e eventos faturáveis | Pendente |
+| 4 | Auditoria e eventos faturáveis | Concluído |
 | 5 | Atualização cadastral e webhooks básicos | Pendente |
 | 6 | Hardening do MVP | Pendente |
 
@@ -55,11 +55,15 @@
 - Use case GetDataRequestResultForConsumerUseCase
 - Testes: unit (CreateDataRequest CLAIMS_OUT_OF_SCOPE, GetDataRequestResultForConsumer), integration (ConsentRepository receipt structure)
 
-## Sprint 4 – Auditoria e billing
+## Sprint 4 – Auditoria e billing (concluído)
 
-- AuditEvent, BillableEvent (append-only)
-- ops-console com /requests e /audit
-- Eventos: request_created, consent_granted, etc.
+- Lib domain-audit: tipos AuditEvent, BillableEvent; ports AuditRepositoryPort, BillableEventRepositoryPort
+- Schema: audit_events, billable_events (append-only)
+- Infrastructure: AuditRepository, BillableEventRepository (drizzle)
+- ConsentRepository.listDataRequests com filtros e paginação
+- Integração nos use cases: CreateDataRequest (request_created), ApproveConsent (consent_granted audit + billable), RejectConsent (consent_rejected), ExpireRequest (request_expired)
+- orchestration-api: GET /internal/requests, GET /internal/audit-events
+- ops-console (React + Vite, porta 4201): rotas /requests e /audit
 
 ## Sprint 5 – Atualização cadastral
 

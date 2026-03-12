@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import type { PartnerRepositoryPort } from '@ultima-forma/domain-partner';
 import type { ConsentRepositoryPort } from '@ultima-forma/domain-consent';
+import type {
+  AuditRepositoryPort,
+  BillableEventRepositoryPort,
+} from '@ultima-forma/domain-audit';
 import {
   CreateConsumerUseCase,
   CreateIssuerUseCase,
@@ -19,6 +23,8 @@ import {
   type DrizzleDB,
   PartnerRepository,
   ConsentRepository,
+  AuditRepository,
+  BillableEventRepository,
 } from '@ultima-forma/infrastructure-drizzle';
 import { IssuersController } from './issuers.controller';
 import { ConsumersController } from './consumers.controller';
@@ -28,6 +34,8 @@ import { ConsentsController } from './consents.controller';
 
 export const PARTNER_REPOSITORY = 'PARTNER_REPOSITORY';
 export const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
+export const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
+export const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
 
 @Module({
   imports: [],
@@ -67,31 +75,49 @@ export const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
       inject: [DRIZZLE],
     },
     {
+      provide: AUDIT_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new AuditRepository(db),
+      inject: [DRIZZLE],
+    },
+    {
+      provide: BILLABLE_EVENT_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new BillableEventRepository(db),
+      inject: [DRIZZLE],
+    },
+    {
       provide: CreateDataRequestUseCase,
       useFactory: (
         consentRepo: ConsentRepositoryPort,
-        partnerRepo: PartnerRepositoryPort
+        partnerRepo: PartnerRepositoryPort,
+        auditRepo: AuditRepositoryPort
       ) =>
-        new CreateDataRequestUseCase(consentRepo, partnerRepo),
-      inject: [CONSENT_REPOSITORY, PARTNER_REPOSITORY],
+        new CreateDataRequestUseCase(consentRepo, partnerRepo, auditRepo),
+      inject: [CONSENT_REPOSITORY, PARTNER_REPOSITORY, AUDIT_REPOSITORY],
     },
     {
       provide: ApproveConsentUseCase,
-      useFactory: (repo: ConsentRepositoryPort) =>
-        new ApproveConsentUseCase(repo),
-      inject: [CONSENT_REPOSITORY],
+      useFactory: (
+        repo: ConsentRepositoryPort,
+        auditRepo: AuditRepositoryPort,
+        billableRepo: BillableEventRepositoryPort
+      ) => new ApproveConsentUseCase(repo, auditRepo, billableRepo),
+      inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY, BILLABLE_EVENT_REPOSITORY],
     },
     {
       provide: RejectConsentUseCase,
-      useFactory: (repo: ConsentRepositoryPort) =>
-        new RejectConsentUseCase(repo),
-      inject: [CONSENT_REPOSITORY],
+      useFactory: (
+        repo: ConsentRepositoryPort,
+        auditRepo: AuditRepositoryPort
+      ) => new RejectConsentUseCase(repo, auditRepo),
+      inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY],
     },
     {
       provide: ExpireRequestUseCase,
-      useFactory: (repo: ConsentRepositoryPort) =>
-        new ExpireRequestUseCase(repo),
-      inject: [CONSENT_REPOSITORY],
+      useFactory: (
+        repo: ConsentRepositoryPort,
+        auditRepo: AuditRepositoryPort
+      ) => new ExpireRequestUseCase(repo, auditRepo),
+      inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY],
     },
     {
       provide: GetDataRequestForUserUseCase,

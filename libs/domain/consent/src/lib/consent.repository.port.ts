@@ -2,7 +2,10 @@ import type {
   Consent,
   ConsentReceipt,
   DataRequest,
+  DataRequestListItem,
   DataRequestResultForConsumer,
+  ListDataRequestsFilters,
+  ListDataRequestsPagination,
   RequestItem,
 } from './consent.types';
 
@@ -35,4 +38,8 @@ export interface ConsentRepositoryPort {
   findDataRequestResultForConsumer(
     requestId: string
   ): Promise<DataRequestResultForConsumer | null>;
+  listDataRequests(
+    filters?: ListDataRequestsFilters,
+    pagination?: ListDataRequestsPagination
+  ): Promise<{ items: DataRequestListItem[]; total: number }>;
 }

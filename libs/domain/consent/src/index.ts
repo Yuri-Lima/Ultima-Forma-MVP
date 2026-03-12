@@ -5,10 +5,13 @@ export {
   type VerificationResult,
   type ReceiptData,
   type DataRequest,
+  type DataRequestListItem,
   type RequestItem,
   type Consent,
   type ConsentReceipt,
   type DataRequestResultForConsumer,
+  type ListDataRequestsFilters,
+  type ListDataRequestsPagination,
 } from './lib/consent.types';
 
 export type {

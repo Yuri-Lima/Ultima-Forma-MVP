@@ -1,12 +1,15 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import type {
   Consent,
   ConsentReceipt,
   ConsentRepositoryPort,
   CreateDataRequestInput,
   DataRequest,
+  DataRequestListItem,
   DataRequestResultForConsumer,
   DataRequestWithDetails,
+  ListDataRequestsFilters,
+  ListDataRequestsPagination,
   RequestItem,
   TrustLevel,
   VerificationResult,
@@ -261,6 +264,64 @@ export class ConsentRepository implements ConsentRepositoryPort {
     const row = rows[0];
     if (!row) return null;
     return this.toDataRequest(row);
+  }
+
+  async listDataRequests(
+    filters?: ListDataRequestsFilters,
+    pagination?: ListDataRequestsPagination
+  ): Promise<{ items: DataRequestListItem[]; total: number }> {
+    const conditions: ReturnType<typeof eq>[] = [];
+    if (filters?.status) {
+      conditions.push(eq(dataRequests.status, filters.status));
+    }
+    if (filters?.tenantId) {
+      conditions.push(eq(dataRequests.tenantId, filters.tenantId));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+    const limit = pagination?.limit ?? 50;
+    const offset = pagination?.offset ?? 0;
+
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(dataRequests)
+      .where(whereClause);
+    const total = countResult[0]?.count ?? 0;
+
+    const rows = await this.db
+      .select({
+        id: dataRequests.id,
+        consumerId: dataRequests.consumerId,
+        tenantId: dataRequests.tenantId,
+        status: dataRequests.status,
+        purpose: dataRequests.purpose,
+        expiresAt: dataRequests.expiresAt,
+        idempotencyKey: dataRequests.idempotencyKey,
+        createdAt: dataRequests.createdAt,
+        updatedAt: dataRequests.updatedAt,
+        consumerName: consumers.name,
+      })
+      .from(dataRequests)
+      .innerJoin(consumers, eq(dataRequests.consumerId, consumers.id))
+      .where(whereClause)
+      .orderBy(dataRequests.createdAt)
+      .limit(limit)
+      .offset(offset);
+
+    const items: DataRequestListItem[] = rows.map((row) => ({
+      id: row.id,
+      consumerId: row.consumerId,
+      tenantId: row.tenantId,
+      status: row.status as DataRequest['status'],
+      purpose: row.purpose,
+      expiresAt: row.expiresAt,
+      idempotencyKey: row.idempotencyKey,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      consumerName: row.consumerName,
+    }));
+
+    return { items, total };
   }
 
   async findDataRequestResultForConsumer(

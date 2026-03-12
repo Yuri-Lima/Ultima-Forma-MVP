@@ -7,3 +7,5 @@ export {
 export * as schema from './lib/schema';
 export { PartnerRepository } from './lib/partner.repository';
 export { ConsentRepository } from './lib/consent.repository';
+export { AuditRepository } from './lib/audit.repository';
+export { BillableEventRepository } from './lib/billable-event.repository';

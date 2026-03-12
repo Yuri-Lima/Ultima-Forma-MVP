@@ -120,3 +120,25 @@ export const consentReceipts = core.table('consent_receipts', {
   receiptData: jsonb('receipt_data').$type<Record<string, unknown>>().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const auditEvents = core.table('audit_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventType: varchar('event_type', { length: 100 }).notNull(),
+  aggregateType: varchar('aggregate_type', { length: 100 }).notNull(),
+  aggregateId: uuid('aggregate_id').notNull(),
+  payload: jsonb('payload').$type<Record<string, unknown>>().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const billableEvents = core.table('billable_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventType: varchar('event_type', { length: 100 }).notNull(),
+  dataRequestId: uuid('data_request_id')
+    .notNull()
+    .references(() => dataRequests.id),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  payload: jsonb('payload').$type<Record<string, unknown>>().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});

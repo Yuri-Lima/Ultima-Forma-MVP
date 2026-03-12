@@ -7,6 +7,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js'],
   testMatch: ['**/*.spec.ts'],
   moduleNameMapper: {
+    '^@ultima-forma/domain-audit$': '<rootDir>/../../domain/audit/src/index.ts',
     '^@ultima-forma/domain-partner$':
       '<rootDir>/../../domain/partner/src/index.ts',
     '^@ultima-forma/domain-consent$':

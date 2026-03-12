@@ -8,6 +8,7 @@ module.exports = {
   coverageDirectory: '../../coverage/libs/application/consent',
   testMatch: ['**/*.spec.ts'],
   moduleNameMapper: {
+    '^@ultima-forma/domain-audit$': '<rootDir>/../../domain/audit/src/index.ts',
     '^@ultima-forma/domain-consent$':
       '<rootDir>/../../domain/consent/src/index.ts',
     '^@ultima-forma/domain-partner$':

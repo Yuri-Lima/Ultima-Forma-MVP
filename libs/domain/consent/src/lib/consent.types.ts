@@ -70,3 +70,17 @@ export interface DataRequestResultForConsumer {
     verificationResult?: VerificationResult;
   };
 }
+
+export interface DataRequestListItem extends DataRequest {
+  consumerName: string;
+}
+
+export interface ListDataRequestsFilters {
+  status?: RequestStatus;
+  tenantId?: string;
+}
+
+export interface ListDataRequestsPagination {
+  limit?: number;
+  offset?: number;
+}

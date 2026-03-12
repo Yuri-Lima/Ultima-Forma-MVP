@@ -1,0 +1,19 @@
+{
+  "name": "domain-audit",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domain/audit/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/domain/audit",
+        "main": "libs/domain/audit/src/index.ts",
+        "tsConfig": "libs/domain/audit/tsconfig.lib.json",
+        "assets": ["libs/domain/audit/*.md"]
+      }
+    }
+  }
+}

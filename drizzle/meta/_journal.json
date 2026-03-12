@@ -22,6 +22,13 @@
       "when": 1773076744723,
       "tag": "0002_amusing_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773173914665,
+      "tag": "0003_light_senator_kelly",
+      "breakpoints": true
     }
   ]
 }

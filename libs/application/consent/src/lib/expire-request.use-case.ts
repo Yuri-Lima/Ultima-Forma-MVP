@@ -3,9 +3,13 @@ import type {
   DataRequest,
   ConsentRepositoryPort,
 } from '@ultima-forma/domain-consent';
+import type { AuditRepositoryPort } from '@ultima-forma/domain-audit';
 
 export class ExpireRequestUseCase {
-  constructor(private readonly repo: ConsentRepositoryPort) {}
+  constructor(
+    private readonly repo: ConsentRepositoryPort,
+    private readonly auditRepo: AuditRepositoryPort
+  ) {}
 
   async execute(requestId: string): Promise<DataRequest> {
     const request = await this.repo.findDataRequestById(requestId);
@@ -19,6 +23,20 @@ export class ExpireRequestUseCase {
         400
       );
     }
-    return this.repo.expireRequest(requestId);
+    const expired = await this.repo.expireRequest(requestId);
+
+    await this.auditRepo.append({
+      eventType: 'request_expired',
+      aggregateType: 'data_request',
+      aggregateId: requestId,
+      payload: {
+        requestId,
+        consumerId: expired.consumerId,
+        tenantId: expired.tenantId,
+        status: 'expired',
+      },
+    });
+
+    return expired;
   }
 }

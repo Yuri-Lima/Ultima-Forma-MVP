@@ -4,12 +4,14 @@ import type {
   CreateDataRequestInput,
   DataRequest,
 } from '@ultima-forma/domain-consent';
+import type { AuditRepositoryPort } from '@ultima-forma/domain-audit';
 import type { PartnerRepositoryPort } from '@ultima-forma/domain-partner';
 
 export class CreateDataRequestUseCase {
   constructor(
     private readonly consentRepo: ConsentRepositoryPort,
-    private readonly partnerRepo: PartnerRepositoryPort
+    private readonly partnerRepo: PartnerRepositoryPort,
+    private readonly auditRepo?: AuditRepositoryPort
   ) {}
 
   async execute(input: CreateDataRequestInput): Promise<DataRequest> {
@@ -59,6 +61,23 @@ export class CreateDataRequestUseCase {
       );
     }
 
-    return this.consentRepo.createDataRequest(input);
+    const request = await this.consentRepo.createDataRequest(input);
+
+    if (this.auditRepo) {
+      await this.auditRepo.append({
+        eventType: 'request_created',
+        aggregateType: 'data_request',
+        aggregateId: request.id,
+        payload: {
+          requestId: request.id,
+          consumerId: request.consumerId,
+          tenantId: request.tenantId,
+          status: request.status,
+          purpose: request.purpose,
+        },
+      });
+    }
+
+    return request;
   }
 }
