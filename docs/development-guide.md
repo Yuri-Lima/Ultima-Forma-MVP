@@ -74,6 +74,16 @@ curl -X POST http://localhost:3333/v1/data-requests \
 3. Rodar `pnpm nx run <projeto>:build` (e testes se houver)
 4. Commit com mensagem descritiva
 
+## i18n – extrair chaves de tradução
+
+Após adicionar strings traduzíveis com `t('chave')`, extraia as chaves para os arquivos de locale:
+
+```bash
+pnpm i18n:extract
+```
+
+Isso atualiza os JSON em `libs/shared/i18n/src/locales/`.
+
 ## Gerar migrations Drizzle
 
 ```bash

@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "INTERNAL_ERROR": "Ocurrió un error inesperado",
+    "NOT_FOUND": "Recurso no encontrado",
+    "PARTNER_NOT_FOUND": "Socio no encontrado",
+    "PARTNER_INACTIVE": "El socio no está activo",
+    "ISSUER_NOT_FOUND": "Emisor no encontrado",
+    "CONSUMER_NOT_FOUND": "Consumidor no encontrado",
+    "CONSUMER_INACTIVE": "El consumidor no está activo",
+    "INVALID_INPUT": "Se requiere al menos una reivindicación",
+    "CLAIMS_OUT_OF_SCOPE": "Una o más reivindicaciones están fuera del alcance permitido",
+    "CONSENT_NOT_FOUND": "Consentimiento no encontrado",
+    "REQUEST_NOT_FOUND": "Solicitud de datos no encontrada",
+    "REQUEST_EXPIRED": "La solicitud ha expirado",
+    "DATA_REQUEST_NOT_FOUND": "Solicitud de datos no encontrada",
+    "ISSUER_UPDATE_FAILED": "Error al actualizar emisor",
+    "CONSUMER_UPDATE_FAILED": "Error al actualizar consumidor",
+    "WEBHOOK_SUBSCRIPTION_CREATE_FAILED": "Error al crear suscripción de webhook",
+    "WEBHOOK_DELIVERY_CREATE_FAILED": "Error al crear entrega de webhook",
+    "AUDIT_APPEND_FAILED": "Error al registrar evento de auditoría",
+    "BILLABLE_APPEND_FAILED": "Error al registrar evento facturable"
+  },
+  "validation": {
+    "NOT_EMPTY": "{{property}} no puede estar vacío",
+    "IS_EMAIL": "Email inválido",
+    "IS_UUID": "UUID inválido",
+    "IS_ENUM": "Valor inválido para {{property}}",
+    "MIN": "{{property}} debe tener al menos {{constraints.0}} caracteres",
+    "MAX": "{{property}} debe tener como máximo {{constraints.0}} caracteres"
+  }
+}

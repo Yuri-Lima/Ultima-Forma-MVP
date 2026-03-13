@@ -1,0 +1,8 @@
+{
+  "errors": {
+    "generic": "An unexpected error occurred"
+  },
+  "language": "Language",
+  "loading": "Loading...",
+  "selectLanguage": "Select language"
+}

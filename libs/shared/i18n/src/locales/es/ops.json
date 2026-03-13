@@ -1,0 +1,67 @@
+{
+  "audit": {
+    "error": "Error al cargar eventos de auditoría",
+    "eventConsentGranted": "Consentimiento concedido",
+    "eventConsentRejected": "Consentimiento rechazado",
+    "eventRequestCreated": "Solicitud creada",
+    "eventRequestExpired": "Solicitud expirada",
+    "noResults": "No se encontraron eventos de auditoría.",
+    "title": "Eventos de Auditoría"
+  },
+  "filters": {
+    "aggregateId": "ID Agregado",
+    "all": "Todos",
+    "eventType": "Tipo de Evento",
+    "filterById": "Filtrar por ID",
+    "filterByTenant": "Filtrar por tenant",
+    "status": "Estado",
+    "tenantId": "ID del Tenant"
+  },
+  "nav": {
+    "audit": "Auditoría",
+    "profileUpdates": "Actualizaciones de Perfil",
+    "requests": "Solicitudes",
+    "webhooks": "Webhooks"
+  },
+  "pagination": {
+    "next": "Siguiente",
+    "page_one": "",
+    "page_many": "",
+    "page_other": "",
+    "previous": "Anterior"
+  },
+  "profileUpdates": {
+    "error": "Error al cargar actualizaciones de perfil",
+    "eventConsumerUpdated": "Consumidor actualizado",
+    "eventIssuerUpdated": "Emisor actualizado",
+    "noResults": "No se encontraron actualizaciones",
+    "title": "Actualizaciones de Perfil"
+  },
+  "requests": {
+    "columns": {
+      "consumer": "Consumidor",
+      "created": "Creado",
+      "expires": "Expira",
+      "id": "ID",
+      "purpose": "Propósito",
+      "status": "Estado"
+    },
+    "error": "Error al cargar solicitudes",
+    "noResults": "No se encontraron solicitudes.",
+    "statusCompleted": "Completado",
+    "statusExpired": "Expirado",
+    "statusPending": "Pendiente",
+    "statusRejected": "Rechazado",
+    "title": "Solicitudes de Datos"
+  },
+  "webhooks": {
+    "attempts": "intentos",
+    "error": "Error al cargar entregas de webhook",
+    "nextRetry": "Próximo reintento",
+    "noResults": "No se encontraron entregas de webhook.",
+    "statusFailed": "Fallido",
+    "statusPending": "Pendiente",
+    "statusSucceeded": "Exitoso",
+    "title": "Entregas de Webhook"
+  }
+}

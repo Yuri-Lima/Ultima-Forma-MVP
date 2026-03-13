@@ -1,0 +1,67 @@
+{
+  "audit": {
+    "error": "Erro ao carregar eventos de auditoria",
+    "eventConsentGranted": "Consentimento concedido",
+    "eventConsentRejected": "Consentimento rejeitado",
+    "eventRequestCreated": "Solicitação criada",
+    "eventRequestExpired": "Solicitação expirada",
+    "noResults": "Nenhum evento de auditoria encontrado",
+    "title": "Eventos de Auditoria"
+  },
+  "filters": {
+    "aggregateId": "ID Agregado",
+    "all": "Todos",
+    "eventType": "Tipo de Evento",
+    "filterById": "Filtrar por ID",
+    "filterByTenant": "Filtrar por tenant",
+    "status": "Status",
+    "tenantId": "ID do Tenant"
+  },
+  "nav": {
+    "audit": "Auditoria",
+    "profileUpdates": "Atualizações de Perfil",
+    "requests": "Solicitações",
+    "webhooks": "Webhooks"
+  },
+  "pagination": {
+    "next": "Próximo",
+    "page_one": "",
+    "page_many": "",
+    "page_other": "",
+    "previous": "Anterior"
+  },
+  "profileUpdates": {
+    "error": "Erro ao carregar atualizações de perfil",
+    "eventConsumerUpdated": "Consumidor atualizado",
+    "eventIssuerUpdated": "Emissor atualizado",
+    "noResults": "Nenhuma atualização encontrada",
+    "title": "Atualizações de Perfil"
+  },
+  "requests": {
+    "columns": {
+      "consumer": "Consumidor",
+      "created": "Criado",
+      "expires": "Expira",
+      "id": "ID",
+      "purpose": "Finalidade",
+      "status": "Status"
+    },
+    "error": "Erro ao carregar solicitações",
+    "noResults": "Nenhuma solicitação encontrada",
+    "statusCompleted": "Concluído",
+    "statusExpired": "Expirado",
+    "statusPending": "Pendente",
+    "statusRejected": "Rejeitado",
+    "title": "Solicitações de Dados"
+  },
+  "webhooks": {
+    "attempts": "tentativas",
+    "error": "Erro ao carregar entregas de webhook",
+    "nextRetry": "Próxima tentativa",
+    "noResults": "Nenhuma entrega de webhook encontrada",
+    "statusFailed": "Falhou",
+    "statusPending": "Pendente",
+    "statusSucceeded": "Sucesso",
+    "title": "Entregas de Webhook"
+  }
+}

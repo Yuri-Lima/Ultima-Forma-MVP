@@ -1,0 +1,33 @@
+{
+  "consent": {
+    "approve": "Approve",
+    "approved": {
+      "subtitleSuccess": "Data was shared successfully according to your authorization.",
+      "title": "Approved",
+      "titleFull": "Consent Approved"
+    },
+    "approveError": "Error approving",
+    "approveFailed": "Could not approve",
+    "back": "Back",
+    "claimsLabel": "Requested data:",
+    "corsHint": "If the api-gateway is running, restart it to enable CORS.",
+    "dataRequest": "Data Request",
+    "errorLoad": "Error loading",
+    "errorNotFound": "Request not found",
+    "loading": "Loading request...",
+    "purpose": "Purpose",
+    "reject": "Reject",
+    "rejected": {
+      "subtitleSuccess": "The request was declined. No data was shared.",
+      "title": "Rejected",
+      "titleFull": "Consent Rejected"
+    },
+    "rejectError": "Error rejecting",
+    "rejectFailed": "Could not reject",
+    "requestsAccess": "requests access to the following data:"
+  },
+  "home": {
+    "subtitle": "Your portable, privacy-first identity app",
+    "title": "Ultima Forma"
+  }
+}

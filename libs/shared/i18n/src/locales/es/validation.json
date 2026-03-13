@@ -1,0 +1,8 @@
+{
+  "NOT_EMPTY": "{{property}} no puede estar vacío",
+  "IS_EMAIL": "Email inválido",
+  "IS_UUID": "UUID inválido",
+  "IS_ENUM": "Valor inválido para {{property}}",
+  "MIN": "{{property}} debe tener al menos {{constraints.0}} caracteres",
+  "MAX": "{{property}} debe tener como máximo {{constraints.0}} caracteres"
+}

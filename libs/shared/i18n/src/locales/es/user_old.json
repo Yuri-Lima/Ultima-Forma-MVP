@@ -1,0 +1,11 @@
+{
+  "consent": {
+    "approved": {
+      "subtitle": "Aprobaste compartir los datos solicitados."
+    },
+    "rejected": {
+      "subtitle": "Rechazaste compartir los datos solicitados."
+    },
+    "title": "Solicitud de Datos"
+  }
+}

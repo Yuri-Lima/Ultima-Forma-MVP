@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RequestItem {
   id: string;
@@ -17,6 +18,7 @@ interface RequestListProps {
 }
 
 export function RequestList({ apiBase, apiKey }: RequestListProps) {
+  const { t, i18n } = useTranslation(['ops', 'common']);
   const [items, setItems] = useState<RequestItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,9 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
     params.set('limit', String(limit));
     params.set('offset', String(page * limit));
 
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {
+      'Accept-Language': i18n.language || 'pt-BR',
+    };
     if (apiKey) headers['X-API-Key'] = apiKey;
     fetch(`${apiBase}/internal/requests?${params}`, { headers })
       .then((res) => {
@@ -49,21 +53,21 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
         setTotal(data.total ?? 0);
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : 'Failed to load requests');
+        setError(err instanceof Error ? err.message : t('ops:requests.error'));
         setItems([]);
         setTotal(0);
       })
       .finally(() => setLoading(false));
-  }, [apiBase, apiKey, status, tenantId, page]);
+  }, [apiBase, apiKey, status, tenantId, page, i18n.language, t]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
   return (
     <div>
-      <h1>Data Requests</h1>
+      <h1>{t('ops:requests.title')}</h1>
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <label>
-          Status
+          {t('ops:filters.status')}
           <select
             value={status}
             onChange={(e) => {
@@ -72,15 +76,15 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
             }}
             style={{ marginLeft: '0.5rem' }}
           >
-            <option value="">All</option>
-            <option value="pending">pending</option>
-            <option value="completed">completed</option>
-            <option value="rejected">rejected</option>
-            <option value="expired">expired</option>
+            <option value="">{t('ops:filters.all')}</option>
+            <option value="pending">{t('ops:requests.statusPending')}</option>
+            <option value="completed">{t('ops:requests.statusCompleted')}</option>
+            <option value="rejected">{t('ops:requests.statusRejected')}</option>
+            <option value="expired">{t('ops:requests.statusExpired')}</option>
           </select>
         </label>
         <label>
-          Tenant ID
+          {t('ops:filters.tenantId')}
           <input
             type="text"
             value={tenantId}
@@ -88,7 +92,7 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
               setTenantId(e.target.value);
               setPage(0);
             }}
-            placeholder="Filter by tenant"
+            placeholder={t('ops:filters.filterByTenant')}
             style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
           />
         </label>
@@ -97,18 +101,18 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
         <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
       )}
       {loading ? (
-        <p>Loading...</p>
+        <p>{t('common:loading')}</p>
       ) : (
         <>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #ddd' }}>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>ID</th>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>Consumer</th>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>Status</th>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>Purpose</th>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>Expires</th>
-                <th style={{ textAlign: 'left', padding: '0.5rem' }}>Created</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.id')}</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.consumer')}</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.status')}</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.purpose')}</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.expires')}</th>
+                <th style={{ textAlign: 'left', padding: '0.5rem' }}>{t('ops:requests.columns.created')}</th>
               </tr>
             </thead>
             <tbody>
@@ -118,7 +122,14 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
                     {item.id}
                   </td>
                   <td style={{ padding: '0.5rem' }}>{item.consumerName || item.consumerId}</td>
-                  <td style={{ padding: '0.5rem' }}>{item.status}</td>
+                  <td style={{ padding: '0.5rem' }}>
+                    {{
+                      pending: t('ops:requests.statusPending'),
+                      completed: t('ops:requests.statusCompleted'),
+                      rejected: t('ops:requests.statusRejected'),
+                      expired: t('ops:requests.statusExpired'),
+                    }[item.status] ?? item.status}
+                  </td>
                   <td style={{ padding: '0.5rem' }}>{item.purpose}</td>
                   <td style={{ padding: '0.5rem' }}>{item.expiresAt}</td>
                   <td style={{ padding: '0.5rem' }}>{item.createdAt}</td>
@@ -126,22 +137,22 @@ export function RequestList({ apiBase, apiKey }: RequestListProps) {
               ))}
             </tbody>
           </table>
-          {items.length === 0 && <p style={{ marginTop: '1rem' }}>No requests found.</p>}
+          {items.length === 0 && <p style={{ marginTop: '1rem' }}>{t('ops:requests.noResults')}</p>}
           <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <button
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              Previous
+              {t('ops:pagination.previous')}
             </button>
             <span>
-              Page {page + 1} of {totalPages} ({total} total)
+              {t('ops:pagination.page', { current: page + 1, total: totalPages, count: total })}
             </span>
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next
+              {t('ops:pagination.next')}
             </button>
           </div>
         </>

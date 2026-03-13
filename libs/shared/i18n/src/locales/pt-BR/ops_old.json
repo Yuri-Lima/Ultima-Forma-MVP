@@ -1,0 +1,17 @@
+{
+  "audit": {
+    "loading": "Carregando eventos..."
+  },
+  "pagination": {
+    "page": "Página {{current}} de {{total}} ({{count}} no total)"
+  },
+  "profileUpdates": {
+    "loading": "Carregando atualizações..."
+  },
+  "requests": {
+    "loading": "Carregando solicitações..."
+  },
+  "webhooks": {
+    "loading": "Carregando entregas..."
+  }
+}

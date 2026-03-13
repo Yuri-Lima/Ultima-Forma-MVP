@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileUpdateItem {
   id: string;
@@ -15,6 +16,7 @@ interface ProfileUpdateListProps {
 }
 
 export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
+  const { t, i18n } = useTranslation(['ops', 'common']);
   const [items, setItems] = useState<ProfileUpdateItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -28,19 +30,23 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
     setLoading(true);
     setError(null);
 
+    const baseHeaders: Record<string, string> = {
+      'Accept-Language': i18n.language || 'pt-BR',
+    };
+    if (apiKey) baseHeaders['X-API-Key'] = apiKey;
+
     const fetchOne = (evType: string) => {
       const params = new URLSearchParams();
       params.set('eventType', evType);
       if (aggregateId) params.set('aggregateId', aggregateId);
       params.set('limit', String(limit));
       params.set('offset', String(page * limit));
-      const headers: Record<string, string> = {};
-      if (apiKey) headers['X-API-Key'] = apiKey;
-      return fetch(`${apiBase}/internal/audit-events?${params}`, { headers });
+      return fetch(`${apiBase}/internal/audit-events?${params}`, {
+        headers: baseHeaders,
+      });
     };
 
-    const headers: Record<string, string> = {};
-    if (apiKey) headers['X-API-Key'] = apiKey;
+    const headers = baseHeaders;
 
     const params = new URLSearchParams();
     if (eventType) params.set('eventType', eventType);
@@ -80,19 +86,19 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
         setError(
           err instanceof Error
             ? err.message
-            : 'Failed to load profile updates'
+            : t('ops:profileUpdates.error')
         );
         setItems([]);
         setTotal(0);
       })
       .finally(() => setLoading(false));
-  }, [apiBase, apiKey, eventType, aggregateId, page]);
+  }, [apiBase, apiKey, eventType, aggregateId, page, i18n.language, t]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
   return (
     <div>
-      <h1>Profile Updates</h1>
+      <h1>{t('ops:profileUpdates.title')}</h1>
       <div
         style={{
           display: 'flex',
@@ -102,7 +108,7 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
         }}
       >
         <label>
-          Event Type
+          {t('ops:filters.eventType')}
           <select
             value={eventType}
             onChange={(e) => {
@@ -111,13 +117,13 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
             }}
             style={{ marginLeft: '0.5rem' }}
           >
-            <option value="">All</option>
-            <option value="issuer_updated">issuer_updated</option>
-            <option value="consumer_updated">consumer_updated</option>
+            <option value="">{t('ops:filters.all')}</option>
+            <option value="issuer_updated">{t('ops:profileUpdates.eventIssuerUpdated')}</option>
+            <option value="consumer_updated">{t('ops:profileUpdates.eventConsumerUpdated')}</option>
           </select>
         </label>
         <label>
-          Aggregate ID
+          {t('ops:filters.aggregateId')}
           <input
             type="text"
             value={aggregateId}
@@ -125,7 +131,7 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
               setAggregateId(e.target.value);
               setPage(0);
             }}
-            placeholder="Filter by ID"
+            placeholder={t('ops:filters.filterById')}
             style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
           />
         </label>
@@ -134,7 +140,7 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
         <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
       )}
       {loading ? (
-        <p>Loading...</p>
+        <p>{t('common:loading')}</p>
       ) : (
         <>
           <div
@@ -198,7 +204,7 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
             ))}
           </div>
           {items.length === 0 && (
-            <p style={{ marginTop: '1rem' }}>No profile updates found.</p>
+            <p style={{ marginTop: '1rem' }}>{t('ops:profileUpdates.noResults')}</p>
           )}
           <div
             style={{
@@ -212,16 +218,16 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              Previous
+              {t('ops:pagination.previous')}
             </button>
             <span>
-              Page {page + 1} of {totalPages} ({total} total)
+              {t('ops:pagination.page', { current: page + 1, total: totalPages, count: total })}
             </span>
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next
+              {t('ops:pagination.next')}
             </button>
           </div>
         </>

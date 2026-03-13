@@ -1,5 +1,5 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import { AppModule } from './app/app.module';
 import { correlationIdMiddleware } from './app/correlation-id.middleware';
 import { getConfig } from '@ultima-forma/shared-config';
@@ -10,12 +10,13 @@ async function bootstrap() {
   app.use(correlationIdMiddleware);
   app.enableCors({ origin: true });
   app.useGlobalPipes(
-    new ValidationPipe({
+    new I18nValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
     })
   );
+  app.useGlobalFilters(new I18nValidationExceptionFilter());
   const config = getConfig();
   const port = config.orchestrationApiPort;
   await app.listen(port);

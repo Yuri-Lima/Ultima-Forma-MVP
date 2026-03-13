@@ -1,0 +1,33 @@
+{
+  "consent": {
+    "approve": "Aprobar",
+    "approved": {
+      "subtitleSuccess": "Los datos se compartieron correctamente según tu autorización.",
+      "title": "Aprobado",
+      "titleFull": "Consentimiento Aprobado"
+    },
+    "approveError": "Error al aprobar",
+    "approveFailed": "No se pudo aprobar",
+    "back": "Volver",
+    "claimsLabel": "Datos solicitados:",
+    "corsHint": "Si el api-gateway está en ejecución, reinícialo para habilitar CORS.",
+    "dataRequest": "Solicitud de Datos",
+    "errorLoad": "Error al cargar",
+    "errorNotFound": "Solicitud no encontrada",
+    "loading": "Cargando solicitud...",
+    "purpose": "Propósito",
+    "reject": "Rechazar",
+    "rejected": {
+      "subtitleSuccess": "La solicitud fue rechazada. No se compartieron datos.",
+      "title": "Rechazado",
+      "titleFull": "Consentimiento Rechazado"
+    },
+    "rejectError": "Error al rechazar",
+    "rejectFailed": "No se pudo rechazar",
+    "requestsAccess": "solicita acceso a los siguientes datos:"
+  },
+  "home": {
+    "subtitle": "Tu app de identidad portátil y centrada en la privacidad",
+    "title": "Ultima Forma"
+  }
+}

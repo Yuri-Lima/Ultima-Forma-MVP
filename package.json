@@ -10,6 +10,7 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts",
     "test:api": "bash scripts/test-endpoints.sh",
+    "i18n:extract": "pnpm exec i18next --config i18next-parser.config.js",
     "dev:gateway": "nx serve api-gateway",
     "dev:orchestration": "nx serve orchestration-api",
     "dev:user-app": "nx run user-app:serve",
@@ -17,7 +18,8 @@
     "dev:user-app:native": "nx run user-app:start",
     "dev:user-app:tunnel": "nx run user-app:start -- --tunnel",
     "dev:partner-portal": "nx serve partner-portal",
-    "dev:ops-console": "nx serve ops-console"
+    "dev:ops-console": "nx serve ops-console",
+    "dev:all": "pnpm db:migrate && pnpm db:seed && pnpm i18n:extract && nx run-many -t serve -p api-gateway,orchestration-api,user-app,partner-portal,ops-console --parallel"
   },
   "private": true,
   "devDependencies": {
@@ -57,6 +59,7 @@
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-playwright": "^1.6.2",
+    "i18next-parser": "^9.4.0",
     "jest": "^30.2.0",
     "jest-environment-node": "^30.0.2",
     "jest-expo": "~55.0.0",
@@ -79,6 +82,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@ultima-forma/shared-i18n": "file:libs/shared/i18n",
     "@expo/metro-config": "~55.0.0",
     "@expo/metro-runtime": "~55.0.0",
     "@nestjs/common": "^11.0.0",
@@ -94,13 +98,18 @@
     "expo": "~55.0.0",
     "expo-constants": "~55.0.0",
     "expo-linking": "~55.0.0",
+    "expo-localization": "^55.0.8",
     "expo-router": "~55.0.0",
     "expo-splash-screen": "~55.0.0",
     "expo-status-bar": "~55.0.0",
     "expo-system-ui": "~55.0.0",
+    "i18next": "^25.8.18",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "nestjs-i18n": "^10.6.0",
     "pg": "^8.20.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-i18next": "^16.5.8",
     "react-native": "0.83.2",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.24.0",

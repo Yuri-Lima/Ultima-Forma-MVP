@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -26,6 +27,7 @@ interface DataRequestResponse {
 }
 
 export default function ConsentScreen() {
+  const { t } = useTranslation('user');
   const { requestId } = useLocalSearchParams<{ requestId: string }>();
   const router = useRouter();
   const [data, setData] = useState<DataRequestResponse | null>(null);
@@ -37,13 +39,13 @@ export default function ConsentScreen() {
     if (!requestId) return;
     fetch(`${API_BASE_URL}/v1/data-requests/${requestId}`)
       .then((res) => {
-        if (!res.ok) throw new Error(res.status === 404 ? 'Solicitação não encontrada' : 'Erro ao carregar');
+        if (!res.ok) throw new Error(res.status === 404 ? t('consent.errorNotFound') : t('consent.errorLoad'));
         return res.json();
       })
       .then(setData)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Erro'))
+      .catch((err) => setError(err instanceof Error ? err.message : t('common:errors.generic')))
       .finally(() => setLoading(false));
-  }, [requestId]);
+  }, [requestId, t]);
 
   const handleApprove = async () => {
     if (!data?.consentId || submitting) return;
@@ -53,10 +55,10 @@ export default function ConsentScreen() {
         `${API_BASE_URL}/v1/consents/${data.consentId}/approve`,
         { method: 'POST' }
       );
-      if (!res.ok) throw new Error('Erro ao aprovar');
+      if (!res.ok) throw new Error(t('consent.approveError'));
       router.replace(`/consent/${requestId}/approved`);
     } catch (err) {
-      Alert.alert('Erro', err instanceof Error ? err.message : 'Não foi possível aprovar');
+      Alert.alert(t('common:errors.generic'), err instanceof Error ? err.message : t('consent.approveFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -70,10 +72,10 @@ export default function ConsentScreen() {
         `${API_BASE_URL}/v1/consents/${data.consentId}/reject`,
         { method: 'POST' }
       );
-      if (!res.ok) throw new Error('Erro ao rejeitar');
+      if (!res.ok) throw new Error(t('consent.rejectError'));
       router.replace(`/consent/${requestId}/rejected`);
     } catch (err) {
-      Alert.alert('Erro', err instanceof Error ? err.message : 'Não foi possível rejeitar');
+      Alert.alert(t('common:errors.generic'), err instanceof Error ? err.message : t('consent.rejectFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -83,7 +85,7 @@ export default function ConsentScreen() {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Carregando solicitação...</Text>
+        <Text style={styles.loadingText}>{t('consent.loading')}</Text>
       </View>
     );
   }
@@ -91,11 +93,9 @@ export default function ConsentScreen() {
   if (error || !data) {
     return (
       <View style={[styles.center, Platform.OS === 'web' && styles.centerWeb]}>
-        <Text style={styles.errorText}>{error ?? 'Solicitação não encontrada'}</Text>
+        <Text style={styles.errorText}>{error ?? t('consent.errorNotFound')}</Text>
         {Platform.OS === 'web' && (
-          <Text style={styles.errorHint}>
-            Se o api-gateway está rodando, reinicie-o para habilitar CORS.
-          </Text>
+          <Text style={styles.errorHint}>{t('consent.corsHint')}</Text>
         )}
       </View>
     );
@@ -108,16 +108,16 @@ export default function ConsentScreen() {
         contentContainerStyle={[styles.content, styles.contentWithButtons]}
         showsVerticalScrollIndicator={true}
       >
-        <Text style={styles.title}>Solicitação de Dados</Text>
+        <Text style={styles.title}>{t('consent.dataRequest')}</Text>
         <Text style={styles.consumer}>{data.consumerName}</Text>
-        <Text style={styles.label}>solicita acesso aos seguintes dados:</Text>
+        <Text style={styles.label}>{t('consent.requestsAccess')}</Text>
 
         <View style={styles.purposeBox}>
-          <Text style={styles.purposeLabel}>Finalidade</Text>
+          <Text style={styles.purposeLabel}>{t('consent.purpose')}</Text>
           <Text style={styles.purpose}>{data.request.purpose}</Text>
         </View>
 
-        <Text style={styles.claimsLabel}>Dados solicitados:</Text>
+        <Text style={styles.claimsLabel}>{t('consent.claimsLabel')}</Text>
         {data.items.map((item) => (
           <View key={item.id} style={styles.claimRow}>
             <Text style={styles.claim}>• {item.claim}</Text>
@@ -131,7 +131,7 @@ export default function ConsentScreen() {
           disabled={submitting}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>Aprovar</Text>
+          <Text style={styles.buttonText}>{t('consent.approve')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.rejectButton]}
@@ -139,7 +139,7 @@ export default function ConsentScreen() {
           disabled={submitting}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>Rejeitar</Text>
+          <Text style={styles.buttonText}>{t('consent.reject')}</Text>
         </TouchableOpacity>
       </View>
     </View>

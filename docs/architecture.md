@@ -16,6 +16,7 @@ flowchart TB
         config[shared-config]
         logger[shared-logger]
         errors[shared-errors]
+        i18n[shared-i18n]
         db[infrastructure-db]
         drizzle[infrastructure-drizzle]
         domainPartner[domain-partner]
@@ -55,7 +56,7 @@ flowchart TB
 
 | Camada | Responsabilidade | Quem pode depender |
 |--------|------------------|--------------------|
-| **shared** | Config, logger, erros, utilitários | Qualquer lib ou app |
+| **shared** | Config, logger, erros, i18n (traduções), utilitários | Qualquer lib ou app |
 | **domain** | Regras de negócio puras | application, interfaces |
 | **application** | Use cases, orquestração | interfaces |
 | **infrastructure** | DB, auth, webhooks, etc. | application |
@@ -89,3 +90,14 @@ A plataforma **pode** armazenar:
 - Configurações de parceiros
 - Eventos faturáveis
 - Status de fluxos
+
+## Internacionalização (i18n)
+
+O projeto suporta múltiplos idiomas (pt-BR, en, es) com português como padrão.
+
+- **shared-i18n** (`libs/shared/i18n`): traduções em JSON por locale e namespace (common, ops, partner, user, api, validation)
+- **Frontend:** react-i18next nos apps (ops-console, partner-portal, user-app). O user-app usa `expo-localization` para detectar o idioma do dispositivo
+- **Backend:** nestjs-i18n nos APIs (api-gateway, orchestration-api) com `Accept-Language`; `I18nValidationPipe` para mensagens de validação
+- **Extração de chaves:** `pnpm i18n:extract` (i18next-parser)
+
+O user-app (Expo) consome `@ultima-forma/shared-i18n` via dependência em `package.json` (`file:libs/shared/i18n`); o Metro usa `watchFolders` para o monorepo.

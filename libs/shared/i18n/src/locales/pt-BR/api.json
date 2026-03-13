@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "INTERNAL_ERROR": "Ocorreu um erro inesperado",
+    "NOT_FOUND": "Recurso não encontrado",
+    "PARTNER_NOT_FOUND": "Parceiro não encontrado",
+    "PARTNER_INACTIVE": "Parceiro não está ativo",
+    "ISSUER_NOT_FOUND": "Emissor não encontrado",
+    "CONSUMER_NOT_FOUND": "Consumidor não encontrado",
+    "CONSUMER_INACTIVE": "Consumidor não está ativo",
+    "INVALID_INPUT": "Pelo menos uma reivindicação é necessária",
+    "CLAIMS_OUT_OF_SCOPE": "Uma ou mais reivindicações estão fora do escopo permitido",
+    "CONSENT_NOT_FOUND": "Consentimento não encontrado",
+    "REQUEST_NOT_FOUND": "Solicitação de dados não encontrada",
+    "REQUEST_EXPIRED": "A solicitação expirou",
+    "DATA_REQUEST_NOT_FOUND": "Solicitação de dados não encontrada",
+    "ISSUER_UPDATE_FAILED": "Falha ao atualizar emissor",
+    "CONSUMER_UPDATE_FAILED": "Falha ao atualizar consumidor",
+    "WEBHOOK_SUBSCRIPTION_CREATE_FAILED": "Falha ao criar inscrição de webhook",
+    "WEBHOOK_DELIVERY_CREATE_FAILED": "Falha ao criar entrega de webhook",
+    "AUDIT_APPEND_FAILED": "Falha ao registrar evento de auditoria",
+    "BILLABLE_APPEND_FAILED": "Falha ao registrar evento faturável"
+  },
+  "validation": {
+    "NOT_EMPTY": "{{property}} não pode estar vazio",
+    "IS_EMAIL": "Email inválido",
+    "IS_UUID": "UUID inválido",
+    "IS_ENUM": "Valor inválido para {{property}}",
+    "MIN": "{{property}} deve ter no mínimo {{constraints.0}} caracteres",
+    "MAX": "{{property}} deve ter no máximo {{constraints.0}} caracteres"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "audit": {
+    "error": "Failed to load audit events",
+    "eventConsentGranted": "Consent granted",
+    "eventConsentRejected": "Consent rejected",
+    "eventRequestCreated": "Request created",
+    "eventRequestExpired": "Request expired",
+    "noResults": "No audit events found.",
+    "title": "Audit Events"
+  },
+  "filters": {
+    "aggregateId": "Aggregate ID",
+    "all": "All",
+    "eventType": "Event Type",
+    "filterById": "Filter by ID",
+    "filterByTenant": "Filter by tenant",
+    "status": "Status",
+    "tenantId": "Tenant ID"
+  },
+  "nav": {
+    "audit": "Audit",
+    "profileUpdates": "Profile Updates",
+    "requests": "Requests",
+    "webhooks": "Webhooks"
+  },
+  "pagination": {
+    "next": "Next",
+    "page_one": "",
+    "page_other": "",
+    "previous": "Previous"
+  },
+  "profileUpdates": {
+    "error": "Failed to load profile updates",
+    "eventConsumerUpdated": "Consumer updated",
+    "eventIssuerUpdated": "Issuer updated",
+    "noResults": "No updates found",
+    "title": "Profile Updates"
+  },
+  "requests": {
+    "columns": {
+      "consumer": "Consumer",
+      "created": "Created",
+      "expires": "Expires",
+      "id": "ID",
+      "purpose": "Purpose",
+      "status": "Status"
+    },
+    "error": "Failed to load requests",
+    "noResults": "No requests found.",
+    "statusCompleted": "Completed",
+    "statusExpired": "Expired",
+    "statusPending": "Pending",
+    "statusRejected": "Rejected",
+    "title": "Data Requests"
+  },
+  "webhooks": {
+    "attempts": "attempts",
+    "error": "Failed to load webhook deliveries",
+    "nextRetry": "Next retry",
+    "noResults": "No webhook deliveries found.",
+    "statusFailed": "Failed",
+    "statusPending": "Pending",
+    "statusSucceeded": "Succeeded",
+    "title": "Webhook Deliveries"
+  }
+}

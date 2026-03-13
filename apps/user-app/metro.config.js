@@ -1,7 +1,11 @@
+const path = require('path');
 const { getDefaultConfig } = require('@expo/metro-config');
 const { mergeConfig } = require('metro-config');
 
-const defaultConfig = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const monorepoRoot = path.resolve(projectRoot, '../..');
+
+const defaultConfig = getDefaultConfig(projectRoot);
 const { assetExts, sourceExts } = defaultConfig.resolver;
 
 /**
@@ -12,6 +16,7 @@ const { assetExts, sourceExts } = defaultConfig.resolver;
  */
 const customConfig = {
   cacheVersion: 'user-app',
+  watchFolders: [monorepoRoot],
   transformer: {
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },

@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import {
   RequestList,
   AuditEventList,
   ProfileUpdateList,
   WebhookDeliveryList,
+  LocaleSwitcher,
 } from './components';
 import styles from './app.module.css';
 
@@ -12,22 +14,24 @@ const API_BASE =
 const INTERNAL_API_KEY = import.meta.env['VITE_INTERNAL_API_KEY'] ?? '';
 
 export function App() {
+  const { t } = useTranslation('ops');
   return (
     <BrowserRouter>
       <div className={styles.app}>
         <nav className={styles.nav}>
           <Link to="/requests" className={styles.navLink}>
-            Requests
+            {t('nav.requests')}
           </Link>
           <Link to="/audit" className={styles.navLink}>
-            Audit
+            {t('nav.audit')}
           </Link>
           <Link to="/profile-updates" className={styles.navLink}>
-            Profile Updates
+            {t('nav.profileUpdates')}
           </Link>
           <Link to="/webhooks" className={styles.navLink}>
-            Webhooks
+            {t('nav.webhooks')}
           </Link>
+          <LocaleSwitcher />
         </nav>
         <main className={styles.main}>
           <Routes>

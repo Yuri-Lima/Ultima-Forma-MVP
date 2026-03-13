@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AuditItem {
   id: string;
@@ -15,6 +16,7 @@ interface AuditEventListProps {
 }
 
 export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
+  const { t, i18n } = useTranslation(['ops', 'common']);
   const [items, setItems] = useState<AuditItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,9 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
     params.set('limit', String(limit));
     params.set('offset', String(page * limit));
 
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {
+      'Accept-Language': i18n.language || 'pt-BR',
+    };
     if (apiKey) headers['X-API-Key'] = apiKey;
     fetch(`${apiBase}/internal/audit-events?${params}`, { headers })
       .then((res) => {
@@ -47,21 +51,21 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
         setTotal(data.total ?? 0);
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : 'Failed to load audit events');
+        setError(err instanceof Error ? err.message : t('ops:audit.error'));
         setItems([]);
         setTotal(0);
       })
       .finally(() => setLoading(false));
-  }, [apiBase, apiKey, eventType, aggregateId, page]);
+  }, [apiBase, apiKey, eventType, aggregateId, page, i18n.language, t]);
 
   const totalPages = Math.ceil(total / limit) || 1;
 
   return (
     <div>
-      <h1>Audit Events</h1>
+      <h1>{t('ops:audit.title')}</h1>
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <label>
-          Event Type
+          {t('ops:filters.eventType')}
           <select
             value={eventType}
             onChange={(e) => {
@@ -70,15 +74,15 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
             }}
             style={{ marginLeft: '0.5rem' }}
           >
-            <option value="">All</option>
-            <option value="request_created">request_created</option>
-            <option value="consent_granted">consent_granted</option>
-            <option value="consent_rejected">consent_rejected</option>
-            <option value="request_expired">request_expired</option>
+            <option value="">{t('ops:filters.all')}</option>
+            <option value="request_created">{t('ops:audit.eventRequestCreated')}</option>
+            <option value="consent_granted">{t('ops:audit.eventConsentGranted')}</option>
+            <option value="consent_rejected">{t('ops:audit.eventConsentRejected')}</option>
+            <option value="request_expired">{t('ops:audit.eventRequestExpired')}</option>
           </select>
         </label>
         <label>
-          Aggregate ID
+          {t('ops:filters.aggregateId')}
           <input
             type="text"
             value={aggregateId}
@@ -86,7 +90,7 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
               setAggregateId(e.target.value);
               setPage(0);
             }}
-            placeholder="Filter by ID"
+            placeholder={t('ops:filters.filterById')}
             style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
           />
         </label>
@@ -95,7 +99,7 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
         <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
       )}
       {loading ? (
-        <p>Loading...</p>
+        <p>{t('common:loading')}</p>
       ) : (
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -156,22 +160,22 @@ export function AuditEventList({ apiBase, apiKey }: AuditEventListProps) {
               </div>
             ))}
           </div>
-          {items.length === 0 && <p style={{ marginTop: '1rem' }}>No audit events found.</p>}
+          {items.length === 0 && <p style={{ marginTop: '1rem' }}>{t('ops:audit.noResults')}</p>}
           <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <button
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              Previous
+              {t('ops:pagination.previous')}
             </button>
             <span>
-              Page {page + 1} of {totalPages} ({total} total)
+              {t('ops:pagination.page', { current: page + 1, total: totalPages, count: total })}
             </span>
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next
+              {t('ops:pagination.next')}
             </button>
           </div>
         </>

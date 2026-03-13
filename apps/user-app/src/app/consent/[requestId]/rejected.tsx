@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 export default function RejectedScreen() {
+  const { t } = useTranslation('user');
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>✕</Text>
-      <Text style={styles.title}>Consentimento Rejeitado</Text>
-      <Text style={styles.subtitle}>
-        A solicitação foi recusada. Nenhum dado foi compartilhado.
-      </Text>
+      <Text style={styles.title}>{t('consent.rejected.titleFull')}</Text>
+      <Text style={styles.subtitle}>{t('consent.rejected.subtitleSuccess')}</Text>
     </View>
   );
 }

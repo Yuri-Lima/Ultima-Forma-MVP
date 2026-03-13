@@ -49,6 +49,19 @@ API_GATEWAY_PORT=3335 pnpm dev:gateway
 3. Limpar cache: `pnpm nx run user-app:serve -- --clear`
 4. Reinstalar: `pnpm install`
 
+## Expo – Unable to resolve @ultima-forma/shared-i18n
+
+**Erro:** `Unable to resolve module @ultima-forma/shared-i18n`
+
+**Causa:** O Metro (bundler do Expo) não usa os `paths` do `tsconfig.base.json`; ele precisa encontrar o pacote em `node_modules`.
+
+**Soluções:**
+
+1. **Dependência no root:** O `@ultima-forma/shared-i18n` está declarado no `package.json` raiz como `file:libs/shared/i18n`. Execute `pnpm install` na raiz do projeto.
+2. **watchFolders:** O `metro.config.js` do user-app configura `watchFolders: [monorepoRoot]` para o Metro observar o monorepo.
+3. **Entry point:** O `libs/shared/i18n/package.json` usa `"main": "./src/index.ts"` para o Metro resolver o módulo.
+4. **Limpar cache:** `cd apps/user-app && npx expo start --clear`
+
 ## Drizzle – connection refused
 
 Ver seção "Database não conecta" acima. O Drizzle usa `DATABASE_URL` para conectar.

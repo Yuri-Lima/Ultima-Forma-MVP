@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { I18nModule, AcceptLanguageResolver } from 'nestjs-i18n';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppExceptionFilter } from './app.exception-filter';
 import { DrizzleModule } from '@ultima-forma/infrastructure-drizzle';
@@ -17,6 +19,14 @@ const throttleLimit = parseInt(
 
 @Module({
   imports: [
+    I18nModule.forRoot({
+      fallbackLanguage: 'pt-BR',
+      loaderOptions: {
+        path: join(process.cwd(), 'libs/shared/i18n/src/locales'),
+        watch: false,
+      },
+      resolvers: [AcceptLanguageResolver],
+    }),
     DrizzleModule,
     V1Module,
     ThrottlerModule.forRoot([{ ttl: throttleTtl, limit: throttleLimit }]),

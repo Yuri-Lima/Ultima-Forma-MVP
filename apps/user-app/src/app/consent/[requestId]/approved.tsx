@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 export default function ApprovedScreen() {
+  const { t } = useTranslation('user');
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>✓</Text>
-      <Text style={styles.title}>Consentimento Aprovado</Text>
-      <Text style={styles.subtitle}>
-        Os dados foram compartilhados com sucesso conforme sua autorização.
-      </Text>
+      <Text style={styles.title}>{t('consent.approved.titleFull')}</Text>
+      <Text style={styles.subtitle}>{t('consent.approved.subtitleSuccess')}</Text>
     </View>
   );
 }
