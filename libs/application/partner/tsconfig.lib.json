@@ -6,7 +6,13 @@
     "types": ["node"],
     "paths": {
       "@ultima-forma/domain-audit": ["dist/libs/domain/audit/src/index.d.ts"],
-      "@ultima-forma/domain-webhook": ["dist/libs/domain/webhook/src/index.d.ts"]
+      "@ultima-forma/domain-webhook": ["dist/libs/domain/webhook/src/index.d.ts"],
+      "@ultima-forma/domain-partner": ["dist/libs/domain/partner/src/index.d.ts"],
+      "@ultima-forma/domain-consent": ["dist/libs/domain/consent/src/index.d.ts"],
+      "@ultima-forma/domain-claims": ["dist/libs/domain/claims/src/index.d.ts"],
+      "@ultima-forma/domain-wallet": ["dist/libs/domain/wallet/src/index.d.ts"],
+      "@ultima-forma/shared-errors": ["dist/libs/shared/errors/src/index.d.ts"],
+      "@ultima-forma/shared-logger": ["dist/libs/shared/logger/src/index.d.ts"]
     }
   },
   "include": ["src/**/*.ts"],

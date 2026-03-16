@@ -11,12 +11,3 @@ export type { GetConsentHistoryInput } from './lib/get-consent-history.use-case'
 export { GetConsentDetailUseCase } from './lib/get-consent-detail.use-case';
 export { ValidateConsentPolicyUseCase } from './lib/validate-consent-policy.use-case';
 export type { ValidateConsentPolicyInput, ValidateConsentPolicyResult } from './lib/validate-consent-policy.use-case';
-export { RegisterClaimDefinitionUseCase } from './lib/register-claim-definition.use-case';
-export { ListClaimDefinitionsUseCase } from './lib/list-claim-definitions.use-case';
-export { ValidateClaimsAgainstRegistryUseCase } from './lib/validate-claims-against-registry.use-case';
-export type { ValidateClaimsInput } from './lib/validate-claims-against-registry.use-case';
-export { AssignClaimPermissionUseCase } from './lib/assign-claim-permission.use-case';
-export { RegisterUserSubjectUseCase } from './lib/register-user-subject.use-case';
-export { RegisterCredentialReferenceUseCase } from './lib/register-credential-reference.use-case';
-export { CreatePresentationSessionUseCase } from './lib/create-presentation-session.use-case';
-export { CompletePresentationSessionUseCase } from './lib/complete-presentation-session.use-case';

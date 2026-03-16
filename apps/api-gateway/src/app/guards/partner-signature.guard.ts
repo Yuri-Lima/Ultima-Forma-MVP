@@ -6,14 +6,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { logger } from '@ultima-forma/shared-logger';
+import { logger, partnerAuthFailedTotal } from '@ultima-forma/shared-logger';
 import { getConfig } from '@ultima-forma/shared-config';
+import { FeatureFlagService, FeatureFlag } from '@ultima-forma/infrastructure-feature-flags';
 import type { ValidatePartnerSignatureUseCase } from '@ultima-forma/application-partner';
 import type { RegisterPartnerApiUsageUseCase } from '@ultima-forma/application-partner';
 
 export const SKIP_PARTNER_AUTH_KEY = 'skipPartnerAuth';
 export const VALIDATE_PARTNER_SIGNATURE = 'VALIDATE_PARTNER_SIGNATURE';
 export const REGISTER_PARTNER_API_USAGE = 'REGISTER_PARTNER_API_USAGE';
+export const FEATURE_FLAG_SERVICE = 'FEATURE_FLAG_SERVICE';
 
 @Injectable()
 export class PartnerSignatureGuard implements CanActivate {
@@ -22,13 +24,13 @@ export class PartnerSignatureGuard implements CanActivate {
     @Inject(VALIDATE_PARTNER_SIGNATURE)
     private readonly validateSignature: ValidatePartnerSignatureUseCase,
     @Inject(REGISTER_PARTNER_API_USAGE)
-    private readonly registerUsage: RegisterPartnerApiUsageUseCase
+    private readonly registerUsage: RegisterPartnerApiUsageUseCase,
+    @Inject(FEATURE_FLAG_SERVICE)
+    private readonly featureFlags: FeatureFlagService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const config = getConfig();
-
-    if (!config.partnerAuthEnabled) {
+    if (!this.featureFlags.isEnabled(FeatureFlag.PARTNER_AUTH)) {
       return true;
     }
 
@@ -53,11 +55,13 @@ export class PartnerSignatureGuard implements CanActivate {
         path: request.url,
         method: request.method,
       });
+      partnerAuthFailedTotal.inc();
       throw new UnauthorizedException(
         'Missing required authentication headers: X-Partner-Id, X-Timestamp, X-Signature'
       );
     }
 
+    const config = getConfig();
     const rawBody =
       typeof request.body === 'object'
         ? JSON.stringify(request.body)
@@ -71,7 +75,7 @@ export class PartnerSignatureGuard implements CanActivate {
       method: request.method,
       path: request.url.split('?')[0],
       body: rawBody,
-      toleranceMs: config.partnerAuthTimestampToleranceMs,
+      toleranceMs: config.partnerSignatureTtl,
     });
 
     const responseTimeMs = Date.now() - startTime;
@@ -83,6 +87,7 @@ export class PartnerSignatureGuard implements CanActivate {
         path: request.url,
         method: request.method,
       });
+      partnerAuthFailedTotal.inc();
 
       this.registerUsage
         .execute({

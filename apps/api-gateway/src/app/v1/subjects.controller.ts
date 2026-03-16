@@ -10,14 +10,14 @@ import {
 import {
   RegisterUserSubjectUseCase,
   RegisterCredentialReferenceUseCase,
-} from '@ultima-forma/application-consent';
-import type { WalletRepositoryPort } from '@ultima-forma/domain-consent';
+} from '@ultima-forma/application-wallet';
+import type { WalletRepositoryPort } from '@ultima-forma/domain-wallet';
 import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 import {
   REGISTER_USER_SUBJECT,
   REGISTER_CREDENTIAL_REFERENCE,
   WALLET_REPOSITORY,
-} from './v1.module';
+} from './tokens';
 
 @UseGuards(PartnerSignatureGuard)
 @Controller('v1/subjects')

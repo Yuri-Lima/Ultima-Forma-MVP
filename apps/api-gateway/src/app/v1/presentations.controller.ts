@@ -9,12 +9,12 @@ import {
 import {
   CreatePresentationSessionUseCase,
   CompletePresentationSessionUseCase,
-} from '@ultima-forma/application-consent';
+} from '@ultima-forma/application-wallet';
 import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 import {
   CREATE_PRESENTATION_SESSION,
   COMPLETE_PRESENTATION_SESSION,
-} from './v1.module';
+} from './tokens';
 
 @UseGuards(PartnerSignatureGuard)
 @Controller('v1/presentations')

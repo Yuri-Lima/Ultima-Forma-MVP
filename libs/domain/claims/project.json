@@ -1,0 +1,19 @@
+{
+  "name": "domain-claims",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domain/claims/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/domain/claims",
+        "main": "libs/domain/claims/src/index.ts",
+        "tsConfig": "libs/domain/claims/tsconfig.lib.json",
+        "assets": ["libs/domain/claims/*.md"]
+      }
+    }
+  }
+}

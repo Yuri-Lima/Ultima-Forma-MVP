@@ -3,7 +3,7 @@ import type {
   CreateCredentialReferenceInput,
   CredentialReference,
   WalletRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-wallet';
 
 export class RegisterCredentialReferenceUseCase {
   constructor(private readonly walletRepo: WalletRepositoryPort) {}

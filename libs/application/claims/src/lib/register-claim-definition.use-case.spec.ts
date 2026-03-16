@@ -1,5 +1,5 @@
 import { RegisterClaimDefinitionUseCase } from './register-claim-definition.use-case';
-import type { ClaimRegistryRepositoryPort } from '@ultima-forma/domain-consent';
+import type { ClaimRegistryRepositoryPort } from '@ultima-forma/domain-claims';
 
 function makeClaimRepo(): jest.Mocked<ClaimRegistryRepositoryPort> {
   return {

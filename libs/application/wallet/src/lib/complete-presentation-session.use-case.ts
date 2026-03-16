@@ -2,7 +2,7 @@ import { AppError } from '@ultima-forma/shared-errors';
 import type {
   PresentationSession,
   WalletRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-wallet';
 
 export class CompletePresentationSessionUseCase {
   constructor(private readonly walletRepo: WalletRepositoryPort) {}

@@ -22,7 +22,7 @@ import {
   LIST_PARTNER_REQUESTS,
   MANAGE_PARTNER_WEBHOOKS,
   PARTNER_DASHBOARD_REPOSITORY,
-} from './v1.module';
+} from './tokens';
 
 @UseGuards(PartnerSignatureGuard)
 @Controller('v1/partner')

@@ -7,16 +7,11 @@ import { AppController } from './app.controller';
 import { AppExceptionFilter } from './app.exception-filter';
 import { MetricsInterceptor } from './metrics.interceptor';
 import { DrizzleModule } from '@ultima-forma/infrastructure-drizzle';
+import { HealthModule } from '@ultima-forma/shared-health';
+import { getConfig } from '@ultima-forma/shared-config';
 import { V1Module } from './v1/v1.module';
 
-const throttleTtl = parseInt(
-  process.env['RATE_LIMIT_TTL'] ?? '60000',
-  10
-);
-const throttleLimit = parseInt(
-  process.env['RATE_LIMIT_LIMIT'] ?? '100',
-  10
-);
+const config = getConfig();
 
 @Module({
   imports: [
@@ -29,8 +24,11 @@ const throttleLimit = parseInt(
       resolvers: [AcceptLanguageResolver],
     }),
     DrizzleModule,
+    HealthModule,
     V1Module,
-    ThrottlerModule.forRoot([{ ttl: throttleTtl, limit: throttleLimit }]),
+    ThrottlerModule.forRoot([
+      { ttl: config.rateLimitTtl, limit: config.rateLimitLimit },
+    ]),
   ],
   controllers: [AppController],
   providers: [

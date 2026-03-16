@@ -1,5 +1,5 @@
 import { AppError } from '@ultima-forma/shared-errors';
-import type { ClaimRegistryRepositoryPort } from '@ultima-forma/domain-consent';
+import type { ClaimRegistryRepositoryPort } from '@ultima-forma/domain-claims';
 
 export interface ValidateClaimsInput {
   claims: string[];

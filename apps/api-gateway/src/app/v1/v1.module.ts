@@ -3,7 +3,9 @@ import type {
   PartnerRepositoryPort,
   PartnerSecurityRepositoryPort,
 } from '@ultima-forma/domain-partner';
-import type { ConsentRepositoryPort } from '@ultima-forma/domain-consent';
+import type { ConsentRepositoryPort, ConsentPolicyRepositoryPort } from '@ultima-forma/domain-consent';
+import type { ClaimRegistryRepositoryPort } from '@ultima-forma/domain-claims';
+import type { WalletRepositoryPort } from '@ultima-forma/domain-wallet';
 import type {
   AuditRepositoryPort,
   BillableEventRepositoryPort,
@@ -32,20 +34,19 @@ import {
   GetConsentDetailUseCase,
   GetConsentHistoryUseCase,
   ValidateConsentPolicyUseCase,
+} from '@ultima-forma/application-consent';
+import {
   RegisterClaimDefinitionUseCase,
   ListClaimDefinitionsUseCase,
   ValidateClaimsAgainstRegistryUseCase,
   AssignClaimPermissionUseCase,
+} from '@ultima-forma/application-claims';
+import {
   RegisterUserSubjectUseCase,
   RegisterCredentialReferenceUseCase,
   CreatePresentationSessionUseCase,
   CompletePresentationSessionUseCase,
-} from '@ultima-forma/application-consent';
-import type { WalletRepositoryPort } from '@ultima-forma/domain-consent';
-import type {
-  ConsentPolicyRepositoryPort,
-  ClaimRegistryRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/application-wallet';
 import type { WebhookDispatcherPort } from '@ultima-forma/domain-webhook';
 import {
   DRIZZLE,
@@ -77,34 +78,54 @@ import {
   PartnerSignatureGuard,
   VALIDATE_PARTNER_SIGNATURE,
   REGISTER_PARTNER_API_USAGE,
+  FEATURE_FLAG_SERVICE,
 } from '../guards/partner-signature.guard';
+import { FeatureFlagService } from '@ultima-forma/infrastructure-feature-flags';
+import {
+  PARTNER_REPOSITORY,
+  PARTNER_SECURITY_REPOSITORY,
+  CONSENT_REPOSITORY,
+  CONSENT_POLICY_REPOSITORY,
+  REVOKE_CONSENT,
+  GET_CONSENT_DETAIL,
+  GET_CONSENT_HISTORY,
+  VALIDATE_CONSENT_POLICY,
+  CLAIM_REGISTRY_REPOSITORY,
+  REGISTER_CLAIM_DEFINITION,
+  LIST_CLAIM_DEFINITIONS,
+  VALIDATE_CLAIMS_AGAINST_REGISTRY,
+  ASSIGN_CLAIM_PERMISSION,
+  PARTNER_DASHBOARD_REPOSITORY,
+  GET_PARTNER_DASHBOARD,
+  LIST_PARTNER_REQUESTS,
+  MANAGE_PARTNER_WEBHOOKS,
+  WALLET_REPOSITORY,
+  REGISTER_USER_SUBJECT,
+  REGISTER_CREDENTIAL_REFERENCE,
+  CREATE_PRESENTATION_SESSION,
+  COMPLETE_PRESENTATION_SESSION,
+  AUDIT_REPOSITORY,
+  BILLABLE_EVENT_REPOSITORY,
+  WEBHOOK_SUBSCRIPTION_REPOSITORY,
+  WEBHOOK_DELIVERY_REPOSITORY,
+} from './tokens';
 
-export const PARTNER_REPOSITORY = 'PARTNER_REPOSITORY';
-export const PARTNER_SECURITY_REPOSITORY = 'PARTNER_SECURITY_REPOSITORY';
-export const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
-export const CONSENT_POLICY_REPOSITORY = 'CONSENT_POLICY_REPOSITORY';
-export const REVOKE_CONSENT = 'REVOKE_CONSENT';
-export const GET_CONSENT_DETAIL = 'GET_CONSENT_DETAIL';
-export const GET_CONSENT_HISTORY = 'GET_CONSENT_HISTORY';
-export const VALIDATE_CONSENT_POLICY = 'VALIDATE_CONSENT_POLICY';
-export const CLAIM_REGISTRY_REPOSITORY = 'CLAIM_REGISTRY_REPOSITORY';
-export const REGISTER_CLAIM_DEFINITION = 'REGISTER_CLAIM_DEFINITION';
-export const LIST_CLAIM_DEFINITIONS = 'LIST_CLAIM_DEFINITIONS';
-export const VALIDATE_CLAIMS_AGAINST_REGISTRY = 'VALIDATE_CLAIMS_AGAINST_REGISTRY';
-export const ASSIGN_CLAIM_PERMISSION = 'ASSIGN_CLAIM_PERMISSION';
-export const PARTNER_DASHBOARD_REPOSITORY = 'PARTNER_DASHBOARD_REPOSITORY';
-export const GET_PARTNER_DASHBOARD = 'GET_PARTNER_DASHBOARD';
-export const LIST_PARTNER_REQUESTS = 'LIST_PARTNER_REQUESTS';
-export const MANAGE_PARTNER_WEBHOOKS = 'MANAGE_PARTNER_WEBHOOKS';
-export const WALLET_REPOSITORY = 'WALLET_REPOSITORY';
-export const REGISTER_USER_SUBJECT = 'REGISTER_USER_SUBJECT';
-export const REGISTER_CREDENTIAL_REFERENCE = 'REGISTER_CREDENTIAL_REFERENCE';
-export const CREATE_PRESENTATION_SESSION = 'CREATE_PRESENTATION_SESSION';
-export const COMPLETE_PRESENTATION_SESSION = 'COMPLETE_PRESENTATION_SESSION';
-export const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
-export const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
-export const WEBHOOK_SUBSCRIPTION_REPOSITORY = 'WEBHOOK_SUBSCRIPTION_REPOSITORY';
-export const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
+export {
+  REVOKE_CONSENT,
+  GET_CONSENT_DETAIL,
+  GET_CONSENT_HISTORY,
+  REGISTER_CLAIM_DEFINITION,
+  LIST_CLAIM_DEFINITIONS,
+  ASSIGN_CLAIM_PERMISSION,
+  REGISTER_USER_SUBJECT,
+  REGISTER_CREDENTIAL_REFERENCE,
+  CREATE_PRESENTATION_SESSION,
+  COMPLETE_PRESENTATION_SESSION,
+  WALLET_REPOSITORY,
+  GET_PARTNER_DASHBOARD,
+  LIST_PARTNER_REQUESTS,
+  MANAGE_PARTNER_WEBHOOKS,
+} from './tokens';
 
 @Module({
   imports: [],
@@ -206,6 +227,10 @@ export const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
       useFactory: (securityRepo: PartnerSecurityRepositoryPort) =>
         new RegisterPartnerApiUsageUseCase(securityRepo),
       inject: [PARTNER_SECURITY_REPOSITORY],
+    },
+    {
+      provide: FEATURE_FLAG_SERVICE,
+      useFactory: () => new FeatureFlagService(),
     },
     PartnerSignatureGuard,
     {

@@ -9,10 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApproveConsentUseCase,
-  GetConsentDetailUseCase,
-  GetConsentHistoryUseCase,
   RejectConsentUseCase,
-  RevokeConsentUseCase,
 } from '@ultima-forma/application-consent';
 import type { ConsentStatus } from '@ultima-forma/domain-consent';
 import { SkipPartnerAuth } from '../guards/skip-partner-auth.decorator';
@@ -20,7 +17,7 @@ import {
   REVOKE_CONSENT,
   GET_CONSENT_DETAIL,
   GET_CONSENT_HISTORY,
-} from './v1.module';
+} from './tokens';
 
 @SkipPartnerAuth()
 @Controller('v1/consents')
@@ -29,11 +26,11 @@ export class ConsentsController {
     private readonly approveConsent: ApproveConsentUseCase,
     private readonly rejectConsent: RejectConsentUseCase,
     @Inject(REVOKE_CONSENT)
-    private readonly revokeConsentUseCase: RevokeConsentUseCase,
+    private readonly revokeConsentUseCase: any,
     @Inject(GET_CONSENT_DETAIL)
-    private readonly getConsentDetailUseCase: GetConsentDetailUseCase,
+    private readonly getConsentDetailUseCase: any,
     @Inject(GET_CONSENT_HISTORY)
-    private readonly getConsentHistoryUseCase: GetConsentHistoryUseCase
+    private readonly getConsentHistoryUseCase: any
   ) {}
 
   @Post(':id/approve')
@@ -101,7 +98,7 @@ export class ConsentsController {
       offset: offset ? parseInt(offset, 10) : undefined,
     });
     return {
-      items: result.items.map((item) => ({
+      items: result.items.map((item: any) => ({
         consent: {
           id: item.consent.id,
           status: item.consent.status,

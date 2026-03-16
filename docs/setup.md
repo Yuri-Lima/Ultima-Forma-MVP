@@ -1,58 +1,81 @@
 # Setup
 
-## Pré-requisitos
+## Pre-requisitos
 
-| Ferramenta | Versão mínima |
+| Ferramenta | Versao minima |
 |------------|---------------|
 | Node.js | 20+ |
 | pnpm | 9+ |
-| Docker | Qualquer versão recente |
-| Xcode (iOS) | Última estável |
-| Android Studio (Android) | Última estável |
+| Docker | Qualquer versao recente |
+| Xcode (iOS) | Ultima estavel |
+| Android Studio (Android) | Ultima estavel |
 
-## Instalação passo a passo
+## Instalacao passo a passo
 
-### 1. Clone e dependências
+### 1. Clone e dependencias
 
 ```bash
 cd Ultima-Forma-MVP
 pnpm install
 ```
 
-### 2. Variáveis de ambiente
+### 2. Variaveis de ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-Edite `.env` se necessário. Valores padrão:
+Edite `.env` se necessario. Variaveis:
 
-| Variável | Padrão | Descrição |
+| Variavel | Padrao | Descricao |
 |----------|--------|-----------|
-| DATABASE_URL | postgresql://postgres:YOUR_PASSWORD@localhost:55432/ultima_forma | Conexão PostgreSQL |
-| API_GATEWAY_PORT | 3333 | Porta do api-gateway |
-| ORCHESTRATION_API_PORT | 3334 | Porta do orchestration-api |
-| NODE_ENV | development | Ambiente |
-| USER_APP_URL | http://localhost:8081 | URL usada pelo api-gateway para gerar consentUrl |
-| EXPO_PUBLIC_API_URL | http://localhost:3333 | URL da API injetada no user-app (Expo) |
-| INTERNAL_API_KEY | *(opcional)* | Quando definida, /internal/* exige header X-API-Key; ops-console usa VITE_INTERNAL_API_KEY |
-| RATE_LIMIT_TTL | 60000 | *(opcional)* Janela em ms para rate limit (api-gateway) |
-| RATE_LIMIT_LIMIT | 100 | *(opcional)* Requisições máx. por janela (api-gateway) |
-| CREDENTIAL_ENCRYPTION_KEY | *(opcional)* | Chave AES-256-GCM (32 bytes hex) para cifrar secrets de integração. Gerar com: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
-| PARTNER_AUTH_ENABLED | false | *(opcional)* Quando `true`, endpoints `/v1/*` exigem assinatura HMAC via headers `X-Partner-Id`, `X-Timestamp`, `X-Signature` |
-| PARTNER_AUTH_TIMESTAMP_TOLERANCE_MS | 300000 | *(opcional)* Tolerância de timestamp para assinatura HMAC (padrão: 5 min) |
+| `DATABASE_URL` | postgresql://postgres:YOUR_PASSWORD@localhost:55432/ultima_forma | Conexao PostgreSQL |
+| `API_GATEWAY_PORT` | 3333 | Porta do api-gateway |
+| `ORCHESTRATION_API_PORT` | 3334 | Porta do orchestration-api |
+| `NODE_ENV` | development | Ambiente (`development`, `staging`, `production`) |
+| `USER_APP_URL` | http://localhost:8081 | URL usada pelo api-gateway para gerar consentUrl |
+| `EXPO_PUBLIC_API_URL` | http://localhost:3333 | URL da API injetada no user-app (Expo) |
+| `INTERNAL_API_KEY` | *(opcional em dev)* | Quando definida, /internal/* exige header X-API-Key. **Obrigatoria em production** |
+| `RATE_LIMIT_TTL` | 60000 | Janela em ms para rate limit (api-gateway) |
+| `RATE_LIMIT_LIMIT` | 100 | Requisicoes max por janela (api-gateway) |
+| `CREDENTIAL_ENCRYPTION_KEY` | *(opcional em dev)* | Chave AES-256-GCM (32 bytes hex). **Obrigatoria em production**. Gerar com: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `PARTNER_SIGNATURE_TTL` | 300000 | Tolerancia de timestamp para assinatura HMAC em ms (5 min) |
+| `FF_PARTNER_AUTH` | false | Feature flag: autenticacao HMAC para parceiros |
+| `FF_CLAIMS_VALIDATION` | false | Feature flag: validacao de claims no registry |
+| `FF_WALLET_PRESENTATIONS` | false | Feature flag: endpoints de presentation sessions |
+
+Em **production**, `CREDENTIAL_ENCRYPTION_KEY` e `INTERNAL_API_KEY` sao obrigatorias e `DATABASE_URL` nao pode apontar para localhost. A validacao Zod no startup impede o boot se as variaveis estiverem invalidas.
 
 ### 3. Banco de dados
 
 ```bash
-pnpm db:up      # Sobe PostgreSQL
-pnpm db:migrate # Aplica migrations
-pnpm db:seed    # Cria tenant e partner de demonstração (IDs fixos)
+pnpm db:up           # Sobe PostgreSQL
+pnpm db:migrate:safe # Aplica migrations com logging estruturado
+pnpm db:seed         # Cria tenant e partner de demonstracao (IDs fixos)
 ```
 
-Após o seed, use os IDs para testar os endpoints; veja `docs/development-guide.md` (seção "Testar endpoints").
+Scripts adicionais de seed:
 
-### 4. Verificação
+| Comando | Descricao |
+|---------|-----------|
+| `pnpm db:seed` | Seed padrao (dev) |
+| `pnpm db:seed:dev` | Fixtures de desenvolvimento com IDs fixos |
+| `pnpm db:seed:prod` | Bootstrap de producao (idempotente, sem IDs fixos) |
+| `pnpm db:migrate:safe` | Migrations com logging JSON estruturado |
+
+Apos o seed, use os IDs para testar os endpoints; veja `docs/development-guide.md`.
+
+### 4. Build info (opcional)
+
+Para gerar metadados de build (usados pelo endpoint `/version`):
+
+```bash
+pnpm build:info
+```
+
+Isso cria `build-info.json` na raiz com versao, git commit e timestamp. O comando `dev:all` ja executa isso automaticamente.
+
+### 5. Verificacao
 
 ```bash
 pnpm nx run api-gateway:build
@@ -66,13 +89,15 @@ pnpm nx run user-app:export
 - [ ] `pnpm install` sem erros
 - [ ] `pnpm nx graph` abre o grafo
 - [ ] `pnpm db:up` sobe o container
-- [ ] `pnpm db:migrate` aplica migrations
+- [ ] `pnpm db:migrate:safe` aplica migrations com logs estruturados
 - [ ] `pnpm dev:gateway` sobe na porta 3333
 - [ ] `curl http://localhost:3333/health` retorna `{"status":"ok",...}`
-- [ ] `pnpm db:seed` cria tenant e partner (IDs: `21a30170-166d-44e3-ac09-b640768dc1c7`, `c2989a86-ca61-40f2-9d8a-e6250bde4f9d`)
+- [ ] `curl http://localhost:3333/version` retorna versao e git commit
+- [ ] `curl http://localhost:3333/ready` retorna `{"ready":true,...}`
+- [ ] `pnpm db:seed` cria tenant e partner
 
-## Configuração opcional
+## Configuracao opcional
 
 - **IDE:** Nx Console para VSCode ou JetBrains
-- **Debug:** `.vscode/launch.json` já inclui configurações para Nest
+- **Debug:** `.vscode/launch.json` ja inclui configuracoes para Nest
 - **Prettier/ESLint:** Configurados no workspace

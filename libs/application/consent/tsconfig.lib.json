@@ -7,14 +7,17 @@
     "paths": {
       "@ultima-forma/shared-config": ["libs/shared/config/src/index.ts"],
       "@ultima-forma/shared-logger": ["libs/shared/logger/src/index.ts"],
-      "@ultima-forma/shared-errors": ["libs/shared/errors/src/index.ts"],
+      "@ultima-forma/shared-errors": ["dist/libs/shared/errors/src/index.d.ts"],
       "@ultima-forma/infrastructure-db": ["libs/infrastructure/db/src/index.ts"],
       "@ultima-forma/infrastructure-drizzle": ["libs/infrastructure/drizzle/src/index.ts"],
       "@ultima-forma/domain-partner": ["libs/domain/partner/src/index.ts"],
       "@ultima-forma/application-partner": ["libs/application/partner/src/index.ts"],
-      "@ultima-forma/domain-consent": ["libs/domain/consent/src/index.ts"],
+      "@ultima-forma/domain-consent": ["dist/libs/domain/consent/src/index.d.ts"],
       "@ultima-forma/domain-audit": ["dist/libs/domain/audit/src/index.d.ts"],
-      "@ultima-forma/application-consent": ["libs/application/consent/src/index.ts"]
+      "@ultima-forma/domain-claims": ["dist/libs/domain/claims/src/index.d.ts"],
+      "@ultima-forma/domain-wallet": ["dist/libs/domain/wallet/src/index.d.ts"],
+      "@ultima-forma/application-claims": ["dist/libs/application/claims/src/index.d.ts"],
+      "@ultima-forma/application-wallet": ["dist/libs/application/wallet/src/index.d.ts"]
     }
   },
   "include": ["src/**/*.ts"],

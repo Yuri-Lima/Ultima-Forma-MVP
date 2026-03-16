@@ -13,5 +13,9 @@ module.exports = {
       '<rootDir>/../../domain/partner/src/index.ts',
     '^@ultima-forma/domain-consent$':
       '<rootDir>/../../domain/consent/src/index.ts',
+    '^@ultima-forma/domain-claims$':
+      '<rootDir>/../../domain/claims/src/index.ts',
+    '^@ultima-forma/domain-wallet$':
+      '<rootDir>/../../domain/wallet/src/index.ts',
   },
 };

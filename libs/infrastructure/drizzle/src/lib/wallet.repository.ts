@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type {
   CreateCredentialReferenceInput,
   CreatePresentationSessionInput,
@@ -7,7 +7,7 @@ import type {
   PresentationSession,
   UserSubject,
   WalletRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-wallet';
 import {
   credentialReferences,
   presentationSessions,
@@ -35,6 +35,23 @@ export class WalletRepository implements WalletRepositoryPort {
       .select()
       .from(userSubjects)
       .where(eq(userSubjects.id, id))
+      .limit(1);
+    return rows[0] ? this.toSubject(rows[0]) : null;
+  }
+
+  async findByTenantAndExternalRef(
+    tenantId: string,
+    externalSubjectRef: string
+  ): Promise<UserSubject | null> {
+    const rows = await this.db
+      .select()
+      .from(userSubjects)
+      .where(
+        and(
+          eq(userSubjects.tenantId, tenantId),
+          eq(userSubjects.externalSubjectRef, externalSubjectRef)
+        )
+      )
       .limit(1);
     return rows[0] ? this.toSubject(rows[0]) : null;
   }

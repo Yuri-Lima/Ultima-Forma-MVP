@@ -34,7 +34,19 @@
       "@ultima-forma/application-consent": [
         "libs/application/consent/src/index.ts"
       ],
-      "@ultima-forma/shared-i18n": ["libs/shared/i18n/src/index.ts"]
+      "@ultima-forma/shared-i18n": ["libs/shared/i18n/src/index.ts"],
+      "@ultima-forma/shared-health": ["libs/shared/health/src/index.ts"],
+      "@ultima-forma/infrastructure-feature-flags": [
+        "libs/infrastructure/feature-flags/src/index.ts"
+      ],
+      "@ultima-forma/domain-claims": ["libs/domain/claims/src/index.ts"],
+      "@ultima-forma/application-claims": [
+        "libs/application/claims/src/index.ts"
+      ],
+      "@ultima-forma/domain-wallet": ["libs/domain/wallet/src/index.ts"],
+      "@ultima-forma/application-wallet": [
+        "libs/application/wallet/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

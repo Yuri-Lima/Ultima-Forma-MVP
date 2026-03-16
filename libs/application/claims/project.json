@@ -1,0 +1,27 @@
+{
+  "name": "app-claims",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/claims/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/application/claims",
+        "main": "libs/application/claims/src/index.ts",
+        "tsConfig": "libs/application/claims/tsconfig.lib.json",
+        "assets": ["libs/application/claims/*.md"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/claims/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

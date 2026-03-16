@@ -11,18 +11,18 @@ import {
   AssignClaimPermissionUseCase,
   ListClaimDefinitionsUseCase,
   RegisterClaimDefinitionUseCase,
-} from '@ultima-forma/application-consent';
+} from '@ultima-forma/application-claims';
 import type {
   ClaimPermissionType,
   SensitivityLevel,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-claims';
 import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 import { UseGuards } from '@nestjs/common';
 import {
   REGISTER_CLAIM_DEFINITION,
   LIST_CLAIM_DEFINITIONS,
   ASSIGN_CLAIM_PERMISSION,
-} from './v1.module';
+} from './tokens';
 
 @UseGuards(PartnerSignatureGuard)
 @Controller('v1/claims')

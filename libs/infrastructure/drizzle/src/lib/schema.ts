@@ -87,6 +87,7 @@ export const dataRequests = core.table('data_requests', {
   tenantId: uuid('tenant_id')
     .notNull()
     .references(() => tenants.id),
+  userSubjectId: uuid('user_subject_id').references(() => userSubjects.id),
   status: varchar('status', { length: 50 }).notNull().default('pending'),
   purpose: varchar('purpose', { length: 500 }).notNull(),
   expiresAt: timestamp('expires_at').notNull(),

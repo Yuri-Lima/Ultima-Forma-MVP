@@ -8,7 +8,7 @@ import type {
   CreateClaimDefinitionInput,
   CreateClaimVersionInput,
   ListClaimsFilters,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-claims';
 import {
   claimDefinitions,
   claimDefinitionVersions,

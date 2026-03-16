@@ -3,7 +3,7 @@ import type {
   ClaimDefinition,
   ClaimRegistryRepositoryPort,
   CreateClaimDefinitionInput,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-claims';
 
 export class RegisterClaimDefinitionUseCase {
   constructor(private readonly claimRepo: ClaimRegistryRepositoryPort) {}

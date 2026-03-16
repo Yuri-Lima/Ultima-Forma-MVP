@@ -2,7 +2,7 @@ import type {
   CreateUserSubjectInput,
   UserSubject,
   WalletRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-wallet';
 
 export class RegisterUserSubjectUseCase {
   constructor(private readonly walletRepo: WalletRepositoryPort) {}

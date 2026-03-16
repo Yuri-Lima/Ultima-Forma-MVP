@@ -2,7 +2,7 @@ import type {
   ClaimDefinition,
   ClaimRegistryRepositoryPort,
   ListClaimsFilters,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-claims';
 
 export class ListClaimDefinitionsUseCase {
   constructor(private readonly claimRepo: ClaimRegistryRepositoryPort) {}

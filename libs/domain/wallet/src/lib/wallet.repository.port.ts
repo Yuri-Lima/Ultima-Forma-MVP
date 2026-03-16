@@ -10,6 +10,10 @@ import type {
 export interface WalletRepositoryPort {
   createUserSubject(input: CreateUserSubjectInput): Promise<UserSubject>;
   findUserSubjectById(id: string): Promise<UserSubject | null>;
+  findByTenantAndExternalRef(
+    tenantId: string,
+    externalSubjectRef: string
+  ): Promise<UserSubject | null>;
   createCredentialReference(
     input: CreateCredentialReferenceInput
   ): Promise<CredentialReference>;

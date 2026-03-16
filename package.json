@@ -9,6 +9,10 @@
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts",
+    "db:seed:dev": "tsx scripts/seed-dev.ts",
+    "db:seed:prod": "tsx scripts/seed-prod.ts",
+    "db:migrate:safe": "tsx scripts/migrate-safe.ts",
+    "build:info": "tsx scripts/generate-build-info.ts",
     "test:api": "bash scripts/test-endpoints.sh",
     "i18n:extract": "pnpm exec i18next --config i18next-parser.config.js",
     "dev:gateway": "nx serve api-gateway",
@@ -19,7 +23,7 @@
     "dev:user-app:tunnel": "nx run user-app:start -- --tunnel",
     "dev:partner-portal": "nx serve partner-portal",
     "dev:ops-console": "nx serve ops-console",
-    "dev:all": "pnpm db:migrate && pnpm db:seed && pnpm i18n:extract && nx run-many -t serve -p api-gateway,orchestration-api,user-app,partner-portal,ops-console --parallel"
+    "dev:all": "pnpm build:info && pnpm db:migrate:safe && pnpm db:seed && pnpm i18n:extract && nx run-many -t serve -p api-gateway,orchestration-api,user-app,partner-portal,ops-console --parallel"
   },
   "private": true,
   "devDependencies": {
@@ -119,7 +123,8 @@
     "react-native-web": "~0.21.0",
     "react-router-dom": "^7.13.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "zod": "^4.3.6"
   },
   "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

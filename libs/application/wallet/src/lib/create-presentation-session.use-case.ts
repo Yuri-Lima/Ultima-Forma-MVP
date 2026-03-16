@@ -1,10 +1,10 @@
 import { AppError } from '@ultima-forma/shared-errors';
 import type {
-  ConsentRepositoryPort,
   CreatePresentationSessionInput,
   PresentationSession,
   WalletRepositoryPort,
-} from '@ultima-forma/domain-consent';
+} from '@ultima-forma/domain-wallet';
+import type { ConsentRepositoryPort } from '@ultima-forma/domain-consent';
 
 export class CreatePresentationSessionUseCase {
   constructor(

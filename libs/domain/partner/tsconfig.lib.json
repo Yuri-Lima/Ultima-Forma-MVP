@@ -3,7 +3,16 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@ultima-forma/domain-consent": ["dist/libs/domain/consent/src/index.d.ts"],
+      "@ultima-forma/domain-claims": ["dist/libs/domain/claims/src/index.d.ts"],
+      "@ultima-forma/domain-wallet": ["dist/libs/domain/wallet/src/index.d.ts"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
 }
