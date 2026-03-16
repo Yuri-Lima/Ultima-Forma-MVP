@@ -37,7 +37,8 @@ describe('RotateIntegrationCredentialUseCase', () => {
 
     expect(result.secret).toBe('new-secret-123');
     expect(mockRepo.rotateIntegrationCredential).toHaveBeenCalledWith(
-      'partner-id'
+      'partner-id',
+      undefined
     );
   });
 

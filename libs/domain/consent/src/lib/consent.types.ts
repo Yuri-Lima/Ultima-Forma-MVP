@@ -1,6 +1,6 @@
 export type RequestStatus = 'pending' | 'expired' | 'completed' | 'rejected';
 
-export type ConsentStatus = 'pending' | 'approved' | 'rejected';
+export type ConsentStatus = 'pending' | 'approved' | 'rejected' | 'revoked';
 
 export type TrustLevel = 'low' | 'medium' | 'high' | 'verified';
 
@@ -83,4 +83,44 @@ export interface ListDataRequestsFilters {
 export interface ListDataRequestsPagination {
   limit?: number;
   offset?: number;
+}
+
+export interface ConsentPolicy {
+  id: string;
+  tenantId: string;
+  name: string;
+  maxDurationHours: number;
+  allowedClaims: string[];
+  jurisdiction: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ConsentRevocation {
+  id: string;
+  consentId: string;
+  reason: string | null;
+  revokedBy: string;
+  createdAt: Date;
+}
+
+export interface ConsentWithDetails {
+  consent: Consent;
+  dataRequest: DataRequest;
+  claims: string[];
+  consumerName: string;
+  revocation?: ConsentRevocation;
+}
+
+export interface ListConsentsFilters {
+  tenantId?: string;
+  status?: ConsentStatus;
+}
+
+export interface CreateConsentPolicyInput {
+  tenantId: string;
+  name: string;
+  maxDurationHours: number;
+  allowedClaims: string[];
+  jurisdiction?: string;
 }

@@ -2,6 +2,8 @@
 
 ## Visão geral
 
+### Fase 1 – MVP Foundation (Sprints 0–6)
+
 | Sprint | Objetivo principal | Status |
 |--------|--------------------|--------|
 | 0 | Foundation e base executável | Concluído |
@@ -13,6 +15,19 @@
 | 5 | Atualização cadastral e webhooks básicos | Concluído |
 | 5.1 | Sprint 5 – Production-Grade MVP Review | Concluído |
 | 6 | Hardening do MVP | Concluído |
+
+### Fase 2 – Production Readiness (MVP 2.0–2.5)
+
+| Versão | Objetivo principal | Status |
+|--------|--------------------|--------|
+| 2.0 | Partner API Security | Concluído |
+| 2.1 | Consent Governance | Concluído |
+| 2.2 | Claims Registry | Concluído |
+| 2.3 | Partner Portal Expansion | Concluído |
+| 2.4 | Observability | Concluído |
+| 2.5 | Wallet Readiness | Concluído |
+
+---
 
 ## Sprint 0 – Foundation (concluído)
 
@@ -69,73 +84,106 @@
 
 ## Sprint 4.1 – Production-Grade MVP Review (concluído)
 
-- **orchestration-api**
-  - CORS habilitado (`enableCors({ origin: true })`) para requisições do ops-console
-  - ValidationPipe global com whitelist e transform
-  - DTOs de query com class-validator: ListRequestsQueryDto, ListAuditEventsQueryDto (limit 1–100, validação de UUIDs e enums)
-  - InternalApiKeyGuard: proteção por `X-API-Key` quando `INTERNAL_API_KEY` está definido (opcional em dev)
-- **ApproveConsentUseCase**: checagem defensiva — lança AppError se `dataRequest` for null (evita FK violation)
-- **Audit/Billable repositories**: uso de AppError com códigos `AUDIT_APPEND_FAILED` e `BILLABLE_APPEND_FAILED` em vez de Error genérico
-- **ops-console**
-  - Tratamento de erros: checagem `res.ok`, estado de erro e feedback ao usuário (sem listas vazias silenciosas)
-  - Suporte a `VITE_INTERNAL_API_KEY` para enviar X-API-Key em chamadas internas
-  - Barrel `components/index.ts` para resolução de módulos
-- **Banco de dados**: migration 0004 com índices em audit_events (event_type, aggregate_id, created_at) e billable_events (event_type, tenant_id, data_request_id, created_at)
-- **ops-console E2E**: expectativa atualizada de "Welcome" para "Data Requests"
+- **orchestration-api**: CORS, ValidationPipe global, DTOs com class-validator, InternalApiKeyGuard
+- **ApproveConsentUseCase**: checagem defensiva de dataRequest
+- **Audit/Billable repositories**: AppError com códigos específicos
+- **ops-console**: tratamento de erros, suporte a VITE_INTERNAL_API_KEY, barrel exports
+- **Banco de dados**: migration 0004 com índices em audit/billable
 - **.env.example**: documentação de INTERNAL_API_KEY
 
 ## Sprint 5 – Atualização cadastral (concluído)
 
 - **Lib domain-webhook**: ProfileChangeEvent, UpdateNotification, WebhookSubscription, WebhookDelivery, ports
-- **Schema**: webhook_subscriptions, webhook_deliveries (migration 0005)
+- **Schema**: webhook_subscriptions, webhook_deliveries (migration 0004_mean_romulus); índices em migration 0005
 - **Infrastructure**: WebhookSubscriptionRepository, WebhookDeliveryRepository, WebhookDispatcher (HMAC signing, retry backoff 1–16min)
-- **PartnerRepository**: findIssuerById, updateIssuer, updateConsumer
-- **Application**: UpdateIssuerUseCase, UpdateConsumerUseCase (audit issuer_updated/consumer_updated + webhook dispatch)
+- **Application**: UpdateIssuerUseCase, UpdateConsumerUseCase (audit + webhook dispatch)
 - **api-gateway**: PATCH /v1/issuers/:id, PATCH /v1/consumers/:id
 - **orchestration-api**: GET /internal/webhook-deliveries, WebhookRetryJob (cron a cada minuto)
-- **ops-console**: rotas /profile-updates e /webhooks (ProfileUpdateList, WebhookDeliveryList)
+- **ops-console**: rotas /profile-updates e /webhooks
 
 ## Sprint 5.1 – Production-Grade MVP Review (concluído)
 
-- **api-gateway**
-  - ParseUUIDPipe para PATCH /v1/issuers/:id e PATCH /v1/consumers/:id — IDs inválidos retornam 400 Bad Request
-  - UpdateIssuerDto/UpdateConsumerDto: validador customizado exige ao menos um campo (name, status ou scopes); corpo vazio `{}` retorna erro de validação
-  - ValidationPipe global: adicionado `transform: true` para coerção de tipos (ex.: limit/offset como números)
-- **Repositories**
-  - PartnerRepository, WebhookSubscriptionRepository, WebhookDeliveryRepository: uso de AppError com códigos específicos em vez de Error genérico (ISSUER_UPDATE_FAILED, CONSUMER_UPDATE_FAILED, WEBHOOK_SUBSCRIPTION_CREATE_FAILED, WEBHOOK_DELIVERY_CREATE_FAILED)
-- **WebhookDispatcher**
-  - Timeout de 30s (AbortController) no fetch — endpoints lentos ou travados não bloqueiam o retry job
-- **WebhookRetryJob**
-  - Log de erros no catch com shared-logger (deliveryId, mensagem) — observabilidade quando retryDelivery lança exceção
-- **Banco de dados**
-  - Migration 0005: índices em webhook_deliveries (status, subscription_id, next_retry_at, created_at)
-- **ops-console E2E**: smoke tests para /profile-updates e /webhooks
+- ParseUUIDPipe, DTOs com validação, ValidationPipe com transform
+- AppError com códigos específicos nos repositories
+- WebhookDispatcher com timeout de 30s
+- WebhookRetryJob com logging de erros
+- Migration 0005 com índices em webhook_deliveries
 
 ## Sprint 6 – Hardening (concluído)
 
-- **Scaffolding**
-  - Remoção de nx-welcome.tsx (partner-portal, ops-console)
-  - api-gateway-e2e e orchestration-api-e2e: testes de /health em vez de /api; portas 3333/3334
-  - partner-portal-e2e: expectativa corrigida para "Partner Portal"
-- **Seed e fixtures**
-  - scripts/fixtures.ts com SEED_TENANT_ID, SEED_PARTNER_ID, SEED_CONSUMER_ID, SEED_ISSUER_ID
-  - Seed estendido com issuer (Demo Issuer)
-  - test-endpoints.sh: exemplo PATCH /v1/issuers/:id
-- **Correlation ID**
-  - Middleware em api-gateway e orchestration-api: lê/propaga X-Correlation-ID ou X-Request-ID, gera UUID se ausente
-- **Rate limit**
-  - @nestjs/throttler em api-gateway: 100 req/min por IP (RATE_LIMIT_TTL, RATE_LIMIT_LIMIT)
-  - /health isento via @SkipThrottle()
-- **Documentação**
-  - docs/api-endpoints.md: todos os endpoints (api-gateway, orchestration-api) com método, path, body, resposta, idempotency
-- **E2E**
-  - api-gateway-e2e: smoke PATCH /v1/issuers/:id
+- Scaffolding cleanup, seed estendido, test-endpoints.sh
+- Correlation ID middleware (api-gateway e orchestration-api)
+- Rate limit (@nestjs/throttler, 100 req/min)
+- Documentação completa de API endpoints
+- E2E smoke tests
+
+---
+
+## MVP 2.0 – Partner API Security (concluído)
+
+- **Schema**: migration 0006 — `encrypted_secret` em `integration_credentials`, tabelas `partner_api_nonces` e `partner_api_usage`
+- **Domain (domain-partner)**: tipos `PartnerApiNonce`, `PartnerApiUsage`; port `PartnerSecurityRepositoryPort`
+- **Application (application-partner)**: `ValidatePartnerSignatureUseCase` (HMAC SHA-256, timing-safe compare, replay protection), `RegisterPartnerApiUsageUseCase`
+- **Infrastructure (infrastructure-drizzle)**: `PartnerSecurityRepository`, `crypto.utils.ts` (AES-256-GCM), `PartnerRepository` atualizado
+- **API Gateway**: `PartnerSignatureGuard` com feature flag `PARTNER_AUTH_ENABLED`, `@SkipPartnerAuth()` em endpoints user-facing
+- **Config**: `credentialEncryptionKey`, `partnerAuthEnabled`, `partnerAuthTimestampToleranceMs`
+- **Testes**: 10 testes do ValidatePartnerSignature, 6 testes do crypto.utils
+- **Compatibilidade**: `PARTNER_AUTH_ENABLED=false` por padrão
+
+## MVP 2.1 – Consent Governance (concluído)
+
+- **Schema**: migration 0007 — tabelas `consent_policies` e `consent_revocations`
+- **Domain (domain-consent)**: `ConsentStatus` estendido com `'revoked'`; novos tipos `ConsentPolicy`, `ConsentRevocation`, `ConsentWithDetails`; `ConsentPolicyRepositoryPort`; `ConsentRepositoryPort` estendido com `revokeConsent` e `listConsentsByTenant`
+- **Application (application-consent)**: `RevokeConsentUseCase` (valida estado, cria revocação, audit trail), `GetConsentHistoryUseCase` (paginação por tenant), `GetConsentDetailUseCase`, `ValidateConsentPolicyUseCase` (max_duration_hours, allowed_claims)
+- **Infrastructure**: `ConsentPolicyRepository`, `ConsentRepository` estendido com revogação e listagem
+- **API**: `POST /v1/consents/:id/revoke`, `GET /v1/consents/:id`, `GET /v1/consents/tenant/:tenantId`, `GET /internal/consents`
+- **Audit**: novo evento `consent_revoked`
+- **Testes**: 5 revoke, 5 policy, 3 history = 13 novos testes
+
+## MVP 2.2 – Claims Registry (concluído)
+
+- **Schema**: migration 0008 — tabelas `claim_definitions`, `claim_definition_versions`, `partner_claim_permissions`
+- **Domain (domain-consent)**: tipos `ClaimDefinition`, `ClaimDefinitionVersion`, `ClaimPermission`; `ClaimRegistryRepositoryPort`
+- **Application (application-consent)**: `RegisterClaimDefinitionUseCase`, `ListClaimDefinitionsUseCase`, `ValidateClaimsAgainstRegistryUseCase`, `AssignClaimPermissionUseCase`
+- **Infrastructure**: `ClaimRegistryRepository` com CRUD completo e findClaimsByKeys
+- **API**: `POST /v1/claims`, `GET /v1/claims`, `POST /v1/claims/:id/permissions`
+- **Testes**: 3 register, 4 validate = 7 novos testes
+
+## MVP 2.3 – Partner Portal Expansion (concluído)
+
+- **Domain (domain-partner)**: `PartnerDashboardMetrics`, `WebhookSubscriptionSummary`, `CreateWebhookInput`, `UpdateWebhookInput`; `PartnerDashboardRepositoryPort`
+- **Application (application-partner)**: `GetPartnerDashboardUseCase`, `ListPartnerRequestsUseCase`, `ManagePartnerWebhooksUseCase`
+- **Infrastructure**: `PartnerDashboardRepository` com queries agregadas
+- **API**: `GET /v1/partner/dashboard`, `GET /v1/partner/requests`, `GET /v1/partner/credentials`, `POST /v1/partner/credentials/rotate`, `GET/POST/PATCH /v1/partner/webhooks`
+- **Testes**: 2 dashboard testes
+
+## MVP 2.4 – Observability (concluído)
+
+- **Dependência**: `prom-client` para métricas Prometheus
+- **Shared (shared-logger)**: `metrics.ts` com 8 métricas — `http_requests_total`, `http_request_duration_ms`, `data_requests_created_total`, `consents_approved/rejected/revoked_total`, `webhook_delivery_failed_total`, `partner_auth_failed_total`
+- **API**: `GET /health` enriquecido (uptime, version, status degraded), `GET /ready` (readiness check), `GET /metrics` (Prometheus)
+- **Interceptor**: `MetricsInterceptor` auto-tracks HTTP requests (method, path, status, duration)
+- **Logs**: `correlation-id.middleware.ts` enriquecido com campos estruturados (correlationId, method, path, partnerId)
+
+## MVP 2.5 – Wallet Readiness (concluído)
+
+- **Schema**: migration 0009 — tabelas `user_subjects`, `credential_references`, `presentation_sessions`
+- **Domain (domain-consent)**: tipos `UserSubject`, `CredentialReference`, `PresentationSession`; `WalletRepositoryPort`
+- **Application (application-consent)**: `RegisterUserSubjectUseCase`, `RegisterCredentialReferenceUseCase`, `CreatePresentationSessionUseCase`, `CompletePresentationSessionUseCase`
+- **Infrastructure**: `WalletRepository`
+- **API**: `POST/GET /v1/subjects`, `POST /v1/subjects/:id/credentials`, `POST /v1/presentations`, `POST /v1/presentations/:id/complete`
+- **Testes**: 5 wallet testes (subject, credential, session create/complete, duplicate rejection)
+
+---
 
 ## O que fica fora do MVP
 
 - Microsserviços
 - IA no caminho crítico
-- Wallet completa
+- Wallet completa (DID, VC W3C, ZKP)
 - Marketplace financeiro
 - Next.js como centro da experiência do usuário
 - TypeORM
+- Grafana/alerting pré-configurado
+- JWT/OAuth token-based auth
+- Mutual TLS

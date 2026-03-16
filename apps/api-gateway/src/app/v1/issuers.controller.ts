@@ -5,6 +5,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateIssuerUseCase,
@@ -12,7 +13,9 @@ import {
 } from '@ultima-forma/application-partner';
 import { CreateIssuerDto } from './create-issuer.dto';
 import { UpdateIssuerDto } from './update-issuer.dto';
+import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 
+@UseGuards(PartnerSignatureGuard)
 @Controller('v1/issuers')
 export class IssuersController {
   constructor(

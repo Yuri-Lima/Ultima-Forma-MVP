@@ -21,6 +21,7 @@ import {
   tenants,
 } from './schema';
 import type { DrizzleDB } from './drizzle.module';
+import { encryptSecret } from './crypto.utils';
 
 function hashSecret(secret: string): string {
   return createHash('sha256').update(secret).digest('hex');
@@ -183,7 +184,7 @@ export class PartnerRepository implements PartnerRepositoryPort {
     };
   }
 
-  async rotateIntegrationCredential(partnerId: string): Promise<RotateCredentialResult> {
+  async rotateIntegrationCredential(partnerId: string, encryptionKey?: string): Promise<RotateCredentialResult> {
     const secret = generateSecret();
     const secretHash = hashSecret(secret);
 
@@ -192,12 +193,18 @@ export class PartnerRepository implements PartnerRepositoryPort {
       .set({ status: 'revoked' })
       .where(eq(integrationCredentials.partnerId, partnerId));
 
+    const values: Record<string, unknown> = {
+      partnerId,
+      secretHash,
+    };
+
+    if (encryptionKey) {
+      values['encryptedSecret'] = encryptSecret(secret, encryptionKey);
+    }
+
     const [row] = await this.db
       .insert(integrationCredentials)
-      .values({
-        partnerId,
-        secretHash,
-      })
+      .values(values as typeof integrationCredentials.$inferInsert)
       .returning();
 
     if (!row) throw new Error('Failed to create integration credential');

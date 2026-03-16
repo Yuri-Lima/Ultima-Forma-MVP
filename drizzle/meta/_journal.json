@@ -43,6 +43,34 @@
       "when": 1738886400000,
       "tag": "0005_webhook_deliveries_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773693164225,
+      "tag": "0006_ordinary_genesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1773695301903,
+      "tag": "0007_odd_richard_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1773695698410,
+      "tag": "0008_noisy_lady_ursula",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1773696329744,
+      "tag": "0009_complete_doorman",
+      "breakpoints": true
     }
   ]
 }

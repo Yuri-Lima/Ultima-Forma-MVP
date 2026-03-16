@@ -7,10 +7,11 @@ Guia base para desenvolvedores.
 - [Arquitetura](architecture.md) – Visão do sistema, apps, libs e boundaries
 - [Setup](setup.md) – Instalação e configuração local
 - [Guia de desenvolvimento](development-guide.md) – Workflow e comandos
+- [API Endpoints](api-endpoints.md) – Referência dos endpoints
 - [Convenções](conventions.md) – Nomes, código e estrutura
 - [Glossário](glossary.md) – Termos de domínio e técnicos
 - [Troubleshooting](troubleshooting.md) – Problemas comuns e soluções
-- [Sprints](sprints.md) – Roadmap do MVP
+- [Sprints](sprints.md) – Roadmap completo (Fase 1 e Fase 2)
 
 ## Visão geral
 

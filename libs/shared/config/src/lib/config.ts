@@ -4,6 +4,9 @@ export interface AppConfig {
   databaseUrl: string;
   apiGatewayPort: number;
   orchestrationApiPort: number;
+  credentialEncryptionKey: string;
+  partnerAuthEnabled: boolean;
+  partnerAuthTimestampToleranceMs: number;
 }
 
 export function getConfig(): AppConfig {
@@ -19,6 +22,12 @@ export function getConfig(): AppConfig {
     apiGatewayPort: parseInt(process.env['API_GATEWAY_PORT'] ?? '3333', 10),
     orchestrationApiPort: parseInt(
       process.env['ORCHESTRATION_API_PORT'] ?? '3334',
+      10
+    ),
+    credentialEncryptionKey: process.env['CREDENTIAL_ENCRYPTION_KEY'] ?? '',
+    partnerAuthEnabled: process.env['PARTNER_AUTH_ENABLED'] === 'true',
+    partnerAuthTimestampToleranceMs: parseInt(
+      process.env['PARTNER_AUTH_TIMESTAMP_TOLERANCE_MS'] ?? '300000',
       10
     ),
   };

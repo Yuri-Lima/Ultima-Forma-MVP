@@ -30,6 +30,8 @@ describe('CreateDataRequestUseCase', () => {
       findByIdempotencyKey: jest.fn(),
       findDataRequestResultForConsumer: jest.fn(),
       listDataRequests: jest.fn(),
+      revokeConsent: jest.fn(),
+      listConsentsByTenant: jest.fn(),
     };
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),
@@ -215,6 +217,8 @@ describe('CreateDataRequestUseCase', () => {
       findByIdempotencyKey: jest.fn(),
       findDataRequestResultForConsumer: jest.fn(),
       listDataRequests: jest.fn(),
+      revokeConsent: jest.fn(),
+      listConsentsByTenant: jest.fn(),
     };
     const partnerRepo = {
       findConsumerById: jest.fn().mockResolvedValue({
@@ -278,6 +282,8 @@ describe('CreateDataRequestUseCase', () => {
       findByIdempotencyKey: jest.fn(),
       findDataRequestResultForConsumer: jest.fn(),
       listDataRequests: jest.fn(),
+      revokeConsent: jest.fn(),
+      listConsentsByTenant: jest.fn(),
     };
     const partnerRepo: PartnerRepositoryPort = {
       findPartnerById: jest.fn(),

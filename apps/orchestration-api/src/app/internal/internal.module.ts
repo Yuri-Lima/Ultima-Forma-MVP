@@ -6,6 +6,7 @@ import type {
 } from '@ultima-forma/domain-audit';
 import {
   ApproveConsentUseCase,
+  GetConsentHistoryUseCase,
   RejectConsentUseCase,
 } from '@ultima-forma/application-consent';
 import {
@@ -91,6 +92,12 @@ const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
         auditRepo: AuditRepositoryPort
       ) => new RejectConsentUseCase(repo, auditRepo),
       inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY],
+    },
+    {
+      provide: 'GET_CONSENT_HISTORY',
+      useFactory: (repo: ConsentRepositoryPort) =>
+        new GetConsentHistoryUseCase(repo),
+      inject: [CONSENT_REPOSITORY],
     },
   ],
 })

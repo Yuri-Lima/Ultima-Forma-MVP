@@ -1,13 +1,16 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import type {
   Consent,
   ConsentReceipt,
   ConsentRepositoryPort,
+  ConsentRevocation,
+  ConsentWithDetails,
   CreateDataRequestInput,
   DataRequest,
   DataRequestListItem,
   DataRequestResultForConsumer,
   DataRequestWithDetails,
+  ListConsentsFilters,
   ListDataRequestsFilters,
   ListDataRequestsPagination,
   RequestItem,
@@ -16,6 +19,7 @@ import type {
 } from '@ultima-forma/domain-consent';
 import {
   consentReceipts,
+  consentRevocations,
   consents,
   consumers,
   dataRequests,
@@ -432,6 +436,132 @@ export class ConsentRepository implements ConsentRepositoryPort {
       claim: row.claim,
       createdAt: row.createdAt,
     };
+  }
+
+  async revokeConsent(
+    consentId: string,
+    reason: string | null,
+    revokedBy: string
+  ): Promise<ConsentRevocation> {
+    await this.db
+      .update(consents)
+      .set({ status: 'revoked', updatedAt: new Date() })
+      .where(eq(consents.id, consentId));
+
+    const [row] = await this.db
+      .insert(consentRevocations)
+      .values({ consentId, reason, revokedBy })
+      .returning();
+
+    if (!row) throw new Error('Failed to create consent revocation');
+
+    return {
+      id: row.id,
+      consentId: row.consentId,
+      reason: row.reason,
+      revokedBy: row.revokedBy,
+      createdAt: row.createdAt,
+    };
+  }
+
+  async listConsentsByTenant(
+    tenantId: string,
+    filters?: ListConsentsFilters,
+    pagination?: ListDataRequestsPagination
+  ): Promise<{ items: ConsentWithDetails[]; total: number }> {
+    const conditions: ReturnType<typeof eq>[] = [
+      eq(dataRequests.tenantId, tenantId),
+    ];
+    if (filters?.status) {
+      conditions.push(eq(consents.status, filters.status));
+    }
+    const whereClause = and(...conditions);
+    const limit = pagination?.limit ?? 50;
+    const offset = pagination?.offset ?? 0;
+
+    const countResult = await this.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(consents)
+      .innerJoin(dataRequests, eq(consents.dataRequestId, dataRequests.id))
+      .where(whereClause);
+    const total = countResult[0]?.count ?? 0;
+
+    const rows = await this.db
+      .select({
+        consentId: consents.id,
+        consentStatus: consents.status,
+        consentCreatedAt: consents.createdAt,
+        consentUpdatedAt: consents.updatedAt,
+        requestId: dataRequests.id,
+        consumerId: dataRequests.consumerId,
+        requestTenantId: dataRequests.tenantId,
+        requestStatus: dataRequests.status,
+        purpose: dataRequests.purpose,
+        expiresAt: dataRequests.expiresAt,
+        idempotencyKey: dataRequests.idempotencyKey,
+        requestCreatedAt: dataRequests.createdAt,
+        requestUpdatedAt: dataRequests.updatedAt,
+        consumerName: consumers.name,
+      })
+      .from(consents)
+      .innerJoin(dataRequests, eq(consents.dataRequestId, dataRequests.id))
+      .innerJoin(consumers, eq(dataRequests.consumerId, consumers.id))
+      .where(whereClause)
+      .orderBy(desc(consents.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    const items: ConsentWithDetails[] = [];
+    for (const row of rows) {
+      const itemRows = await this.db
+        .select({ claim: requestItems.claim })
+        .from(requestItems)
+        .where(eq(requestItems.dataRequestId, row.requestId));
+
+      let revocation: ConsentRevocation | undefined;
+      if (row.consentStatus === 'revoked') {
+        const revRows = await this.db
+          .select()
+          .from(consentRevocations)
+          .where(eq(consentRevocations.consentId, row.consentId))
+          .limit(1);
+        if (revRows[0]) {
+          revocation = {
+            id: revRows[0].id,
+            consentId: revRows[0].consentId,
+            reason: revRows[0].reason,
+            revokedBy: revRows[0].revokedBy,
+            createdAt: revRows[0].createdAt,
+          };
+        }
+      }
+
+      items.push({
+        consent: {
+          id: row.consentId,
+          dataRequestId: row.requestId,
+          status: row.consentStatus as Consent['status'],
+          createdAt: row.consentCreatedAt,
+          updatedAt: row.consentUpdatedAt,
+        },
+        dataRequest: {
+          id: row.requestId,
+          consumerId: row.consumerId,
+          tenantId: row.requestTenantId,
+          status: row.requestStatus as DataRequest['status'],
+          purpose: row.purpose,
+          expiresAt: row.expiresAt,
+          idempotencyKey: row.idempotencyKey,
+          createdAt: row.requestCreatedAt,
+          updatedAt: row.requestUpdatedAt,
+        },
+        claims: itemRows.map((r) => r.claim),
+        consumerName: row.consumerName,
+        revocation,
+      });
+    }
+
+    return { items, total };
   }
 
   private toConsent(row: (typeof consents.$inferSelect)): Consent {

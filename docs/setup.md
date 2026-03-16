@@ -29,10 +29,18 @@ Edite `.env` se necessário. Valores padrão:
 
 | Variável | Padrão | Descrição |
 |----------|--------|-----------|
-| DATABASE_URL | postgresql://postgres:postgres@localhost:5432/ultima_forma | Conexão PostgreSQL |
+| DATABASE_URL | postgresql://postgres:YOUR_PASSWORD@localhost:55432/ultima_forma | Conexão PostgreSQL |
 | API_GATEWAY_PORT | 3333 | Porta do api-gateway |
 | ORCHESTRATION_API_PORT | 3334 | Porta do orchestration-api |
 | NODE_ENV | development | Ambiente |
+| USER_APP_URL | http://localhost:8081 | URL usada pelo api-gateway para gerar consentUrl |
+| EXPO_PUBLIC_API_URL | http://localhost:3333 | URL da API injetada no user-app (Expo) |
+| INTERNAL_API_KEY | *(opcional)* | Quando definida, /internal/* exige header X-API-Key; ops-console usa VITE_INTERNAL_API_KEY |
+| RATE_LIMIT_TTL | 60000 | *(opcional)* Janela em ms para rate limit (api-gateway) |
+| RATE_LIMIT_LIMIT | 100 | *(opcional)* Requisições máx. por janela (api-gateway) |
+| CREDENTIAL_ENCRYPTION_KEY | *(opcional)* | Chave AES-256-GCM (32 bytes hex) para cifrar secrets de integração. Gerar com: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| PARTNER_AUTH_ENABLED | false | *(opcional)* Quando `true`, endpoints `/v1/*` exigem assinatura HMAC via headers `X-Partner-Id`, `X-Timestamp`, `X-Signature` |
+| PARTNER_AUTH_TIMESTAMP_TOLERANCE_MS | 300000 | *(opcional)* Tolerância de timestamp para assinatura HMAC (padrão: 5 min) |
 
 ### 3. Banco de dados
 

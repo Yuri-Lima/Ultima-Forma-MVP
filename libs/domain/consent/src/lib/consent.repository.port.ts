@@ -1,9 +1,12 @@
 import type {
   Consent,
   ConsentReceipt,
+  ConsentRevocation,
+  ConsentWithDetails,
   DataRequest,
   DataRequestListItem,
   DataRequestResultForConsumer,
+  ListConsentsFilters,
   ListDataRequestsFilters,
   ListDataRequestsPagination,
   RequestItem,
@@ -42,4 +45,14 @@ export interface ConsentRepositoryPort {
     filters?: ListDataRequestsFilters,
     pagination?: ListDataRequestsPagination
   ): Promise<{ items: DataRequestListItem[]; total: number }>;
+  revokeConsent(
+    consentId: string,
+    reason: string | null,
+    revokedBy: string
+  ): Promise<ConsentRevocation>;
+  listConsentsByTenant(
+    tenantId: string,
+    filters?: ListConsentsFilters,
+    pagination?: ListDataRequestsPagination
+  ): Promise<{ items: ConsentWithDetails[]; total: number }>;
 }

@@ -2,6 +2,7 @@ export type AuditEventType =
   | 'request_created'
   | 'consent_granted'
   | 'consent_rejected'
+  | 'consent_revoked'
   | 'request_expired'
   | 'issuer_updated'
   | 'consumer_updated';

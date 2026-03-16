@@ -40,5 +40,5 @@ export interface PartnerRepositoryPort {
   createConsumer(input: CreateConsumerInput): Promise<Consumer>;
   updateIssuer(id: string, input: UpdateIssuerInput): Promise<Issuer>;
   updateConsumer(id: string, input: UpdateConsumerInput): Promise<Consumer>;
-  rotateIntegrationCredential(partnerId: string): Promise<RotateCredentialResult>;
+  rotateIntegrationCredential(partnerId: string, encryptionKey?: string): Promise<RotateCredentialResult>;
 }

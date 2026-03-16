@@ -1,7 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RotateIntegrationCredentialUseCase } from '@ultima-forma/application-partner';
 import { RotateCredentialDto } from './rotate-credential.dto';
+import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 
+@UseGuards(PartnerSignatureGuard)
 @Controller('v1/integration-credentials')
 export class IntegrationCredentialsController {
   constructor(

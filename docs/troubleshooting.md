@@ -72,7 +72,7 @@ Ver seção "Database não conecta" acima. O Drizzle usa `DATABASE_URL` para con
 
 **Soluções:**
 
-1. Verificar se a porta 5432 está livre: `lsof -i :5432`
+1. Verificar se a porta 55432 está livre: `lsof -i :55432`
 2. Iniciar o Docker Desktop (macOS/Windows)
 3. Se já existir Postgres local, usar outro host/porta no `docker-compose.yml` ou no `DATABASE_URL`
 

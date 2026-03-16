@@ -5,6 +5,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateConsumerUseCase,
@@ -12,7 +13,9 @@ import {
 } from '@ultima-forma/application-partner';
 import { CreateConsumerDto } from './create-consumer.dto';
 import { UpdateConsumerDto } from './update-consumer.dto';
+import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
 
+@UseGuards(PartnerSignatureGuard)
 @Controller('v1/consumers')
 export class ConsumersController {
   constructor(

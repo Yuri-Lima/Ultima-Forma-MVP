@@ -5,6 +5,7 @@ import {
   Headers,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   CreateDataRequestUseCase,
@@ -13,7 +14,10 @@ import {
   GetDataRequestResultForConsumerUseCase,
 } from '@ultima-forma/application-consent';
 import { CreateDataRequestDto } from './create-data-request.dto';
+import { PartnerSignatureGuard } from '../guards/partner-signature.guard';
+import { SkipPartnerAuth } from '../guards/skip-partner-auth.decorator';
 
+@UseGuards(PartnerSignatureGuard)
 @Controller('v1/data-requests')
 export class DataRequestsController {
   constructor(
@@ -87,6 +91,7 @@ export class DataRequestsController {
     };
   }
 
+  @SkipPartnerAuth()
   @Get(':id')
   async getForUser(@Param('id') id: string) {
     const result = await this.getDataRequestForUser.execute(id);
