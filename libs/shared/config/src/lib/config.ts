@@ -22,6 +22,11 @@ const baseEnvSchema = z.object({
     .default('3334')
     .transform((v) => parseInt(v, 10))
     .pipe(z.number().int().min(1).max(65535)),
+  WORKER_PORT: z
+    .string()
+    .default('3335')
+    .transform((v) => parseInt(v, 10))
+    .pipe(z.number().int().min(1).max(65535)),
   CREDENTIAL_ENCRYPTION_KEY: z.string().default(''),
   INTERNAL_API_KEY: z.string().optional(),
   RATE_LIMIT_TTL: z
@@ -43,6 +48,31 @@ const baseEnvSchema = z.object({
   FF_PARTNER_AUTH: z.stringbool().default(false),
   FF_CLAIMS_VALIDATION: z.stringbool().default(false),
   FF_WALLET_PRESENTATIONS: z.stringbool().default(false),
+  // Redis (BullMQ backend)
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z
+    .string()
+    .default('6388')
+    .transform((v) => parseInt(v, 10))
+    .pipe(z.number().int().min(1).max(65535)),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_DB: z
+    .string()
+    .default('0')
+    .transform((v) => parseInt(v, 10))
+    .pipe(z.number().int().min(0)),
+  // Queue config
+  QUEUE_PREFIX: z.string().default('ultima-forma'),
+  QUEUE_WEBHOOK_CONCURRENCY: z
+    .string()
+    .default('5')
+    .transform((v) => parseInt(v, 10))
+    .pipe(z.number().int().min(1).max(100)),
+  QUEUE_NOTIFICATION_CONCURRENCY: z
+    .string()
+    .default('3')
+    .transform((v) => parseInt(v, 10))
+    .pipe(z.number().int().min(1).max(50)),
 });
 
 export type AppConfig = {
@@ -51,6 +81,7 @@ export type AppConfig = {
   databaseUrl: string;
   apiGatewayPort: number;
   orchestrationApiPort: number;
+  workerPort: number;
   credentialEncryptionKey: string;
   internalApiKey: string | undefined;
   rateLimitTtl: number;
@@ -60,6 +91,17 @@ export type AppConfig = {
     partnerAuth: boolean;
     claimsValidation: boolean;
     walletPresentations: boolean;
+  };
+  redis: {
+    host: string;
+    port: number;
+    password?: string;
+    db: number;
+  };
+  queue: {
+    prefix: string;
+    webhookConcurrency: number;
+    notificationConcurrency: number;
   };
 };
 
@@ -104,6 +146,7 @@ export function getConfig(): AppConfig {
     databaseUrl: data.DATABASE_URL,
     apiGatewayPort: data.API_GATEWAY_PORT,
     orchestrationApiPort: data.ORCHESTRATION_API_PORT,
+    workerPort: data.WORKER_PORT,
     credentialEncryptionKey: data.CREDENTIAL_ENCRYPTION_KEY,
     internalApiKey: data.INTERNAL_API_KEY,
     rateLimitTtl: data.RATE_LIMIT_TTL,
@@ -113,6 +156,17 @@ export function getConfig(): AppConfig {
       partnerAuth: data.FF_PARTNER_AUTH,
       claimsValidation: data.FF_CLAIMS_VALIDATION,
       walletPresentations: data.FF_WALLET_PRESENTATIONS,
+    },
+    redis: {
+      host: data.REDIS_HOST,
+      port: data.REDIS_PORT,
+      password: data.REDIS_PASSWORD,
+      db: data.REDIS_DB,
+    },
+    queue: {
+      prefix: data.QUEUE_PREFIX,
+      webhookConcurrency: data.QUEUE_WEBHOOK_CONCURRENCY,
+      notificationConcurrency: data.QUEUE_NOTIFICATION_CONCURRENCY,
     },
   };
 

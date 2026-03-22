@@ -6,6 +6,10 @@
     "rejected": {
       "subtitle": "You rejected sharing the requested data."
     },
-    "title": "Data Request"
+    "requestsAccess": "requests access to the following data:",
+    "title": "Data Request",
+    "wizard": {
+      "claimsCount": "{{count}} data items"
+    }
   }
 }

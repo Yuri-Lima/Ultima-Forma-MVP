@@ -1,12 +1,46 @@
 {
   "audit": {
+    "description": "",
     "error": "Failed to load audit events",
     "eventConsentGranted": "Consent granted",
     "eventConsentRejected": "Consent rejected",
     "eventRequestCreated": "Request created",
     "eventRequestExpired": "Request expired",
+    "hidePayload": "",
     "noResults": "No audit events found.",
+    "showPayload": "",
     "title": "Audit Events"
+  },
+  "consents": {
+    "approve": "",
+    "columns": {
+      "actions": "",
+      "created": "",
+      "id": "",
+      "status": "",
+      "tenant": ""
+    },
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "reject": "",
+    "statusGranted": "",
+    "statusPending": "",
+    "statusRejected": "",
+    "statusRevoked": "",
+    "title": ""
+  },
+  "credentials": {
+    "copied": "Copied!",
+    "copySecret": "Copy secret",
+    "description": "Generate integration credentials for a partner. Use the secret for Partner Portal login or HMAC signing.",
+    "error": "Failed to rotate credentials",
+    "partnerId": "Partner ID",
+    "rotate": "Rotate credential",
+    "rotating": "Rotating...",
+    "secretWarning": "Store this secret securely. It will not be shown again.",
+    "success": "Credentials generated",
+    "title": "Credentials bootstrap"
   },
   "filters": {
     "aggregateId": "Aggregate ID",
@@ -17,10 +51,20 @@
     "status": "Status",
     "tenantId": "Tenant ID"
   },
+  "metrics": {
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "title": ""
+  },
   "nav": {
     "audit": "Audit",
-    "profileUpdates": "Profile Updates",
+    "consents": "",
+    "credentials": "Credentials",
+    "metrics": "",
+    "partners": "",
     "requests": "Requests",
+    "system": "",
     "webhooks": "Webhooks"
   },
   "pagination": {
@@ -28,6 +72,13 @@
     "page_one": "",
     "page_other": "",
     "previous": "Previous"
+  },
+  "partners": {
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "requests": "",
+    "title": ""
   },
   "profileUpdates": {
     "error": "Failed to load profile updates",
@@ -45,6 +96,7 @@
       "purpose": "Purpose",
       "status": "Status"
     },
+    "description": "",
     "error": "Failed to load requests",
     "noResults": "No requests found.",
     "statusCompleted": "Completed",
@@ -53,8 +105,29 @@
     "statusRejected": "Rejected",
     "title": "Data Requests"
   },
+  "system": {
+    "buildTime": "",
+    "commit": "",
+    "database": "",
+    "description": "",
+    "error": "",
+    "featureFlags": "",
+    "health": "",
+    "status": "",
+    "title": "",
+    "uptime": "",
+    "version": ""
+  },
   "webhooks": {
-    "attempts": "attempts",
+    "columns": {
+      "attempts": "",
+      "created": "",
+      "eventType": "",
+      "lastError": "",
+      "status": "",
+      "subscription": ""
+    },
+    "description": "",
     "error": "Failed to load webhook deliveries",
     "nextRetry": "Next retry",
     "noResults": "No webhook deliveries found.",

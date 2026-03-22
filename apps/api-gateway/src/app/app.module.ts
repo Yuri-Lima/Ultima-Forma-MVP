@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { I18nModule, AcceptLanguageResolver } from 'nestjs-i18n';
 import { join } from 'path';
 import { AppController } from './app.controller';
+import { BullMqModule } from '@ultima-forma/infrastructure-queue';
 import { AppExceptionFilter } from './app.exception-filter';
 import { MetricsInterceptor } from './metrics.interceptor';
 import { DrizzleModule } from '@ultima-forma/infrastructure-drizzle';
@@ -25,6 +26,7 @@ const config = getConfig();
     }),
     DrizzleModule,
     HealthModule,
+    BullMqModule.forRoot(),
     V1Module,
     ThrottlerModule.forRoot([
       { ttl: config.rateLimitTtl, limit: config.rateLimitLimit },

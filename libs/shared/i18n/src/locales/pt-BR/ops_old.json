@@ -2,6 +2,9 @@
   "audit": {
     "loading": "Carregando eventos..."
   },
+  "nav": {
+    "profileUpdates": "Atualizações de Perfil"
+  },
   "pagination": {
     "page": "Página {{current}} de {{total}} ({{count}} no total)"
   },
@@ -12,6 +15,7 @@
     "loading": "Carregando solicitações..."
   },
   "webhooks": {
+    "attempts": "tentativas",
     "loading": "Carregando entregas..."
   }
 }

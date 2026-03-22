@@ -1,5 +1,6 @@
 import {
   Counter,
+  Gauge,
   Histogram,
   Registry,
   collectDefaultMetrics,
@@ -57,5 +58,48 @@ export const webhookDeliveryFailedTotal = new Counter({
 export const partnerAuthFailedTotal = new Counter({
   name: 'partner_auth_failed_total',
   help: 'Total partner authentication failures',
+  registers: [metricsRegistry],
+});
+
+// Queue / BullMQ metrics
+export const queueJobsEnqueuedTotal = new Counter({
+  name: 'queue_jobs_enqueued_total',
+  help: 'Total jobs enqueued',
+  labelNames: ['queue', 'job_name'] as const,
+  registers: [metricsRegistry],
+});
+
+export const queueJobsCompletedTotal = new Counter({
+  name: 'queue_jobs_completed_total',
+  help: 'Total jobs completed',
+  labelNames: ['queue', 'job_name'] as const,
+  registers: [metricsRegistry],
+});
+
+export const queueJobsFailedTotal = new Counter({
+  name: 'queue_jobs_failed_total',
+  help: 'Total jobs failed',
+  labelNames: ['queue', 'job_name'] as const,
+  registers: [metricsRegistry],
+});
+
+export const queueJobDurationMs = new Histogram({
+  name: 'queue_job_duration_ms',
+  help: 'Job processing duration in milliseconds',
+  labelNames: ['queue', 'job_name'] as const,
+  buckets: [10, 50, 100, 250, 500, 1000, 2500, 5000],
+  registers: [metricsRegistry],
+});
+
+export const queueJobsActive = new Gauge({
+  name: 'queue_jobs_active',
+  help: 'Number of active jobs',
+  labelNames: ['queue'] as const,
+  registers: [metricsRegistry],
+});
+
+export const webhookJobsRetryTotal = new Counter({
+  name: 'webhook_jobs_retry_total',
+  help: 'Total webhook job retries',
   registers: [metricsRegistry],
 });

@@ -1,49 +1,29 @@
 import { useTranslation } from 'react-i18next';
+import { Flex, Select, Text } from '@radix-ui/themes';
 import { SUPPORTED_LOCALES, LOCALE_NAMES } from '@ultima-forma/shared-i18n';
 import type { SupportedLocale } from '@ultima-forma/shared-i18n';
-
-const switcherStyles: React.CSSProperties = {
-  marginLeft: 'auto',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-};
-
-const selectStyles: React.CSSProperties = {
-  padding: '0.35rem 0.5rem',
-  borderRadius: 4,
-  border: '1px solid rgba(255,255,255,0.3)',
-  backgroundColor: 'rgba(0,0,0,0.2)',
-  color: '#eee',
-  fontSize: 14,
-  cursor: 'pointer',
-};
 
 export function LocaleSwitcher() {
   const { t, i18n } = useTranslation('common');
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value as SupportedLocale);
-  };
-
   return (
-    <div style={switcherStyles}>
-      <label htmlFor="locale-select" style={{ fontSize: 14, color: '#aaa' }}>
+    <Flex align="center" gap="2">
+      <Text as="label" size="2" color="gray">
         {t('language')}:
-      </label>
-      <select
-        id="locale-select"
+      </Text>
+      <Select.Root
         value={i18n.language}
-        onChange={handleChange}
-        style={selectStyles}
-        aria-label={t('selectLanguage')}
+        onValueChange={(val) => i18n.changeLanguage(val as SupportedLocale)}
       >
-        {SUPPORTED_LOCALES.map((locale) => (
-          <option key={locale} value={locale}>
-            {LOCALE_NAMES[locale]}
-          </option>
-        ))}
-      </select>
-    </div>
+        <Select.Trigger size="2" variant="soft" style={{ minWidth: 160 }} aria-label={t('selectLanguage')} />
+        <Select.Content>
+          {SUPPORTED_LOCALES.map((locale) => (
+            <Select.Item key={locale} value={locale}>
+              {LOCALE_NAMES[locale]}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
+    </Flex>
   );
 }

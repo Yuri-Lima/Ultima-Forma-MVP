@@ -1,0 +1,19 @@
+{
+  "name": "shared-ui-native",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/ui-native/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:ui"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/ui-native",
+        "main": "libs/shared/ui-native/src/index.ts",
+        "tsConfig": "libs/shared/ui-native/tsconfig.lib.json",
+        "assets": ["libs/shared/ui-native/*.md"]
+      }
+    }
+  }
+}

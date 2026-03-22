@@ -1,0 +1,26 @@
+{
+  "claims": {
+    "sensitivityHigh": "Alta",
+    "sensitivityLow": "Baixa",
+    "sensitivityMedium": "Média"
+  },
+  "credentials": {
+    "id": "ID",
+    "lastUsed": "Último uso",
+    "never": "Nunca",
+    "status": {
+      "active": "Ativo",
+      "expired": "Expirado",
+      "inactive": "Inativo",
+      "revoked": "Revogado"
+    }
+  },
+  "requests": {
+    "statusApproved": "Aprovado",
+    "statusExpired": "Expirado",
+    "statusPending": "Pendente",
+    "statusRejected": "Rejeitado"
+  },
+  "subtitle": "Área para emissores e consumidores integrarem com a Ultima Forma.",
+  "title": "Portal de Parceiros"
+}

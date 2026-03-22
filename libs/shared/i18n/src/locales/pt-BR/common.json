@@ -1,8 +1,16 @@
 {
+  "cancel": "Cancel",
+  "error": "Error",
   "errors": {
     "generic": "Ocorreu um erro inesperado"
   },
   "language": "Idioma",
   "loading": "Carregando...",
+  "next": "Next",
+  "page": "Page",
+  "previous": "Previous",
+  "retry": "",
+  "save": "Save",
+  "saving": "Saving...",
   "selectLanguage": "Selecionar idioma"
 }

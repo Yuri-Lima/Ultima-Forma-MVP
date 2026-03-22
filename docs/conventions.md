@@ -13,12 +13,29 @@
 ## Imports
 
 ```typescript
-// Padrão: @ultima-forma/<categoria>-<nome>
+// Backend: @ultima-forma/<categoria>-<nome>
 import { getConfig } from '@ultima-forma/shared-config';
 import { logger } from '@ultima-forma/shared-logger';
 import { AppError } from '@ultima-forma/shared-errors';
 import { DrizzleModule } from '@ultima-forma/infrastructure-drizzle';
+
+// Frontend (web): shared-ui components
+import { Button, Table, Badge, PageContainer, useToast } from '@ultima-forma/shared-ui';
+import { colors, spacing } from '@ultima-forma/shared-design-tokens';
+
+// Frontend (native): shared-ui-native components
+import { NativeButton, NativeBadge, NativeCard } from '@ultima-forma/shared-ui-native';
+import { nativeColors, nativeSpacing } from '@ultima-forma/shared-design-tokens';
 ```
+
+## UI Components
+
+- Componentes web usam `class-variance-authority` (CVA) para variantes
+- Usar `cn()` de `@ultima-forma/shared-ui` para compor classNames (clsx + tailwind-merge)
+- Design tokens sao a fonte de verdade: CSS variables para web, objetos TS para React Native
+- Tailwind CSS v4 com `@tailwindcss/vite` plugin (sem `tailwind.config.js`)
+- Radix UI para primitivas acessiveis (Dialog, Select, Tabs, Toast)
+- ThemeProvider no root de cada app web; NativeThemeProvider no root do user-app
 
 ## Organização em domain/application/infrastructure
 

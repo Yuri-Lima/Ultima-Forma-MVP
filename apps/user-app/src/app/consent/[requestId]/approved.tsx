@@ -1,13 +1,37 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
+import {
+  NativeCard,
+  NativeCardHeader,
+  NativeCardTitle,
+  NativeCardContent,
+  NativeButton,
+} from '@ultima-forma/shared-ui-native';
+import { nativeFontSize, nativeColors, nativeSpacing } from '@ultima-forma/shared-design-tokens';
+import { useNativeTheme } from '@ultima-forma/shared-ui-native';
+import { ScreenContainer } from '../../components/ScreenContainer';
 
 export default function ApprovedScreen() {
   const { t } = useTranslation('user');
+  const router = useRouter();
+  const { colors } = useNativeTheme();
   return (
-    <View style={styles.container}>
-      <Text style={styles.icon}>✓</Text>
-      <Text style={styles.title}>{t('consent.approved.titleFull')}</Text>
-      <Text style={styles.subtitle}>{t('consent.approved.subtitleSuccess')}</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScreenContainer>
+        <NativeCard>
+          <NativeCardHeader>
+            <Text style={styles.icon}>✓</Text>
+            <NativeCardTitle>{t('consent.approved.titleFull')}</NativeCardTitle>
+            <Text style={styles.subtitle}>{t('consent.approved.subtitleSuccess')}</Text>
+          </NativeCardHeader>
+          <NativeCardContent>
+            <NativeButton variant="default" onPress={() => router.replace('/')}>
+              {t('consent.backToHome')}
+            </NativeButton>
+          </NativeCardContent>
+        </NativeCard>
+      </ScreenContainer>
     </View>
   );
 }
@@ -15,16 +39,17 @@ export default function ApprovedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#fff',
   },
-  icon: { fontSize: 64, color: '#22c55e', marginBottom: 24 },
-  title: { fontSize: 22, fontWeight: '600', marginBottom: 12, textAlign: 'center' },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+  icon: {
+    fontSize: 64,
+    color: nativeColors.success[500],
+    marginBottom: nativeSpacing[6],
     textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: nativeFontSize.base,
+    color: nativeColors.neutral[500],
+    textAlign: 'center',
+    marginTop: nativeSpacing[2],
   },
 });

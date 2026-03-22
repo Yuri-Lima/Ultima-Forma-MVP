@@ -9,6 +9,7 @@
     "approveError": "Error approving",
     "approveFailed": "Could not approve",
     "back": "Back",
+    "backToHome": "Back to home",
     "claimsLabel": "Requested data:",
     "corsHint": "If the api-gateway is running, restart it to enable CORS.",
     "dataRequest": "Data Request",
@@ -24,10 +25,47 @@
     },
     "rejectError": "Error rejecting",
     "rejectFailed": "Could not reject",
-    "requestsAccess": "requests access to the following data:"
+    "wizard": {
+      "back": "Back",
+      "claims": "Requested data",
+      "claimsCount_one": "",
+      "claimsCount_other": "",
+      "dataUsage": "Data usage",
+      "dataUsageExplanation": "Your data will only be used for the stated purpose and will not be shared with third parties without your consent.",
+      "expiration": "Expiration",
+      "expiresOn": "Expires on {{date}}",
+      "issuer": "Issuer",
+      "issuerPlaceholder": "Identity provider",
+      "next": "Next",
+      "privacyPolicy": "Privacy policy",
+      "requester": "Requester",
+      "requestStatus": "Status",
+      "retry": "Retry",
+      "sensitivityHigh": "High",
+      "sensitivityLow": "Low",
+      "sensitivityMedium": "Medium",
+      "step1Subtitle": "The organization requesting your data",
+      "step1Title": "Who is requesting",
+      "step2Subtitle": "What data is being requested",
+      "step2Title": "Purpose and data",
+      "step3Subtitle": "How your data will be used",
+      "step3Title": "Privacy and terms",
+      "step4Subtitle": "Approve or reject this request",
+      "step4Title": "Review and decide",
+      "stepOf": "Step {{current}} of {{total}}",
+      "summary": "Summary",
+      "trustLevel": "Trust Level",
+      "trustVerified": "Verified"
+    }
   },
   "home": {
+    "description": "",
     "subtitle": "Your portable, privacy-first identity app",
     "title": "Ultima Forma"
+  },
+  "notFound": {
+    "goHome": "Go home",
+    "message": "The page you're looking for doesn't exist.",
+    "title": "Page not found"
   }
 }

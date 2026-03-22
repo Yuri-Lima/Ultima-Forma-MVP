@@ -4,29 +4,43 @@ import type {
   AuditRepositoryPort,
   BillableEventRepositoryPort,
 } from '@ultima-forma/domain-audit';
+import type { PartnerRepositoryPort } from '@ultima-forma/domain-partner';
 import {
   ApproveConsentUseCase,
   GetConsentHistoryUseCase,
   RejectConsentUseCase,
 } from '@ultima-forma/application-consent';
+import { RotateIntegrationCredentialUseCase } from '@ultima-forma/application-partner';
+import { getConfig } from '@ultima-forma/shared-config';
 import {
   DRIZZLE,
   type DrizzleDB,
   ConsentRepository,
   AuditRepository,
   BillableEventRepository,
+  PartnerRepository,
   WebhookSubscriptionRepository,
   WebhookDeliveryRepository,
   WebhookDispatcher,
 } from '@ultima-forma/infrastructure-drizzle';
+import {
+  AsyncWebhookDispatcher,
+  JOB_REPOSITORY,
+} from '@ultima-forma/infrastructure-queue';
+import type {
+  WebhookSubscriptionRepositoryPort,
+  WebhookDeliveryRepositoryPort,
+} from '@ultima-forma/domain-webhook';
+import type { JobRepositoryPort } from '@ultima-forma/domain-jobs';
 import { ConsentsController } from './consents.controller';
+import { CredentialsController } from './credentials.controller';
 import { RequestsController } from './requests.controller';
 import { AuditController } from './audit.controller';
 import { WebhookDeliveriesController } from './webhook-deliveries.controller';
-import { WebhookRetryJob } from './webhook-retry.job';
 import { InternalApiKeyGuard } from './internal-api-key.guard';
 
 const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
+const PARTNER_REPOSITORY = 'PARTNER_REPOSITORY';
 const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
 const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
 const WEBHOOK_SUBSCRIPTION_REPOSITORY = 'WEBHOOK_SUBSCRIPTION_REPOSITORY';
@@ -35,6 +49,7 @@ const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
 @Module({
   controllers: [
     ConsentsController,
+    CredentialsController,
     RequestsController,
     AuditController,
     WebhookDeliveriesController,
@@ -66,15 +81,34 @@ const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
       inject: [DRIZZLE],
     },
     {
-      provide: WebhookDispatcher,
-      useFactory: (subRepo: unknown, delRepo: unknown) =>
-        new WebhookDispatcher(
-          subRepo as WebhookSubscriptionRepository,
-          delRepo as WebhookDeliveryRepository
-        ),
-      inject: [WEBHOOK_SUBSCRIPTION_REPOSITORY, WEBHOOK_DELIVERY_REPOSITORY],
+      provide: PARTNER_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new PartnerRepository(db),
+      inject: [DRIZZLE],
     },
-    WebhookRetryJob,
+    {
+      provide: 'ROTATE_CREDENTIAL',
+      useFactory: (repo: PartnerRepositoryPort) => {
+        const config = getConfig();
+        return new RotateIntegrationCredentialUseCase(
+          repo,
+          config.credentialEncryptionKey || undefined
+        );
+      },
+      inject: [PARTNER_REPOSITORY],
+    },
+    {
+      provide: WebhookDispatcher,
+      useFactory: (
+        subRepo: WebhookSubscriptionRepositoryPort,
+        delRepo: WebhookDeliveryRepositoryPort,
+        jobRepo: JobRepositoryPort
+      ) => new AsyncWebhookDispatcher(subRepo, delRepo, jobRepo),
+      inject: [
+        WEBHOOK_SUBSCRIPTION_REPOSITORY,
+        WEBHOOK_DELIVERY_REPOSITORY,
+        JOB_REPOSITORY,
+      ],
+    },
     {
       provide: ApproveConsentUseCase,
       useFactory: (

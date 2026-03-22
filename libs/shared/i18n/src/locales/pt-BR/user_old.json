@@ -6,6 +6,10 @@
     "rejected": {
       "subtitle": "Você rejeitou o compartilhamento dos dados solicitados."
     },
-    "title": "Solicitação de Dados"
+    "requestsAccess": "solicita acesso aos seguintes dados:",
+    "title": "Solicitação de Dados",
+    "wizard": {
+      "claimsCount": "{{count}} itens de dados"
+    }
   }
 }

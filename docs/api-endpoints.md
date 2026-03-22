@@ -43,8 +43,12 @@ When `FF_PARTNER_AUTH=true`, partner-facing `/v1/*` endpoints require HMAC signa
 **Signature computation:**
 
 ```
-signature = HMAC_SHA256(secret, METHOD + PATH + BODY + TIMESTAMP)
+payload = METHOD + PATH + BODY + TIMESTAMP
+signature = HMAC_SHA256(secret, payload)
 ```
+
+- `PATH`: Request path **without** query string (e.g. `/v1/partner/dashboard`, not `/v1/partner/dashboard?partnerId=...`)
+- `TIMESTAMP`: ISO 8601 timestamp. **Must be unique per request** — when making parallel requests (e.g. dashboard, claims, credentials loading at once), use sub-millisecond precision or sequential timestamps to avoid `REPLAY_DETECTED`
 
 ### Infrastructure Endpoints
 
@@ -130,7 +134,7 @@ signature = HMAC_SHA256(secret, METHOD + PATH + BODY + TIMESTAMP)
 |--------|------|------|-------------|
 | GET | /v1/partner/dashboard | HMAC | Dashboard metrics |
 | GET | /v1/partner/requests | HMAC | Partner requests |
-| GET | /v1/partner/credentials | HMAC | Partner credentials |
+| GET | /v1/partner/credentials | HMAC | List credentials (`{ id, status, createdAt, expiresAt }`) |
 | POST | /v1/partner/credentials/rotate | HMAC | Rotate credential |
 | GET | /v1/partner/webhooks | HMAC | List webhooks |
 | POST | /v1/partner/webhooks | HMAC | Create webhook |

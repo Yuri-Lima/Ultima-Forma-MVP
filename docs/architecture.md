@@ -18,6 +18,9 @@ flowchart TB
         errors[shared-errors]
         i18n[shared-i18n]
         health[shared-health]
+        designTokens[shared-design-tokens]
+        sharedUI[shared-ui]
+        sharedUINative[shared-ui-native]
         db[infrastructure-db]
         drizzle[infrastructure-drizzle]
         featureFlags[infrastructure-feature-flags]
@@ -57,15 +60,84 @@ flowchart TB
     drizzle --> db
     drizzle --> domainClaims
     drizzle --> domainWallet
+    partner --> sharedUI
+    partner --> designTokens
+    partner --> i18n
+    opsConsole --> sharedUI
+    opsConsole --> designTokens
+    opsConsole --> i18n
+    userApp --> sharedUINative
+    userApp --> designTokens
+    userApp --> i18n
+    sharedUI --> designTokens
+    sharedUINative --> designTokens
 ```
 
 ## Principio de superficies
 
-| Superficie | Descricao | Plataformas |
-|------------|-----------|-------------|
-| **user-app** | Produto do usuario final | iOS, Android, Web |
-| **partner-portal** | Portal para emissores e consumidores | Web |
-| **ops-console** | Operacao interna e auditoria | Web |
+| Superficie | Descricao | Plataformas | Stack |
+|------------|-----------|-------------|-------|
+| **user-app** | Produto do usuario final | iOS, Android, Web | React Native + Expo, shared-ui-native |
+| **partner-portal** | Portal para emissores e consumidores | Web | React + Vite + Tailwind v4 + Radix UI, shared-ui |
+| **ops-console** | Operacao interna e auditoria | Web | React + Vite + Tailwind v4 + Radix UI, shared-ui |
+
+## Design System & Shared UI (Fase 4)
+
+A plataforma possui um design system compartilhado com tres libs:
+
+| Lib | Alias | Plataforma | Descricao |
+|-----|-------|------------|-----------|
+| `libs/shared/design-tokens` | `@ultima-forma/shared-design-tokens` | Todas | Tokens de cor, spacing, radius, font, shadow, z-index. CSS variables para web, objetos numericos para React Native |
+| `libs/shared/ui` | `@ultima-forma/shared-ui` | Web (React DOM) | Componentes (Button, Input, Select, Badge, Modal, Table, Card, Tabs, Alert, Spinner), layout (AppLayout, Sidebar, Topbar, PageContainer), feedback (ErrorBoundary, Skeleton, Toast, EmptyState, ErrorState, LoadingState), ThemeProvider, useApiQuery hook |
+| `libs/shared/ui-native` | `@ultima-forma/shared-ui-native` | Mobile (React Native) | Componentes nativos (NativeButton, NativeInput, NativeBadge, NativeCard, NativeAlert, NativeSpinner), feedback, NativeThemeProvider, NativeErrorBoundary |
+
+**Stack de UI web**: Tailwind CSS v4 (`@tailwindcss/vite`), Radix UI (Dialog, Select, Tabs, Toast, Tooltip, Dropdown), class-variance-authority (CVA), tailwind-merge + clsx.
+
+**Dark mode**: Preparado. ThemeProvider aplica classe `dark` no `<html>` e persiste preferencia em localStorage. Tokens CSS possuem variantes light/dark.
+
+### Partner Portal (Fase 4)
+
+Rotas:
+
+| Rota | Pagina | API consumida |
+|------|--------|---------------|
+| `/login` | Login com HMAC (Partner ID + Client Secret) | -- |
+| `/dashboard` | Stat cards (requests, consents, webhooks) | `GET /v1/partner/dashboard` |
+| `/requests` | Tabela com filtros e paginacao | `GET /v1/partner/requests` |
+| `/claims` | Tabela de claim definitions | `GET /v1/claims` |
+| `/credentials` | Cards com acao de rotacao | `GET/POST /v1/partner/credentials` |
+| `/webhooks` | CRUD completo + teste | `GET/POST/PATCH /v1/partner/webhooks` |
+| `/docs` | API docs com snippets curl/node/python | -- |
+| `/settings` | Perfil + locale | -- |
+
+Autenticacao: HMAC SHA-256 via Web Crypto API no browser. Credenciais em sessionStorage.
+
+### Ops Console (Fase 4)
+
+Rotas:
+
+| Rota | Pagina | API consumida |
+|------|--------|---------------|
+| `/requests` | Tabela de data requests | `GET /internal/requests` |
+| `/audit` | Timeline visual de eventos | `GET /internal/audit-events` |
+| `/consents` | Tabela com filtros + approve/reject | `GET /internal/consents` |
+| `/webhooks` | Deliveries com status | `GET /internal/webhook-deliveries` |
+| `/partners` | Card grid por tenant | `GET /internal/requests` (extract tenants) |
+| `/credentials` | Bootstrap de credenciais | `POST /internal/credentials/rotate` |
+| `/metrics` | Metricas Prometheus | `GET /metrics` |
+| `/system` | Health, version, feature flags | `GET /health`, `GET /version` |
+
+### User Consent Experience (Fase 4)
+
+Fluxo de consentimento redesenhado como wizard de 5 passos:
+
+1. Identificacao do solicitante (consumer name, trust badge, issuer)
+2. Proposito e claims (com indicadores de sensibilidade)
+3. Privacidade e termos (expiracao, privacy policy link)
+4. Decisao (approve/reject com resumo)
+5. Confirmacao (sucesso/rejeicao)
+
+Usa componentes de `@ultima-forma/shared-ui-native` com design tokens.
 
 ## Boundaries entre camadas
 
@@ -100,7 +172,8 @@ O api-gateway suporta autenticacao HMAC SHA-256 para parceiros:
 
 - **PartnerSignatureGuard**: guard NestJS aplicado nas rotas `/v1/*` (exceto endpoints user-facing)
 - **Feature flag**: `FF_PARTNER_AUTH` (padrao: `false`) via `FeatureFlagService` permite enforcement gradual
-- **Headers**: `X-Partner-Id`, `X-Timestamp`, `X-Signature`
+- **Headers**: `X-Partner-Id`, `X-Timestamp` (ISO 8601), `X-Signature` (hex)
+- **Payload da assinatura**: `METHOD + PATH + BODY + TIMESTAMP` (concatenacao sem separadores; PATH sem query string)
 - **Replay protection**: nonces armazenados em `core.partner_api_nonces`
 - **Usage tracking**: registrado em `core.partner_api_usage`
 - **Criptografia**: secrets com AES-256-GCM; decriptacao na camada de infraestrutura

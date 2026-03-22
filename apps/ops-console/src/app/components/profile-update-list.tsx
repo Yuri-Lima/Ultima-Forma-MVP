@@ -1,5 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Flex,
+  Card,
+  TextField,
+  Select,
+  Badge,
+  Button,
+  Text,
+} from '@radix-ui/themes';
+import {
+  PageContainer,
+  LoadingState,
+  ErrorState,
+  EmptyState,
+} from '@ultima-forma/shared-ui';
 
 interface ProfileUpdateItem {
   id: string;
@@ -15,25 +30,40 @@ interface ProfileUpdateListProps {
   apiKey?: string;
 }
 
+const EVENT_BADGE_COLOR: Record<string, 'green' | 'gray'> = {
+  issuer_updated: 'gray',
+  consumer_updated: 'green',
+};
+
 export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
   const { t, i18n } = useTranslation(['ops', 'common']);
   const [items, setItems] = useState<ProfileUpdateItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [eventType, setEventType] = useState('');
+  const [eventType, setEventType] = useState('all');
   const [aggregateId, setAggregateId] = useState('');
   const [page, setPage] = useState(0);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const limit = 50;
 
-  useEffect(() => {
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const fetchData = useCallback(() => {
     setLoading(true);
     setError(null);
 
-    const baseHeaders: Record<string, string> = {
+    const headers: Record<string, string> = {
       'Accept-Language': i18n.language || 'pt-BR',
     };
-    if (apiKey) baseHeaders['X-API-Key'] = apiKey;
+    if (apiKey) headers['X-API-Key'] = apiKey;
 
     const fetchOne = (evType: string) => {
       const params = new URLSearchParams();
@@ -41,41 +71,29 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
       if (aggregateId) params.set('aggregateId', aggregateId);
       params.set('limit', String(limit));
       params.set('offset', String(page * limit));
-      return fetch(`${apiBase}/internal/audit-events?${params}`, {
-        headers: baseHeaders,
-      });
+      return fetch(`${apiBase}/internal/audit-events?${params}`, { headers });
     };
 
-    const headers = baseHeaders;
-
-    const params = new URLSearchParams();
-    if (eventType) params.set('eventType', eventType);
-    if (aggregateId) params.set('aggregateId', aggregateId);
-    params.set('limit', String(limit));
-    params.set('offset', String(page * limit));
-
-    const promise = eventType
-      ? fetch(`${apiBase}/internal/audit-events?${params}`, { headers }).then(
-          (res) => {
+    const promise =
+      eventType && eventType !== 'all'
+        ? fetchOne(eventType).then((res) => {
             if (!res.ok) throw new Error(`Request failed: ${res.status}`);
             return res.json();
-          }
-        )
-      : Promise.all([
-          fetchOne('issuer_updated'),
-          fetchOne('consumer_updated'),
-        ]).then(([a, b]) => {
-          if (!a.ok) throw new Error(`Request failed: ${a.status}`);
-          if (!b.ok) throw new Error(`Request failed: ${b.status}`);
-          return Promise.all([a.json(), b.json()]).then(([da, db]) => ({
-            items: [...(da.items ?? []), ...(db.items ?? [])].sort(
-              (x: { createdAt: string }, y: { createdAt: string }) =>
-                new Date(y.createdAt).getTime() -
-                new Date(x.createdAt).getTime()
-            ),
-            total: (da.total ?? 0) + (db.total ?? 0),
-          }));
-        });
+          })
+        : Promise.all([
+            fetchOne('issuer_updated'),
+            fetchOne('consumer_updated'),
+          ]).then(([a, b]) => {
+            if (!a.ok) throw new Error(`Request failed: ${a.status}`);
+            if (!b.ok) throw new Error(`Request failed: ${b.status}`);
+            return Promise.all([a.json(), b.json()]).then(([da, db]) => ({
+              items: [...(da.items ?? []), ...(db.items ?? [])].sort(
+                (x: { createdAt: string }, y: { createdAt: string }) =>
+                  new Date(y.createdAt).getTime() - new Date(x.createdAt).getTime()
+              ),
+              total: (da.total ?? 0) + (db.total ?? 0),
+            }));
+          });
 
     promise
       .then((data: { items: ProfileUpdateItem[]; total: number }) => {
@@ -84,9 +102,7 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
       })
       .catch((err) => {
         setError(
-          err instanceof Error
-            ? err.message
-            : t('ops:profileUpdates.error')
+          err instanceof Error ? err.message : t('ops:profileUpdates.error')
         );
         setItems([]);
         setTotal(0);
@@ -94,144 +110,145 @@ export function ProfileUpdateList({ apiBase, apiKey }: ProfileUpdateListProps) {
       .finally(() => setLoading(false));
   }, [apiBase, apiKey, eventType, aggregateId, page, i18n.language, t]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const totalPages = Math.ceil(total / limit) || 1;
 
   return (
-    <div>
-      <h1>{t('ops:profileUpdates.title')}</h1>
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          marginBottom: '1rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        <label>
-          {t('ops:filters.eventType')}
-          <select
-            value={eventType}
-            onChange={(e) => {
-              setEventType(e.target.value);
-              setPage(0);
-            }}
-            style={{ marginLeft: '0.5rem' }}
-          >
-            <option value="">{t('ops:filters.all')}</option>
-            <option value="issuer_updated">{t('ops:profileUpdates.eventIssuerUpdated')}</option>
-            <option value="consumer_updated">{t('ops:profileUpdates.eventConsumerUpdated')}</option>
-          </select>
-        </label>
-        <label>
-          {t('ops:filters.aggregateId')}
-          <input
-            type="text"
-            value={aggregateId}
-            onChange={(e) => {
-              setAggregateId(e.target.value);
-              setPage(0);
-            }}
-            placeholder={t('ops:filters.filterById')}
-            style={{ marginLeft: '0.5rem', padding: '0.25rem' }}
-          />
-        </label>
-      </div>
-      {error && (
-        <p style={{ color: '#c00', marginBottom: '1rem' }}>{error}</p>
-      )}
-      {loading ? (
-        <p>{t('common:loading')}</p>
+    <PageContainer title={t('ops:profileUpdates.title')}>
+      <Card className="mb-6">
+        <Flex gap="4" wrap="wrap" align="end" p="4">
+          <Flex direction="column" gap="2" className="min-w-[180px]">
+            <Text as="label" size="2" weight="medium">
+              {t('ops:filters.eventType')}
+            </Text>
+            <Select.Root
+              value={eventType}
+              onValueChange={(val) => {
+                setEventType(val);
+                setPage(0);
+              }}
+            >
+              <Select.Trigger />
+              <Select.Content>
+                <Select.Item value="all">{t('ops:filters.all')}</Select.Item>
+                <Select.Item value="issuer_updated">
+                  {t('ops:profileUpdates.eventIssuerUpdated')}
+                </Select.Item>
+                <Select.Item value="consumer_updated">
+                  {t('ops:profileUpdates.eventConsumerUpdated')}
+                </Select.Item>
+              </Select.Content>
+            </Select.Root>
+          </Flex>
+          <Flex direction="column" gap="2" className="min-w-[200px]">
+            <Text as="label" size="2" weight="medium">
+              {t('ops:filters.aggregateId')}
+            </Text>
+            <TextField.Root
+              value={aggregateId}
+              onChange={(e) => {
+                setAggregateId(e.target.value);
+                setPage(0);
+              }}
+              placeholder={t('ops:filters.filterById')}
+              size="2"
+            />
+          </Flex>
+        </Flex>
+      </Card>
+
+      {error ? (
+        <ErrorState message={error} onRetry={fetchData} retryLabel={t('common:retry')} />
+      ) : loading ? (
+        <LoadingState message={t('common:loading')} />
+      ) : items.length === 0 ? (
+        <EmptyState title={t('ops:profileUpdates.noResults')} />
       ) : (
         <>
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
-          >
-            {items.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  padding: '1rem',
-                  border: '1px solid #eee',
-                  borderRadius: '8px',
-                  backgroundColor: '#fafafa',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '1rem',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      color: '#1a1a2e',
-                    }}
-                  >
-                    {item.eventType}
-                  </span>
-                  <span style={{ color: '#666' }}>{item.aggregateType}</span>
-                  <span
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: '0.85em',
-                      color: '#555',
-                    }}
-                  >
-                    {item.aggregateId}
-                  </span>
-                  <span style={{ color: '#888', fontSize: '0.9em' }}>
-                    {item.createdAt}
-                  </span>
+          <div className="relative ml-4 border-l-2 border-[var(--gray-6)] pl-6">
+            {items.map((item) => {
+              const isOpen = expanded.has(item.id);
+              const hasPayload = Object.keys(item.payload).length > 0;
+              return (
+                <div key={item.id} className="relative mb-6 last:mb-0">
+                  <div
+                    className="absolute -left-[31px] top-3 h-3 w-3 rounded-full border-2 border-[var(--accent-8)] bg-[var(--color-background)]"
+                    aria-hidden
+                  />
+                  <Card className="mb-0">
+                    <Flex direction="column" gap="3" p="4">
+                      <Flex wrap="wrap" align="center" gap="3">
+                        <Badge
+                          color={EVENT_BADGE_COLOR[item.eventType] ?? 'gray'}
+                          variant="soft"
+                          size="1"
+                        >
+                          {item.eventType}
+                        </Badge>
+                        <Text size="1" color="gray">
+                          {item.aggregateType}
+                        </Text>
+                        <Text size="1" color="gray" className="font-mono">
+                          {item.aggregateId}
+                        </Text>
+                        <Text size="1" color="gray" className="ml-auto">
+                          {item.createdAt}
+                        </Text>
+                      </Flex>
+                      {hasPayload && (
+                        <Flex direction="column" gap="2">
+                          <Button
+                            variant="ghost"
+                            color="gray"
+                            size="1"
+                            onClick={() => toggleExpand(item.id)}
+                          >
+                            {isOpen ? t('ops:audit.hidePayload') : t('ops:audit.showPayload')}
+                          </Button>
+                          {isOpen && (
+                            <pre className="max-h-64 overflow-auto rounded-md bg-[var(--gray-3)] p-3 text-xs">
+                              {JSON.stringify(item.payload, null, 2)}
+                            </pre>
+                          )}
+                        </Flex>
+                      )}
+                    </Flex>
+                  </Card>
                 </div>
-                {Object.keys(item.payload).length > 0 && (
-                  <pre
-                    style={{
-                      marginTop: '0.5rem',
-                      padding: '0.5rem',
-                      backgroundColor: '#f0f0f0',
-                      borderRadius: '4px',
-                      fontSize: '0.8em',
-                      overflow: 'auto',
-                    }}
-                  >
-                    {JSON.stringify(item.payload, null, 2)}
-                  </pre>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
-          {items.length === 0 && (
-            <p style={{ marginTop: '1rem' }}>{t('ops:profileUpdates.noResults')}</p>
-          )}
-          <div
-            style={{
-              marginTop: '1rem',
-              display: 'flex',
-              gap: '0.5rem',
-              alignItems: 'center',
-            }}
-          >
-            <button
+
+          <Flex align="center" gap="3" mt="4">
+            <Button
+              variant="soft"
+              size="1"
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               {t('ops:pagination.previous')}
-            </button>
-            <span>
-              {t('ops:pagination.page', { current: page + 1, total: totalPages, count: total })}
-            </span>
-            <button
+            </Button>
+            <Text size="1" color="gray">
+              {t('ops:pagination.page', {
+                current: page + 1,
+                total: totalPages,
+                count: total,
+              })}
+            </Text>
+            <Button
+              variant="soft"
+              size="1"
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => p + 1)}
             >
               {t('ops:pagination.next')}
-            </button>
-          </div>
+            </Button>
+          </Flex>
         </>
       )}
-    </div>
+    </PageContainer>
   );
 }

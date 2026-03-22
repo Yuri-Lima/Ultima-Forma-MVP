@@ -9,4 +9,10 @@ export {
   consentsRevokedTotal,
   webhookDeliveryFailedTotal,
   partnerAuthFailedTotal,
+  queueJobsEnqueuedTotal,
+  queueJobsCompletedTotal,
+  queueJobsFailedTotal,
+  queueJobDurationMs,
+  queueJobsActive,
+  webhookJobsRetryTotal,
 } from './lib/metrics';

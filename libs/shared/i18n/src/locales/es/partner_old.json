@@ -1,0 +1,26 @@
+{
+  "claims": {
+    "sensitivityHigh": "Alta",
+    "sensitivityLow": "Baja",
+    "sensitivityMedium": "Media"
+  },
+  "credentials": {
+    "id": "ID",
+    "lastUsed": "Último uso",
+    "never": "Nunca",
+    "status": {
+      "active": "Activo",
+      "expired": "Expirado",
+      "inactive": "Inactivo",
+      "revoked": "Revocado"
+    }
+  },
+  "requests": {
+    "statusApproved": "Aprobado",
+    "statusExpired": "Expirado",
+    "statusPending": "Pendiente",
+    "statusRejected": "Rechazado"
+  },
+  "subtitle": "Área para emisores y consumidores para integrar con Ultima Forma.",
+  "title": "Portal de Socios"
+}

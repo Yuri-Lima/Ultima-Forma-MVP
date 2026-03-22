@@ -2,6 +2,9 @@
   "audit": {
     "loading": "Loading events..."
   },
+  "nav": {
+    "profileUpdates": "Profile Updates"
+  },
   "pagination": {
     "page": "Page {{current}} of {{total}} ({{count}} total)"
   },
@@ -12,6 +15,7 @@
     "loading": "Loading requests..."
   },
   "webhooks": {
+    "attempts": "attempts",
     "loading": "Loading deliveries..."
   }
 }

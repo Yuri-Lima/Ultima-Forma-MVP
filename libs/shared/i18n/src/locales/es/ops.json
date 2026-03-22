@@ -1,12 +1,46 @@
 {
   "audit": {
+    "description": "",
     "error": "Error al cargar eventos de auditoría",
     "eventConsentGranted": "Consentimiento concedido",
     "eventConsentRejected": "Consentimiento rechazado",
     "eventRequestCreated": "Solicitud creada",
     "eventRequestExpired": "Solicitud expirada",
+    "hidePayload": "",
     "noResults": "No se encontraron eventos de auditoría.",
+    "showPayload": "",
     "title": "Eventos de Auditoría"
+  },
+  "consents": {
+    "approve": "",
+    "columns": {
+      "actions": "",
+      "created": "",
+      "id": "",
+      "status": "",
+      "tenant": ""
+    },
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "reject": "",
+    "statusGranted": "",
+    "statusPending": "",
+    "statusRejected": "",
+    "statusRevoked": "",
+    "title": ""
+  },
+  "credentials": {
+    "copied": "¡Copiado!",
+    "copySecret": "Copiar secret",
+    "description": "Genere credenciales de integración para un socio. Use el secret para login en Partner Portal o firma HMAC.",
+    "error": "Error al rotar credenciales",
+    "partnerId": "Partner ID",
+    "rotate": "Rotar credencial",
+    "rotating": "Rotando...",
+    "secretWarning": "Guarde este secret de forma segura. No se mostrará de nuevo.",
+    "success": "Credenciales generadas",
+    "title": "Bootstrap de credenciales"
   },
   "filters": {
     "aggregateId": "ID Agregado",
@@ -17,10 +51,20 @@
     "status": "Estado",
     "tenantId": "ID del Tenant"
   },
+  "metrics": {
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "title": ""
+  },
   "nav": {
     "audit": "Auditoría",
-    "profileUpdates": "Actualizaciones de Perfil",
+    "consents": "",
+    "credentials": "Credenciales",
+    "metrics": "",
+    "partners": "",
     "requests": "Solicitudes",
+    "system": "",
     "webhooks": "Webhooks"
   },
   "pagination": {
@@ -29,6 +73,13 @@
     "page_many": "",
     "page_other": "",
     "previous": "Anterior"
+  },
+  "partners": {
+    "description": "",
+    "error": "",
+    "noResults": "",
+    "requests": "",
+    "title": ""
   },
   "profileUpdates": {
     "error": "Error al cargar actualizaciones de perfil",
@@ -46,6 +97,7 @@
       "purpose": "Propósito",
       "status": "Estado"
     },
+    "description": "",
     "error": "Error al cargar solicitudes",
     "noResults": "No se encontraron solicitudes.",
     "statusCompleted": "Completado",
@@ -54,8 +106,29 @@
     "statusRejected": "Rechazado",
     "title": "Solicitudes de Datos"
   },
+  "system": {
+    "buildTime": "",
+    "commit": "",
+    "database": "",
+    "description": "",
+    "error": "",
+    "featureFlags": "",
+    "health": "",
+    "status": "",
+    "title": "",
+    "uptime": "",
+    "version": ""
+  },
   "webhooks": {
-    "attempts": "intentos",
+    "columns": {
+      "attempts": "",
+      "created": "",
+      "eventType": "",
+      "lastError": "",
+      "status": "",
+      "subscription": ""
+    },
+    "description": "",
     "error": "Error al cargar entregas de webhook",
     "nextRetry": "Próximo reintento",
     "noResults": "No se encontraron entregas de webhook.",

@@ -1,0 +1,22 @@
+{
+  "name": "shared-design-tokens",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/design-tokens/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:ui"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/design-tokens",
+        "main": "libs/shared/design-tokens/src/index.ts",
+        "tsConfig": "libs/shared/design-tokens/tsconfig.lib.json",
+        "assets": [
+          "libs/shared/design-tokens/*.md",
+          "libs/shared/design-tokens/src/**/*.css"
+        ]
+      }
+    }
+  }
+}

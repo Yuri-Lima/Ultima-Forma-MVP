@@ -32,6 +32,7 @@ Edite `.env` se necessario. Variaveis:
 | `DATABASE_URL` | postgresql://postgres:YOUR_PASSWORD@localhost:55432/ultima_forma | Conexao PostgreSQL |
 | `API_GATEWAY_PORT` | 3333 | Porta do api-gateway |
 | `ORCHESTRATION_API_PORT` | 3334 | Porta do orchestration-api |
+| `WORKER_PORT` | 3335 | Porta do worker (health, metrics) |
 | `NODE_ENV` | development | Ambiente (`development`, `staging`, `production`) |
 | `USER_APP_URL` | http://localhost:8081 | URL usada pelo api-gateway para gerar consentUrl |
 | `EXPO_PUBLIC_API_URL` | http://localhost:3333 | URL da API injetada no user-app (Expo) |
@@ -43,16 +44,23 @@ Edite `.env` se necessario. Variaveis:
 | `FF_PARTNER_AUTH` | false | Feature flag: autenticacao HMAC para parceiros |
 | `FF_CLAIMS_VALIDATION` | false | Feature flag: validacao de claims no registry |
 | `FF_WALLET_PRESENTATIONS` | false | Feature flag: endpoints de presentation sessions |
+| `REDIS_HOST` | localhost | Host do Redis (BullMQ) |
+| `REDIS_PORT` | 6388 | Porta do Redis |
+| `REDIS_PASSWORD` | *(opcional)* | Senha do Redis |
+| `QUEUE_PREFIX` | ultima-forma | Prefixo das chaves Redis |
+| `QUEUE_WEBHOOK_CONCURRENCY` | 5 | Concorrência do processor webhooks |
 
 Em **production**, `CREDENTIAL_ENCRYPTION_KEY` e `INTERNAL_API_KEY` sao obrigatorias e `DATABASE_URL` nao pode apontar para localhost. A validacao Zod no startup impede o boot se as variaveis estiverem invalidas.
 
-### 3. Banco de dados
+### 3. Banco de dados e Redis
 
 ```bash
-pnpm db:up           # Sobe PostgreSQL
+pnpm db:up           # Sobe PostgreSQL e Redis
 pnpm db:migrate:safe # Aplica migrations com logging estruturado
 pnpm db:seed         # Cria tenant e partner de demonstracao (IDs fixos)
 ```
+
+O `db:up` sobe tanto o PostgreSQL quanto o Redis (necessário para as filas BullMQ e entrega assíncrona de webhooks).
 
 Scripts adicionais de seed:
 
@@ -95,6 +103,14 @@ pnpm nx run user-app:export
 - [ ] `curl http://localhost:3333/version` retorna versao e git commit
 - [ ] `curl http://localhost:3333/ready` retorna `{"ready":true,...}`
 - [ ] `pnpm db:seed` cria tenant e partner
+- [ ] `pnpm dev:worker` sobe o worker na porta 3335
+- [ ] `curl http://localhost:3335/health` retorna status do worker
+
+## Frontend (apps web)
+
+Os apps `partner-portal` e `ops-console` usam Tailwind CSS v4 com o plugin `@tailwindcss/vite`. O design system compartilhado (`libs/shared/ui`) fornece componentes, layout e feedback. Nenhuma configuracao adicional e necessaria alem de `pnpm install`.
+
+Para acessar o partner-portal, informe **Partner ID** e **Client Secret** na tela de login. Esses dados são obtidos via seed ou via Ops Console (página Credentials em http://localhost:4201/credentials) ou `POST /internal/credentials/rotate` na orchestration-api. O endpoint do api-gateway `POST /v1/integration-credentials/rotate` exige HMAC quando `FF_PARTNER_AUTH=true`; guarde o secret retornado para login ou para assinar requisições.
 
 ## Configuracao opcional
 

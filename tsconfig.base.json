@@ -24,13 +24,20 @@
       "@ultima-forma/infrastructure-drizzle": [
         "libs/infrastructure/drizzle/src/index.ts"
       ],
+      "@ultima-forma/infrastructure-queue": [
+        "libs/infrastructure/queue/src/index.ts"
+      ],
       "@ultima-forma/domain-partner": ["libs/domain/partner/src/index.ts"],
       "@ultima-forma/application-partner": [
         "libs/application/partner/src/index.ts"
       ],
+      "@ultima-forma/application-jobs": [
+        "libs/application/jobs/src/index.ts"
+      ],
       "@ultima-forma/domain-consent": ["libs/domain/consent/src/index.ts"],
       "@ultima-forma/domain-audit": ["libs/domain/audit/src/index.ts"],
       "@ultima-forma/domain-webhook": ["libs/domain/webhook/src/index.ts"],
+      "@ultima-forma/domain-jobs": ["libs/domain/jobs/src/index.ts"],
       "@ultima-forma/application-consent": [
         "libs/application/consent/src/index.ts"
       ],
@@ -46,6 +53,13 @@
       "@ultima-forma/domain-wallet": ["libs/domain/wallet/src/index.ts"],
       "@ultima-forma/application-wallet": [
         "libs/application/wallet/src/index.ts"
+      ],
+      "@ultima-forma/shared-design-tokens": [
+        "libs/shared/design-tokens/src/index.ts"
+      ],
+      "@ultima-forma/shared-ui": ["libs/shared/ui/src/index.ts"],
+      "@ultima-forma/shared-ui-native": [
+        "libs/shared/ui-native/src/index.ts"
       ]
     }
   },

@@ -33,8 +33,9 @@ curl -X POST http://localhost:3333/v1/consumers \
   -H "Content-Type: application/json" \
   -d "{\"tenantId\":\"$TENANT_ID\",\"partnerId\":\"$PARTNER_ID\",\"name\":\"Test Consumer\"}"
 
-# Rotacionar credencial de integracao
-curl -X POST http://localhost:3333/v1/integration-credentials/rotate \
+# Rotacionar credencial (via orchestration-api; bootstrap sem HMAC)
+# Se INTERNAL_API_KEY estiver definido, adicione: -H "X-API-Key: $INTERNAL_API_KEY"
+curl -X POST http://localhost:3334/internal/credentials/rotate \
   -H "Content-Type: application/json" \
   -d "{\"partnerId\":\"$PARTNER_ID\"}"
 
@@ -56,15 +57,21 @@ CREDENTIAL_ENCRYPTION_KEY=$(node -e "console.log(require('crypto').randomBytes(3
 FF_PARTNER_AUTH=true
 ```
 
-2. Rotacionar a credencial do parceiro para obter o secret:
+2. Obter o secret via Ops Console ou API interna:
+
+   **Via Ops Console** (recomendado): Acesse http://localhost:4201/credentials, informe o Partner ID e clique em Rotacionar credencial.
+
+   **Via curl** (orchestration-api na porta 3334; adicione `-H "X-API-Key: $INTERNAL_API_KEY"` se `INTERNAL_API_KEY` estiver definido):
 
 ```bash
-curl -X POST http://localhost:3333/v1/integration-credentials/rotate \
+curl -X POST http://localhost:3334/internal/credentials/rotate \
   -H "Content-Type: application/json" \
   -d "{\"partnerId\":\"$PARTNER_ID\"}"
 ```
 
-3. Gerar assinatura e enviar a requisicao:
+   Guarde o `secret` retornado — ele nao sera exibido novamente. Use Partner ID + secret para login no Partner Portal ou para assinar requisicoes HMAC. O endpoint `POST /v1/integration-credentials/rotate` do api-gateway agora exige HMAC.
+
+3. Gerar assinatura e enviar a requisicao (payload = METHOD + PATH + BODY + TIMESTAMP; PATH sem query string; timestamp em ISO 8601; cada requisicao deve usar timestamp unico para evitar REPLAY_DETECTED):
 
 ```bash
 SECRET="<secret da rotacao>"
@@ -198,6 +205,9 @@ Apos criar, adicionar o path alias em `tsconfig.base.json`.
 | `@ultima-forma/infrastructure-drizzle` | `libs/infrastructure/drizzle` | Schema Drizzle + repositories |
 | `@ultima-forma/infrastructure-db` | `libs/infrastructure/db` | Pool de conexao |
 | `@ultima-forma/infrastructure-feature-flags` | `libs/infrastructure/feature-flags` | FeatureFlagService |
+| `@ultima-forma/shared-design-tokens` | `libs/shared/design-tokens` | Design tokens (cores, spacing, radius, fonts, shadows, z-index) |
+| `@ultima-forma/shared-ui` | `libs/shared/ui` | Componentes React DOM + layout + feedback + ThemeProvider |
+| `@ultima-forma/shared-ui-native` | `libs/shared/ui-native` | Componentes React Native + NativeThemeProvider |
 
 ## Estrutura de pastas por tipo
 
@@ -231,8 +241,27 @@ apps/user-app/
 apps/<app>/
 ├── src/
 │   ├── main.tsx
+│   ├── styles.css          # Tailwind entry (imports design tokens)
+│   ├── i18n.ts
 │   └── app/
-│       └── app.tsx
+│       ├── app.tsx          # Router + AppLayout + ThemeProvider
+│       ├── lib/             # API client, auth context, utilities
+│       └── pages/           # Route pages (partner-portal)
+│           └── components/  # Route components (ops-console)
 ├── index.html
-└── vite.config.mts
+└── vite.config.mts          # Includes @tailwindcss/vite plugin
+```
+
+### Shared UI (libs/shared/ui)
+
+```
+libs/shared/ui/src/
+├── lib/
+│   ├── utils.ts              # cn() helper (clsx + tailwind-merge)
+│   ├── theme-provider.tsx    # Light/dark/system theme
+│   ├── components/           # Button, Input, Select, Badge, Modal, Table, Card, Tabs, Alert, Spinner
+│   ├── layout/               # AppLayout, Sidebar, Topbar, PageContainer, Section
+│   ├── feedback/             # EmptyState, ErrorState, LoadingState, ErrorBoundary, Skeleton, Toast
+│   └── hooks/                # useApiQuery (fetch with retry)
+└── index.ts
 ```

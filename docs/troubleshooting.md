@@ -93,6 +93,14 @@ providers: [
 
 **Solucao:** Execute `pnpm build:info` ou use `pnpm dev:all` (que executa automaticamente).
 
+## Partner Portal: 401 Unauthorized (REPLAY_DETECTED)
+
+**Problema:** Muitas requisições retornam 401 com mensagem `Authentication failed: REPLAY_DETECTED`.
+
+**Causa:** O api-gateway usa nonce (hash de assinatura + timestamp) para evitar replay. Quando várias requisições são feitas no mesmo milissegundo com o mesmo path/method/body, produzem a mesma assinatura e timestamp, e a segunda é rejeitada.
+
+**Solução:** O Partner Portal já usa timestamps com precisão sub-milissegundo (`getUniqueTimestamp` em `api.ts`). Se o erro persistir: (1) reinicie o partner-portal para garantir que a versão mais recente está rodando; (2) verifique se não há cache antigo (hard refresh ou aba anônima).
+
 ## Feature flag nao funciona
 
 **Problema:** `FF_PARTNER_AUTH=true` no `.env` mas a autenticacao HMAC nao e enforced.
@@ -123,6 +131,28 @@ providers: [
 1. `@ultima-forma/shared-i18n` esta declarado no `package.json` raiz como `file:libs/shared/i18n`. Execute `pnpm install`
 2. O `metro.config.js` configura `watchFolders: [monorepoRoot]`
 3. Limpar cache: `cd apps/user-app && npx expo start --clear`
+
+## Redis nao conecta (Worker / BullMQ)
+
+**Erro:** `ECONNREFUSED` ao conectar em Redis ou worker nao processa jobs.
+
+**Solucoes:**
+
+1. Verificar se o container Redis esta rodando: `docker ps | grep redis`
+2. Subir a infraestrutura: `pnpm db:up` (inclui Redis)
+3. Testar Redis: `redis-cli -h localhost -p 6388 ping` deve retornar `PONG`
+  4. Verificar `.env`: `REDIS_HOST=localhost`, `REDIS_PORT=6388`
+
+## Jobs nao sao processados (Webhook async)
+
+**Problema:** Webhooks nao sao entregues ou demoram muito.
+
+**Solucoes:**
+
+1. Verificar se o worker esta rodando: `curl http://localhost:3335/health`
+2. Verificar logs do worker por erros de conexao Redis
+3. Inspecionar filas no Redis: `redis-cli` e `KEYS ultima-forma:*`
+4. Verificar metricas: `curl http://localhost:3335/metrics` inclui `queue_jobs_*`
 
 ## Docker -- container nao sobe
 

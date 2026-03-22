@@ -1,42 +1,92 @@
 import { useTranslation } from 'react-i18next';
-import { SUPPORTED_LOCALES, LOCALE_NAMES } from '@ultima-forma/shared-i18n';
-import type { SupportedLocale } from '@ultima-forma/shared-i18n';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
+import { Theme } from '@radix-ui/themes';
+import { ThemeProvider, AppLayout, type SidebarLink, ErrorBoundary, ToastProvider, ThemeToggle } from '@ultima-forma/shared-ui';
+import { AuthProvider, useAuth } from './lib/auth-context';
+
+import { LoginPage } from './pages/login';
+import { DashboardPage } from './pages/dashboard';
+import { RequestsPage } from './pages/requests';
+import { ClaimsPage } from './pages/claims';
+import { CredentialsPage } from './pages/credentials';
+import { WebhooksPage } from './pages/webhooks';
+import { SettingsPage } from './pages/settings';
+import { DocsPage } from './pages/docs';
+
+function ProtectedRoutes() {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation('partner');
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const links: SidebarLink[] = [
+    { label: t('nav.dashboard'), href: '/dashboard', active: location.pathname === '/dashboard' },
+    { label: t('nav.requests'), href: '/requests', active: location.pathname === '/requests' },
+    { label: t('nav.claims'), href: '/claims', active: location.pathname === '/claims' },
+    { label: t('nav.credentials'), href: '/credentials', active: location.pathname === '/credentials' },
+    { label: t('nav.webhooks'), href: '/webhooks', active: location.pathname === '/webhooks' },
+    { label: t('nav.docs'), href: '/docs', active: location.pathname === '/docs' },
+    { label: t('nav.settings'), href: '/settings', active: location.pathname === '/settings' },
+  ];
+
+  return (
+    <AppLayout
+      sidebarTitle={t('nav.appName')}
+      sidebarLinks={links}
+      onNavigate={(href) => navigate(href)}
+      topbarContent={<ThemeToggle />}
+      sidebarFooter={
+        <button
+          onClick={logout}
+          className="w-full rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors text-left"
+        >
+          {t('nav.logout')}
+        </button>
+      }
+    >
+      <Routes>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/requests" element={<RequestsPage />} />
+        <Route path="/claims" element={<ClaimsPage />} />
+        <Route path="/credentials" element={<CredentialsPage />} />
+        <Route path="/webhooks" element={<WebhooksPage />} />
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </AppLayout>
+  );
+}
 
 export function App() {
-  const { t, i18n } = useTranslation(['partner', 'common']);
   return (
-    <div style={{ padding: 48, fontFamily: 'system-ui, sans-serif' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginBottom: 24,
-        }}
-      >
-        <label htmlFor="locale-select" style={{ marginRight: 8 }}>
-          {t('common:language')}:
-        </label>
-        <select
-          id="locale-select"
-          value={i18n.language}
-          onChange={(e) => i18n.changeLanguage(e.target.value as SupportedLocale)}
-          style={{
-            padding: '0.35rem 0.5rem',
-            borderRadius: 4,
-            border: '1px solid #ccc',
-          }}
-          aria-label={t('common:selectLanguage')}
-        >
-          {SUPPORTED_LOCALES.map((locale) => (
-            <option key={locale} value={locale}>
-              {LOCALE_NAMES[locale]}
-            </option>
-          ))}
-        </select>
-      </div>
-      <h1 style={{ marginBottom: 16 }}>{t('title')}</h1>
-      <p style={{ color: '#666', maxWidth: 480 }}>{t('subtitle')}</p>
-    </div>
+    <ErrorBoundary>
+      <Theme accentColor="blue" grayColor="slate" radius="medium" scaling="100%">
+        <ThemeProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/*" element={<ProtectedRoutes />} />
+                </Routes>
+              </BrowserRouter>
+            </AuthProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </Theme>
+    </ErrorBoundary>
   );
 }
 

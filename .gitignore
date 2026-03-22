@@ -26,6 +26,7 @@ node_modules
 
 # Docker / database
 docker/ultima_forma_data/
+docker/redis_data/
 
 # misc
 /.sass-cache

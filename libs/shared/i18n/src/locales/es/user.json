@@ -9,6 +9,7 @@
     "approveError": "Error al aprobar",
     "approveFailed": "No se pudo aprobar",
     "back": "Volver",
+    "backToHome": "Volver al inicio",
     "claimsLabel": "Datos solicitados:",
     "corsHint": "Si el api-gateway está en ejecución, reinícialo para habilitar CORS.",
     "dataRequest": "Solicitud de Datos",
@@ -24,10 +25,48 @@
     },
     "rejectError": "Error al rechazar",
     "rejectFailed": "No se pudo rechazar",
-    "requestsAccess": "solicita acceso a los siguientes datos:"
+    "wizard": {
+      "back": "Volver",
+      "claims": "Datos solicitados",
+      "claimsCount_one": "",
+      "claimsCount_many": "",
+      "claimsCount_other": "",
+      "dataUsage": "Uso de datos",
+      "dataUsageExplanation": "Tus datos solo se utilizarán para el propósito indicado y no se compartirán con terceros sin tu consentimiento.",
+      "expiration": "Vencimiento",
+      "expiresOn": "Vence el {{date}}",
+      "issuer": "Emisor",
+      "issuerPlaceholder": "Proveedor de identidad",
+      "next": "Siguiente",
+      "privacyPolicy": "Política de privacidad",
+      "requester": "Solicitante",
+      "requestStatus": "Estado",
+      "retry": "Reintentar",
+      "sensitivityHigh": "Alto",
+      "sensitivityLow": "Bajo",
+      "sensitivityMedium": "Medio",
+      "step1Subtitle": "La organización que solicita tus datos",
+      "step1Title": "Quién solicita",
+      "step2Subtitle": "Qué datos se solicitan",
+      "step2Title": "Propósito y datos",
+      "step3Subtitle": "Cómo se usarán tus datos",
+      "step3Title": "Privacidad y términos",
+      "step4Subtitle": "Aprueba o rechaza esta solicitud",
+      "step4Title": "Revisar y decidir",
+      "stepOf": "Paso {{current}} de {{total}}",
+      "summary": "Resumen",
+      "trustLevel": "Nivel de confianza",
+      "trustVerified": "Verificado"
+    }
   },
   "home": {
+    "description": "",
     "subtitle": "Tu app de identidad portátil y centrada en la privacidad",
     "title": "Ultima Forma"
+  },
+  "notFound": {
+    "goHome": "Ir al inicio",
+    "message": "La página que buscas no existe.",
+    "title": "Página no encontrada"
   }
 }

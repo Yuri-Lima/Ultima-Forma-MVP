@@ -11,7 +11,8 @@ Guia base para desenvolvedores.
 - [Convenções](conventions.md) -- Nomes, codigo e estrutura
 - [Glossario](glossary.md) -- Termos de dominio e tecnicos
 - [Troubleshooting](troubleshooting.md) -- Problemas comuns e solucoes
-- [Sprints](sprints.md) -- Roadmap completo (Fase 1, Fase 2 e MVP 3.0)
+- [Sprints](sprints.md) -- Roadmap completo (Fase 1, Fase 2, MVP 3.0 e Fase 4)
+- [Fase 5](phase-5/README.md) -- Platform Scale & Runtime Maturity (async queues, BullMQ)
 
 ## Visao geral
 

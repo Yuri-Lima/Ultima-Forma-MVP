@@ -1,4 +1,113 @@
 {
-  "subtitle": "Área para emissores e consumidores integrarem com a Ultima Forma.",
-  "title": "Portal de Parceiros"
+  "claims": {
+    "description": "Definições de claims e permissões disponíveis",
+    "displayName": "Nome",
+    "empty": "Nenhum claim registrado",
+    "emptyDescription": "As definições de claims aparecerão aqui após criação",
+    "key": "Chave",
+    "namespace": "Namespace",
+    "sensitivity": "Sensibilidade",
+    "title": "Claims"
+  },
+  "credentials": {
+    "created": "Criado",
+    "description": "Gerencie suas credenciais de API",
+    "empty": "Nenhuma credencial encontrada",
+    "emptyDescription": "Suas credenciais de API aparecerão aqui",
+    "expiresAt": "Expira em",
+    "noExpiry": "Sem expiração",
+    "rotate": "Rotacionar credencial",
+    "rotated": "Credenciais rotacionadas",
+    "rotating": "Rotacionando...",
+    "rotationFailed": "Falha na rotação",
+    "title": "Credenciais"
+  },
+  "dashboard": {
+    "approved": "Approved",
+    "description": "Overview of your data requests and consents",
+    "pending": "Pending",
+    "rejected": "Rejected",
+    "title": "Dashboard",
+    "totalRequests": "Total Requests",
+    "webhooksSent": "Webhooks Sent"
+  },
+  "docs": {
+    "authBadge": "Auth",
+    "copied": "Copiado!",
+    "copy": "Copiar",
+    "description": "Referência da API Ultima Forma",
+    "endpointsTitle": "Endpoints",
+    "headerPartnerId": "Seu identificador de parceiro",
+    "headerSignature": "Assinatura HMAC-SHA256",
+    "headerTimestamp": "Timestamp ISO 8601",
+    "hmacDescription": "Todos os endpoints autenticados requerem três headers:",
+    "hmacFormula": "Fórmula da assinatura:",
+    "hmacHeading": "Autenticação por assinatura HMAC",
+    "hmacTitle": "Autenticação",
+    "tabCurl": "curl",
+    "tabNode": "Node.js",
+    "tabPython": "Python",
+    "title": "Documentação da API"
+  },
+  "login": {
+    "clientSecret": "Client Secret",
+    "clientSecretPlaceholder": "••••••••",
+    "description": "Digite suas credenciais de parceiro para continuar",
+    "partnerId": "Partner ID",
+    "partnerIdPlaceholder": "partner-xxx",
+    "submit": "Entrar",
+    "title": "Portal do Parceiro",
+    "validationError": "Ambos os campos são obrigatórios"
+  },
+  "nav": {
+    "appName": "Ultima Forma",
+    "claims": "Claims",
+    "credentials": "Credentials",
+    "dashboard": "Dashboard",
+    "docs": "API Docs",
+    "logout": "Sign Out",
+    "requests": "Requests",
+    "settings": "Settings",
+    "webhooks": "Webhooks"
+  },
+  "requests": {
+    "consumer": "Consumidor",
+    "createdAt": "Criado",
+    "description": "Visualize e gerencie suas solicitações de dados",
+    "empty": "Nenhuma solicitação encontrada",
+    "emptyDescription": "Solicitações de dados aparecerão aqui após criação",
+    "filterStatus": "Status",
+    "id": "ID da solicitação",
+    "purpose": "Propósito",
+    "status": "Status",
+    "title": "Solicitações de dados"
+  },
+  "settings": {
+    "description": "Manage your account preferences",
+    "language": "Language",
+    "partnerId": "Partner ID",
+    "profile": "Profile",
+    "title": "Settings"
+  },
+  "webhooks": {
+    "actions": "Ações",
+    "create": "Criar Webhook",
+    "created": "Criado",
+    "createDescription": "Configure um novo endpoint de webhook",
+    "createFailed": "Falha ao criar",
+    "createTitle": "Novo Webhook",
+    "description": "Gerencie inscrições de webhooks",
+    "empty": "Nenhum webhook configurado",
+    "emptyDescription": "Crie um webhook para receber notificações de eventos",
+    "events": "Eventos",
+    "eventTypes": "Tipos de evento",
+    "placeholderEvents": "consent.approved, consent.rejected",
+    "placeholderUrl": "https://example.com/webhook",
+    "statusActive": "Ativo",
+    "statusInactive": "Inativo",
+    "statusLabel": "Status",
+    "test": "Testar",
+    "title": "Webhooks",
+    "url": "URL"
+  }
 }

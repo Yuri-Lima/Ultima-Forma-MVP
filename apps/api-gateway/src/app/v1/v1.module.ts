@@ -47,7 +47,12 @@ import {
   CreatePresentationSessionUseCase,
   CompletePresentationSessionUseCase,
 } from '@ultima-forma/application-wallet';
-import type { WebhookDispatcherPort } from '@ultima-forma/domain-webhook';
+import type {
+  WebhookDispatcherPort,
+  WebhookSubscriptionRepositoryPort,
+  WebhookDeliveryRepositoryPort,
+} from '@ultima-forma/domain-webhook';
+import type { JobRepositoryPort } from '@ultima-forma/domain-jobs';
 import {
   DRIZZLE,
   type DrizzleDB,
@@ -57,13 +62,17 @@ import {
   BillableEventRepository,
   WebhookSubscriptionRepository,
   WebhookDeliveryRepository,
-  WebhookDispatcher,
   PartnerSecurityRepository,
   ConsentPolicyRepository,
   ClaimRegistryRepository,
   PartnerDashboardRepository,
   WalletRepository,
+  WebhookDispatcher,
 } from '@ultima-forma/infrastructure-drizzle';
+import {
+  AsyncWebhookDispatcher,
+  JOB_REPOSITORY,
+} from '@ultima-forma/infrastructure-queue';
 import { getConfig } from '@ultima-forma/shared-config';
 import { IssuersController } from './issuers.controller';
 import { ConsumersController } from './consumers.controller';
@@ -159,12 +168,16 @@ export {
     },
     {
       provide: WebhookDispatcher,
-      useFactory: (subRepo: unknown, delRepo: unknown) =>
-        new WebhookDispatcher(
-          subRepo as WebhookSubscriptionRepository,
-          delRepo as WebhookDeliveryRepository
-        ),
-      inject: [WEBHOOK_SUBSCRIPTION_REPOSITORY, WEBHOOK_DELIVERY_REPOSITORY],
+      useFactory: (
+        subRepo: WebhookSubscriptionRepositoryPort,
+        delRepo: WebhookDeliveryRepositoryPort,
+        jobRepo: JobRepositoryPort
+      ) => new AsyncWebhookDispatcher(subRepo, delRepo, jobRepo),
+      inject: [
+        WEBHOOK_SUBSCRIPTION_REPOSITORY,
+        WEBHOOK_DELIVERY_REPOSITORY,
+        JOB_REPOSITORY,
+      ],
     },
     {
       provide: CreateIssuerUseCase,

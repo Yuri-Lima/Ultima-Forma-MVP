@@ -1,7 +1,25 @@
 # Production: set POSTGRES_PASSWORD in .env to a strong value;
 # bind 127.0.0.1 keeps Postgres off public interfaces.
 services:
+  redis:
+    networks:
+      - ultima-forma-network
+    image: redis:7-alpine
+    container_name: ultima-forma-redis
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:6388:6379'
+    volumes:
+      - ./redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   postgres:
+    networks:
+      - ultima-forma-network
     image: postgres:18.3
     container_name: ultima-forma-postgres
     restart: unless-stopped
@@ -39,3 +57,8 @@ services:
         reservations:
           memory: 512M
           cpus: '0.5'
+
+networks:
+  ultima-forma-network:
+    name: ultima-forma-network
+    driver: bridge

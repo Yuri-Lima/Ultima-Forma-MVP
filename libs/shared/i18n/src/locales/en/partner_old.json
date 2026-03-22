@@ -1,0 +1,26 @@
+{
+  "claims": {
+    "sensitivityHigh": "High",
+    "sensitivityLow": "Low",
+    "sensitivityMedium": "Medium"
+  },
+  "credentials": {
+    "id": "ID",
+    "lastUsed": "Last Used",
+    "never": "Never",
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "inactive": "Inactive",
+      "revoked": "Revoked"
+    }
+  },
+  "requests": {
+    "statusApproved": "Approved",
+    "statusExpired": "Expired",
+    "statusPending": "Pending",
+    "statusRejected": "Rejected"
+  },
+  "subtitle": "Area for issuers and consumers to integrate with Ultima Forma.",
+  "title": "Partner Portal"
+}
