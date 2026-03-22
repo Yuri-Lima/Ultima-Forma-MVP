@@ -58,11 +58,6 @@
       "trustVerified": "Verified"
     }
   },
-  "home": {
-    "description": "",
-    "subtitle": "Your portable, privacy-first identity app",
-    "title": "Ultima Forma"
-  },
   "notFound": {
     "goHome": "Go home",
     "message": "The page you're looking for doesn't exist.",

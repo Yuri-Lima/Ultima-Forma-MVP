@@ -59,11 +59,6 @@
       "trustVerified": "Verificado"
     }
   },
-  "home": {
-    "description": "",
-    "subtitle": "Seu app de identidade portátil e privacy-first",
-    "title": "Ultima Forma"
-  },
   "notFound": {
     "goHome": "Ir ao início",
     "message": "A página que você procura não existe.",

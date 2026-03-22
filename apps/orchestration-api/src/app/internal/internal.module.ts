@@ -22,6 +22,7 @@ import {
   WebhookSubscriptionRepository,
   WebhookDeliveryRepository,
   WebhookDispatcher,
+  IngestRepository,
 } from '@ultima-forma/infrastructure-drizzle';
 import {
   AsyncWebhookDispatcher,
@@ -37,6 +38,7 @@ import { CredentialsController } from './credentials.controller';
 import { RequestsController } from './requests.controller';
 import { AuditController } from './audit.controller';
 import { WebhookDeliveriesController } from './webhook-deliveries.controller';
+import { ProfileSubmissionsController } from './profile-submissions.controller';
 import { InternalApiKeyGuard } from './internal-api-key.guard';
 
 const CONSENT_REPOSITORY = 'CONSENT_REPOSITORY';
@@ -45,6 +47,7 @@ const AUDIT_REPOSITORY = 'AUDIT_REPOSITORY';
 const BILLABLE_EVENT_REPOSITORY = 'BILLABLE_EVENT_REPOSITORY';
 const WEBHOOK_SUBSCRIPTION_REPOSITORY = 'WEBHOOK_SUBSCRIPTION_REPOSITORY';
 const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
+const INGEST_REPOSITORY = 'INGEST_REPOSITORY';
 
 @Module({
   controllers: [
@@ -53,6 +56,7 @@ const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
     RequestsController,
     AuditController,
     WebhookDeliveriesController,
+    ProfileSubmissionsController,
   ],
   providers: [
     {
@@ -117,6 +121,11 @@ const WEBHOOK_DELIVERY_REPOSITORY = 'WEBHOOK_DELIVERY_REPOSITORY';
         billableRepo: BillableEventRepositoryPort
       ) => new ApproveConsentUseCase(repo, auditRepo, billableRepo),
       inject: [CONSENT_REPOSITORY, AUDIT_REPOSITORY, BILLABLE_EVENT_REPOSITORY],
+    },
+    {
+      provide: INGEST_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new IngestRepository(db),
+      inject: [DRIZZLE],
     },
     InternalApiKeyGuard,
     {

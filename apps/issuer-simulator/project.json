@@ -1,0 +1,8 @@
+{
+  "name": "issuer-simulator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/issuer-simulator/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {}
+}

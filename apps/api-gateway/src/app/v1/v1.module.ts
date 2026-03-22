@@ -68,6 +68,7 @@ import {
   PartnerDashboardRepository,
   WalletRepository,
   WebhookDispatcher,
+  IngestRepository,
 } from '@ultima-forma/infrastructure-drizzle';
 import {
   AsyncWebhookDispatcher,
@@ -83,6 +84,8 @@ import { ClaimsController } from './claims.controller';
 import { PartnerController } from './partner.controller';
 import { SubjectsController } from './subjects.controller';
 import { PresentationsController } from './presentations.controller';
+import { IngestController } from './ingest.controller';
+import { ClientsController } from './clients.controller';
 import {
   PartnerSignatureGuard,
   VALIDATE_PARTNER_SIGNATURE,
@@ -117,6 +120,7 @@ import {
   BILLABLE_EVENT_REPOSITORY,
   WEBHOOK_SUBSCRIPTION_REPOSITORY,
   WEBHOOK_DELIVERY_REPOSITORY,
+  INGEST_REPOSITORY,
 } from './tokens';
 
 export {
@@ -148,6 +152,8 @@ export {
     PartnerController,
     SubjectsController,
     PresentationsController,
+    IngestController,
+    ClientsController,
   ],
   exports: [PartnerSignatureGuard],
   providers: [
@@ -425,6 +431,11 @@ export {
       useFactory: (walletRepo: WalletRepositoryPort) =>
         new CompletePresentationSessionUseCase(walletRepo),
       inject: [WALLET_REPOSITORY],
+    },
+    {
+      provide: INGEST_REPOSITORY,
+      useFactory: (db: DrizzleDB) => new IngestRepository(db),
+      inject: [DRIZZLE],
     },
   ],
 })

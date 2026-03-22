@@ -6,7 +6,8 @@ export type AuditEventType =
   | 'request_expired'
   | 'issuer_updated'
   | 'consumer_updated'
-  | 'webhook_delivery_dead_letter';
+  | 'webhook_delivery_dead_letter'
+  | 'profile_data_received';
 
 export type BillableEventType = 'consent_granted';
 

@@ -21,6 +21,7 @@ import {
   MetricsPage,
   SystemPage,
   LocaleSwitcher,
+  Inbox,
 } from './components';
 import { ThemeToggle } from '@ultima-forma/shared-ui';
 
@@ -34,6 +35,7 @@ function AppShell() {
   const location = useLocation();
 
   const sidebarLinks: SidebarLink[] = [
+    { label: 'Inbox', href: '/inbox', active: location.pathname === '/inbox' },
     { label: t('nav.requests'), href: '/requests', active: location.pathname === '/requests' },
     { label: t('nav.audit'), href: '/audit', active: location.pathname === '/audit' },
     { label: t('nav.consents'), href: '/consents', active: location.pathname === '/consents' },
@@ -57,7 +59,11 @@ function AppShell() {
       }
     >
       <Routes>
-        <Route path="/" element={<Navigate to="/requests" replace />} />
+        <Route path="/" element={<Navigate to="/inbox" replace />} />
+        <Route
+          path="/inbox"
+          element={<Inbox apiBase={API_BASE} apiKey={INTERNAL_API_KEY} />}
+        />
         <Route
           path="/requests"
           element={<RequestList apiBase={API_BASE} apiKey={INTERNAL_API_KEY} />}

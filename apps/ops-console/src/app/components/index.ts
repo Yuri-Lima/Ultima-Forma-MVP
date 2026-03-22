@@ -8,3 +8,4 @@ export { CredentialsPage } from './credentials-page';
 export { MetricsPage } from './metrics-page';
 export { SystemPage } from './system-page';
 export { LocaleSwitcher } from './locale-switcher';
+export { Inbox } from './inbox';

@@ -11,5 +11,10 @@
     "wizard": {
       "claimsCount": "{{count}} data items"
     }
+  },
+  "home": {
+    "description": "",
+    "subtitle": "Your portable, privacy-first identity app",
+    "title": "Ultima Forma"
   }
 }

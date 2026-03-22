@@ -17,4 +17,5 @@ export { ConsentPolicyRepository } from './lib/consent-policy.repository';
 export { ClaimRegistryRepository } from './lib/claim-registry.repository';
 export { PartnerDashboardRepository } from './lib/partner-dashboard.repository';
 export { WalletRepository } from './lib/wallet.repository';
+export { IngestRepository } from './lib/ingest.repository';
 export { encryptSecret, decryptSecret } from './lib/crypto.utils';

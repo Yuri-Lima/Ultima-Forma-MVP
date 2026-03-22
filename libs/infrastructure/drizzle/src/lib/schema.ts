@@ -306,3 +306,46 @@ export const partnerApiUsage = core.table('partner_api_usage', {
   responseTimeMs: integer('response_time_ms'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const profileSubmissions = core.table('profile_submissions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  issuerId: uuid('issuer_id')
+    .notNull()
+    .references(() => issuers.id),
+  tenantId: uuid('tenant_id')
+    .notNull()
+    .references(() => tenants.id),
+  cpf: varchar('cpf', { length: 14 }).notNull(),
+  phone: varchar('phone', { length: 20 }).notNull(),
+  extraFields: jsonb('extra_fields').$type<string[]>().default([]),
+  status: varchar('status', { length: 50 }).notNull().default('received'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const walletEntries = core.table('wallet_entries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userSubjectId: uuid('user_subject_id')
+    .notNull()
+    .references(() => userSubjects.id),
+  issuerId: uuid('issuer_id')
+    .notNull()
+    .references(() => issuers.id),
+  fieldName: varchar('field_name', { length: 255 }).notNull(),
+  fieldValue: text('field_value'),
+  receivedAt: timestamp('received_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const dataRequestTokens = core.table('data_request_tokens', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userSubjectId: uuid('user_subject_id')
+    .notNull()
+    .references(() => userSubjects.id),
+  issuerId: uuid('issuer_id')
+    .notNull()
+    .references(() => issuers.id),
+  token: varchar('token', { length: 255 }).notNull().unique(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  usedAt: timestamp('used_at'),
+});

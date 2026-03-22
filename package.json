@@ -26,7 +26,8 @@
     "dev:user-app:tunnel": "nx run user-app:start -- --tunnel",
     "dev:partner-portal": "nx serve partner-portal",
     "dev:ops-console": "nx serve ops-console",
-    "dev:all": "pnpm build:info && pnpm db:migrate:safe && pnpm db:seed && pnpm i18n:extract && nx run-many -t serve -p api-gateway,orchestration-api,worker,user-app,partner-portal,ops-console --parallel"
+    "dev:issuer-simulator": "nx serve issuer-simulator",
+    "dev:all": "pnpm build:info && pnpm db:migrate:safe && pnpm db:seed && pnpm i18n:extract && nx run-many -t serve -p api-gateway,orchestration-api,worker,user-app,partner-portal,ops-console,issuer-simulator --parallel"
   },
   "private": true,
   "devDependencies": {
